@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     async getTodo() {
-      const resData = await axios.get("http://127.0.0.1:8001/api/todo");
+      const resData = await axios.get("http://127.0.0.1:8003/api/todo");
       this.todoLists = resData.data.data;
       this.filterList();
     },
@@ -67,16 +67,12 @@ export default {
       }
     },
     async insertTodo() {
-      // const axiosPost = axios.create({
-      //   xsrfHeaderName: "X-CSRF-Token",
-      //   withCredentials: true,
-      // });
       const sendData = {
         id: 1,
         todo: this.todo,
       };
-      await axios.post("http://127.0.0.1:8001/api/todo", sendData);
-      this.getTodo();
+      await axios.post("http://127.0.0.1:8003/api/todo", sendData);
+      this.change();
     },
     change() {
       this.show = !this.show;
