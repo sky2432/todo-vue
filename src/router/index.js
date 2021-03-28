@@ -1,12 +1,16 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import TopPage from '../views/TopPage.vue'
-import Registration from "../views/Registration.vue";
+import Vue from "vue";
+import VueRouter from "vue-router";
+import TopPage from "../views/TopPage.vue";
+import RegisterForm from "../views/RegisterFome.vue";
+import RegisterConfirm from "../views/RegisterConfirm.vue";
 import Login from "../views/Login.vue";
 import Home from "../views/Home.vue";
-import RegistrationConfirm from "../views/RegistrationConfirm.vue";
+import DoneTodo from "../views/DoneTodo.vue";
+import MyPage from "../views/MyPage.vue";
+import store from "../store/store";
 
-Vue.use(VueRouter)
+
+Vue.use(VueRouter);
 
 const routes = [
   {
@@ -15,14 +19,14 @@ const routes = [
     component: TopPage,
   },
   {
-    path: "/registration",
-    name: "Registration",
-    component: Registration,
+    path: "/registerForm",
+    name: "RegisterForm",
+    component: RegisterForm,
   },
   {
-    path: "/registration/confirm",
-    name: "RegistrationConfirm",
-    component: RegistrationConfirm,
+    path: "/registerConfirm",
+    name: "RegisterConfirm",
+    component: RegisterConfirm,
   },
   {
     path: "/login",
@@ -33,13 +37,52 @@ const routes = [
     path: "/home",
     name: "Home",
     component: Home,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/doneTodo",
+    name: "DoneTodo",
+    component: DoneTodo,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/mypage",
+    name: "MyPage",
+    component: MyPage,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "*",
+    redirect: "/",
   },
 ];
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: "history",
   base: process.env.BASE_URL,
-  routes
-})
+  routes,
+});
 
-export default router
+router.beforeEach((to, from, next) => {
+  if (
+    to.matched.some((record) => record.meta.requiresAuth) &&
+    !store.state.auth
+  ) {
+    next({
+      path: "/",
+      query: {
+        redirect: to.fullPath,
+      },
+    });
+  } else {
+    next();
+  }
+});
+
+export default router;
