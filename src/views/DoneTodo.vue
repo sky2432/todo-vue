@@ -13,7 +13,7 @@
             {{ list.todo_list }}
           </td>
           <td>
-            {{ list.updated_at }}
+            {{ convertDay(list.updated_at) }}
           </td>
           <td>
             <b-button variant="info" size="sm" @click="returnTodo(list.id)"
@@ -50,10 +50,28 @@ export default {
       todoLists: [],
     };
   },
+  computed: {
+    convertDay() {
+      return function(updateDay) {
+        const day = new Date(updateDay);
+        const doneDay =
+          day.getFullYear() +
+          "\t" +
+          "/" +
+          "\t" +
+          (day.getMonth() + 1) +
+          "\t" +
+          "/" +
+          "\t" +
+          day.getDate();
+        return doneDay;
+      };
+    },
+  },
   methods: {
     async showDoneTodo() {
       const resData = await axios.get(
-        "http://127.0.0.1:8000/api/doneTodo/" + this.$store.state.name.id
+        "http://127.0.0.1:8000/api/doneTodo/" + this.$store.state.loginUser.id
       );
       this.todoLists = resData.data.data;
     },
@@ -81,7 +99,8 @@ export default {
   width: 50%;
   margin: 0 auto;
   background-color: #f0f0f0;
-  margin-top: 100px;
+  margin-top: 150px;
+  margin-bottom: 100px;
   padding: 20px;
   box-shadow: 0 7px #e1e0e0;
 }

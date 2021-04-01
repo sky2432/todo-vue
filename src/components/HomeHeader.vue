@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-navbar type="dark" variant="info">
+    <b-navbar type="dark" variant="info" fixed="top">
       <b-navbar-brand class="ml-3" href="#" @click="$router.push('/home')">
         <b-icon icon="card-checklist"></b-icon>
         Todolist
@@ -42,7 +42,7 @@ export default {
   },
   computed: {
     showUserName() {
-      return this.$store.state.name.name;
+      return this.$store.state.loginUser.name;
     },
     displayUserImage() {
       return this.$store.state.userImage;
@@ -50,9 +50,9 @@ export default {
   },
   methods: {
     async getUserImage() {
-      const userId = this.$store.state.name.id;
+      const userId = this.$store.state.loginUser.id;
       const resData = await axios.get(
-        "http://127.0.0.1:8000/api/fileUpload/" + userId
+        "http://127.0.0.1:8000/api/file/" + userId
       );
       if (resData.data.data.file_path) {
         const userImage =

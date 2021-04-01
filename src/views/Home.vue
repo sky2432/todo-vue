@@ -16,7 +16,8 @@
             }}</b-form-checkbox>
           </td>
           <td>
-            {{ list.deadline }}
+            {{ convertDeadline(list.deadline) }}
+            <!-- {{ list.deadline }} -->
           </td>
           <!-- 編集ボタン -->
           <td class="edit-btn-wrap">
@@ -210,19 +211,34 @@ export default {
   computed: {
     // ユーザーネームの取得
     showUserName() {
-      return this.$store.state.name.name;
+      return this.$store.state.loginUser.name;
     },
+    //期限日の表示を変える
+    convertDeadline() {
+      return function(deadline) {
+        if (deadline !== null) {
+          const today = this.createToday();
+          const todoDay = this.createDeadlineDate(deadline);
+          const tommorrow = this.createTomorrow();
+          if (today.getTime() === todoDay.getTime()) {
+            return "今日";
+          }
+          if (tommorrow.getTime() === todoDay.getTime()) {
+            return "明日";
+          }
+          const convertDay =
+            todoDay.getMonth() + 1 + "\t" + "/" + "\t" + todoDay.getDate();
+          return convertDay;
+        }
+      };
+    },
+    //期限が過ぎたTodoは赤色で表示
     checkDeadline() {
       return function(deadline) {
-        if(deadline === null) {
+        if (deadline === null) {
           return this.blackColor;
-        };
-        const todo = new Date(deadline);
-        const todoDeadline = new Date(
-          todo.getFullYear(),
-          todo.getMonth(),
-          todo.getDate()
-        );
+        }
+        const todoDeadline = this.createDeadlineDate(deadline);
         const today = this.createToday();
         if (today <= todoDeadline) {
           return this.blackColor;
@@ -233,11 +249,32 @@ export default {
     },
   },
   methods: {
+    //比較用の期限日の日付を作成
+    createDeadlineDate(deadline) {
+      const todo = new Date(deadline);
+      const todoDeadline = new Date(
+        todo.getFullYear(),
+        todo.getMonth(),
+        todo.getDate()
+      );
+      return todoDeadline;
+    },
     //比較用の今日の日付を作成
     createToday() {
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       return today;
+    },
+    //比較用の明日の日付を作成
+    createTomorrow() {
+      const now = new Date();
+      now.setDate(now.getDate() + 1);
+      const tomorrow = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate()
+      );
+      return tomorrow;
     },
     // 期限設定ポップオーバー
     setAddDeadline() {
@@ -248,7 +285,11 @@ export default {
     },
     validateDeadline(value) {
       const select = new Date(value);
-      const selectDay = new Date(select.getFullYear(), select.getMonth(), select.getDate());
+      const selectDay = new Date(
+        select.getFullYear(),
+        select.getMonth(),
+        select.getDate()
+      );
       const today = this.createToday();
       if (today > selectDay) {
         this.showDeadlineError = true;
@@ -281,7 +322,7 @@ export default {
     //Todoリストの表示
     async showTodo() {
       const resData = await axios.get(
-        "http://127.0.0.1:8000/api/todo/" + this.$store.state.name.id
+        "http://127.0.0.1:8000/api/todo/" + this.$store.state.loginUser.id
       );
       this.todoLists = resData.data.data;
     },
@@ -301,9 +342,10 @@ export default {
     async createTodo() {
       this.$bvModal.hide("add-modal"); //新規登録モーダルを閉じる
       const sendData = {
-        id: this.$store.state.name.id,
-        todo: this.newTodo,
+        user_id: this.$store.state.loginUser.id,
+        todo_list: this.newTodo,
         deadline: this.todoDeadline,
+        status: true,
       };
       await axios.post("http://127.0.0.1:8000/api/todo", sendData);
       this.newTodo = "";
@@ -353,7 +395,8 @@ export default {
   width: 50%;
   margin: 0 auto;
   background-color: #f0f0f0;
-  margin-top: 100px;
+  margin-top: 150px;
+  margin-bottom: 100px;
   padding: 20px;
   box-shadow: 0 7px #e1e0e0;
 }

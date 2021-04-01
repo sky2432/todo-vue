@@ -6,9 +6,7 @@
         <b-list-group-item button @click="show = 1"
           >プロフィール</b-list-group-item
         >
-        <b-list-group-item button @click="show = 2"
-          >各種変更</b-list-group-item
-        >
+        <b-list-group-item button @click="show = 2">各種変更</b-list-group-item>
         <b-list-group-item button @click="show = 3"
           >アカウント削除</b-list-group-item
         >
@@ -83,7 +81,7 @@
         <b-modal id="delete-confirm-modal" title="確認" centered>
           <p class="my-4">本当に削除しますか？</p>
           <template #modal-footer>
-            <b-button size="lg" variant="danger" @click="deleteAccount">
+            <b-button size="lg" variant="danger" @click="deleteUser">
               はい
             </b-button>
             <b-button size="lg" variant="info" @click="deleteCancel">
@@ -117,7 +115,7 @@ export default {
   },
   computed: {
     showUserName() {
-      return this.$store.state.name.name;
+      return this.$store.state.loginUser.name;
     },
     displayUserImage() {
       return this.$store.state.userImage;
@@ -141,9 +139,9 @@ export default {
     async fileUpload() {
       const formData = new FormData();
       formData.append("file", this.fileInfo);
-      const userId = this.$store.state.name.id;
+      const userId = this.$store.state.loginUser.id;
       const resData = await axios.post(
-        "http://127.0.0.1:8000/api/fileUpload/" + userId,
+        "http://127.0.0.1:8000/api/file/" + userId,
         formData,
         {
           headers: {
@@ -154,7 +152,7 @@ export default {
       if (resData.data.data.file_path) {
         const userImage =
           "http://127.0.0.1:8000/storage/image/" + resData.data.data.file_path;
-        this.$store.commit('storeUserImage', userImage);
+        this.$store.commit("storeUserImage", userImage);
         this.showInput = false;
         this.$nextTick(function() {
           this.showInput = true;
@@ -183,7 +181,7 @@ export default {
 
     // 名前・メールアドレス変更
     async updateUser() {
-      const userId = this.$store.state.name.id;
+      const userId = this.$store.state.loginUser.id;
       const sendData = {
         name: this.userName,
         email: this.userEmail,
@@ -194,22 +192,22 @@ export default {
       );
       console.log(resData);
       if (resData.data.message === "Ok") {
-        this.$store.dispatch("updateUser", resData.data.data);
+        this.$store.commit("updateUser", resData.data.data);
         this.errors = "";
         this.showMsgBox();
       }
-      if (resData.data.message === 'error') {
+      if (resData.data.message === "error") {
         this.errors = resData.data.data;
       }
     },
     getUserData() {
-      this.userName = this.$store.state.name.name;
-      this.userEmail = this.$store.state.name.email;
+      this.userName = this.$store.state.loginUser.name;
+      this.userEmail = this.$store.state.loginUser.email;
     },
     // アカウント削除
-    async deleteAccount() {
-      const userId = this.$store.state.name.id;
-      await axios.delete("http://127.0.0.1:8000/api/deleteAccount/" + userId);
+    async deleteUser() {
+      const userId = this.$store.state.loginUser.id;
+      await axios.delete("http://127.0.0.1:8000/api/deleteUser/" + userId);
       this.logout();
     },
     logout() {

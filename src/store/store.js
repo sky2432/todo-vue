@@ -10,7 +10,7 @@ export default new Vuex.Store({
   plugins: [createPersistedState()],
   state: {
     auth: "",
-    name: "", //ログインユーザーの情報
+    loginUser: "", //ログインユーザーの情報
     formName: "",
     formEmail: "",
     formPassword: "",
@@ -20,15 +20,15 @@ export default new Vuex.Store({
     auth(state, payload) {
       state.auth = payload;
     },
-    member(state, payload) {
-      state.name = payload;
+    user(state, payload) {
+      state.loginUser = payload;
     },
     updateUser(state, payload) {
-      state.name = payload;
+      state.loginUser = payload;
     },
     logout(state, payload) {
       state.auth = payload;
-      state.name = "";
+      state.loginUser = "";
     },
     storeFormName(state, value) {
       state.formName = value;
@@ -58,9 +58,8 @@ export default new Vuex.Store({
           password: password,
         }
       );
-
       commit("auth", responseLogin.data.auth);
-      commit("member", responseLogin.data.data);
+      commit("user", responseLogin.data.data);
       if (responseLogin.data.auth === true) {
         // ログインメール送信
         const userId = responseLogin.data.data.id;
@@ -76,10 +75,6 @@ export default new Vuex.Store({
       );
       commit("logout", responseLogout.data.auth);
       router.replace("/");
-    },
-    // ユーザー情報更新
-    updateUser({ commit }, resData) {
-      commit("updateUser", resData);
     },
   },
 });
