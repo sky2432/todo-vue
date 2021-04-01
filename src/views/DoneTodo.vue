@@ -20,13 +20,15 @@
               >戻す</b-button
             >
           </td>
-          <td> <b-button variant="info" size="sm" @click="deleteTodo(list.id)"
-              >
+          <td>
+            <b-button variant="info" size="sm" @click="deleteTodo(list.id)">
               <b-icon icon="trash"></b-icon>
               削除</b-button
-            ></td>
+            >
+          </td>
         </tr>
       </table>
+
       <div class="btn-wrap">
         <b-button type="submit" variant="info" @click="$router.push('/home')"
           >トップページへ</b-button
@@ -60,11 +62,12 @@ export default {
       this.showDoneTodo();
     },
     async deleteTodo($id) {
-      const deleteRes =  await axios.delete("http://127.0.0.1:8000/api/doneTodo/" + $id);
+      const deleteRes = await axios.delete(
+        "http://127.0.0.1:8000/api/doneTodo/" + $id
+      );
       console.log(deleteRes);
       this.showDoneTodo();
     },
-
   },
   created() {
     this.showDoneTodo();
@@ -77,9 +80,10 @@ export default {
 .container {
   width: 50%;
   margin: 0 auto;
-  background-color: #dbdbdb;
+  background-color: #f0f0f0;
   margin-top: 100px;
   padding: 20px;
+  box-shadow: 0 7px #e1e0e0;
 }
 
 .list {

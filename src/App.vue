@@ -5,6 +5,9 @@
 </template>
 
 <style>
+.error {
+  color: red;
+}
 /*
 html5doctor.com Reset Stylesheet
 v1.6.1
@@ -182,8 +185,5 @@ select {
 * {
   box-sizing: border-box;
 }
-
-
-
 
 </style>

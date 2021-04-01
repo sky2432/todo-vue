@@ -8,7 +8,6 @@
     <div class="form">
       <b-form @submit.prevent="formValidate">
         <b-form-group label="名前" label-for="name">
-          <!-- <pre>{{ $v.name }}</pre> -->
           <b-form-input
             id="name"
             :value="showFormName"
@@ -52,7 +51,6 @@
 </template>
 
 <script>
-// import { required, minLength, between } from "vuelidate/lib/validators";
 import axios from "axios";
 export default {
   data() {
@@ -63,16 +61,6 @@ export default {
       errors: "",
     };
   },
-  // validations: {
-  //   name: {
-  //     required,
-  //     minLength: minLength(3),
-  //   },
-  //   password: {
-  //     required,
-  //     minLength: minLength(3),
-  //   },
-  // },
   computed: {
     showFormName() {
       return this.$store.state.formName;
@@ -113,12 +101,6 @@ export default {
       }
     },
   },
-  // status(validation) {
-  //   return {
-  //     dirty: validation.$dirty,
-  //     error: validation.$error,
-  //   };
-  // },
 
   beforeRouteLeave(to, from, next) {
     if (to.name != "RegisterConfirm") {
@@ -152,23 +134,4 @@ header {
 .btn-wrap {
   text-align: center;
 }
-.error {
-  color: rgb(255, 83, 83);
-}
-/* form-validation */
-/* .dirty {
-  border-color: forestgreen;
-  background: mintcream;
-}
-.success-msg {
-  color: forestgreen;
-}
-.error {
-  border-color: red;
-  background: mistyrose;
-}
-.error-msg {
-  color: red;
-} */
-/* ------------------------------ */
 </style>

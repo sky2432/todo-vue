@@ -7,7 +7,7 @@
     </header>
 
     <div class="form">
-      <b-form @submit.prevent="auth">
+      <b-form @submit.prevent="login">
         <b-form-group label="メールアドレス" label-for="email">
           <b-form-input
             id="email"
@@ -43,7 +43,7 @@
 <script>
 import { required } from "vuelidate/lib/validators";
 import axios from "axios";
-import store from '../store/store';
+import store from "../store/store";
 export default {
   data() {
     return {
@@ -61,7 +61,7 @@ export default {
     },
   },
   methods: {
-    async auth() {
+    async login() {
       const sendData = {
         email: this.email,
         password: this.password,
@@ -81,11 +81,11 @@ export default {
     },
   },
   beforeRouteEnter(to, from, next) {
-    if(store.state.auth){
-      next('/home');
+    if (store.state.auth) {
+      next("/home");
     }
-    next()
-  }
+    next();
+  },
 };
 </script>
 
@@ -93,9 +93,6 @@ export default {
 .dirty {
   border-color: forestgreen;
   background: mintcream;
-}
-.error {
-  color: red;
 }
 /* ------------------------------ */
 

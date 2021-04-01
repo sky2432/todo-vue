@@ -5,8 +5,10 @@
     </header>
     <div class="form">
       <b-list-group>
-        <b-list-group-item>名前: {{showFormName}}</b-list-group-item>
-        <b-list-group-item>メールアドレス: {{showFormEmail}}</b-list-group-item>
+        <b-list-group-item>名前: {{ showFormName }}</b-list-group-item>
+        <b-list-group-item
+          >メールアドレス: {{ showFormEmail }}</b-list-group-item
+        >
         <b-list-group-item>パスワード:　表示されません</b-list-group-item>
       </b-list-group>
 
@@ -17,7 +19,7 @@
           @click="$router.push({ name: 'RegisterForm' })"
           >修正する</b-button
         >
-        <b-button class="submit-btn" variant="info" @click="auth"
+        <b-button class="submit-btn" variant="info" @click="register"
           >登録する</b-button
         >
       </div>
@@ -46,31 +48,32 @@ export default {
     },
   },
   methods: {
-    auth() {
-      axios
-        .post("http://127.0.0.1:8000/api/register", {
-          name: this.$store.state.formName,
-          email: this.$store.state.formEmail,
-          password: this.$store.state.formPassword,
-        })
-        .then((response) => {
-          console.log(response);
-          this.$store.commit("resetForm");
-          this.$router.replace("/login");
-        })
-        .catch((error) => {
-          alert(error);
-        });
+    async register() {
+      const resData = await axios.post("http://127.0.0.1:8000/api/register", {
+        name: this.$store.state.formName,
+        email: this.$store.state.formEmail,
+        password: this.$store.state.formPassword,
+      });
+      console.log(resData);
+      const sendData = {
+        email: resData.data.data.email,
+      };
+      const resMailData = axios.post(
+        "http://127.0.0.1:8000/api/sendRegisterMail",
+        sendData
+      );
+      this.$store.commit("resetForm"); //Vuexに保存した会員登録フォーム情報をリセット
+      this.$router.replace("/login");
     },
   },
   beforeRouteLeave(to, from, next) {
-      if (to.name != "RegisterForm") {
-        this.$store.commit("resetForm");
-        next();
-      } else {
-        next();
-      }
-    },
+    if (to.name != "RegisterForm") {
+      this.$store.commit("resetForm");
+      next();
+    } else {
+      next();
+    }
+  },
 };
 </script>
 
