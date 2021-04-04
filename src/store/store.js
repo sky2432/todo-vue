@@ -9,7 +9,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   plugins: [createPersistedState()],
   state: {
-    auth: "",
+    auth: "", //ログイン認証情報
     loginUser: "", //ログインユーザーの情報
     formName: "",
     formEmail: "",
@@ -49,21 +49,23 @@ export default new Vuex.Store({
     },
   },
   actions: {
+    //ログイン処理
     async login({ commit }, { email, password }) {
-      //ログイン処理
       const responseLogin = await axios.post(
         "http://127.0.0.1:8000/api/login",
         {
           email: email,
           password: password,
         }
-      );
+      )
       commit("auth", responseLogin.data.auth);
       commit("user", responseLogin.data.data);
       if (responseLogin.data.auth === true) {
         // ログインメール送信
-        const userId = responseLogin.data.data.id;
-        axios.get("http://127.0.0.1:8000/api/sendLoginMail/" + userId);
+        const sendData = {
+          email: email
+        };
+        axios.post("http://127.0.0.1:8000/api/sendLoginMail", sendData);
         // ホーム画面へ
         router.replace("/home");
       }

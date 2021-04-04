@@ -7,7 +7,7 @@
     </header>
 
     <div class="form">
-      <b-form @submit.prevent="login">
+      <b-form @submit.prevent="login" novalidate>
         <b-form-group label="メールアドレス" label-for="email">
           <b-form-input
             id="email"
@@ -16,9 +16,11 @@
             :class="status($v.email)"
             required
           ></b-form-input>
-          <p class="error" v-if="this.errors.email">
-            ※メールアドレスが違います。
-          </p>
+          <div class="error" v-if="this.errorsEmail">
+            <p v-for="(error, index) in this.errorsEmail" :key="index">
+              {{ error }}
+            </p>
+          </div>
         </b-form-group>
         <b-form-group label="パスワード" label-for="password">
           <b-form-input
@@ -28,9 +30,11 @@
             :class="status($v.password)"
             required
           ></b-form-input>
-          <p class="error" v-if="this.errors.password">
-            ※パスワードが違います。
-          </p>
+          <div class="error" v-if="this.errorsPassword">
+            <p v-for="(error, index) in this.errorsPassword" :key="index">
+              {{ error }}
+            </p>
+          </div>
         </b-form-group>
         <div class="btn-wrap">
           <b-button type="submit" variant="info">ログイン</b-button>
@@ -49,7 +53,8 @@ export default {
     return {
       email: "",
       password: "",
-      errors: "",
+      errorsEmail: [],
+      errorsPassword: [],
     };
   },
   validations: {
@@ -61,17 +66,18 @@ export default {
     },
   },
   methods: {
-    async login() {
+    login() {
       const sendData = {
         email: this.email,
         password: this.password,
       };
-      const resData = await axios.post(
-        "http://127.0.0.1:8000/api/loginValidate",
-        sendData
-      );
-      this.errors = resData.data.data;
-      this.$store.dispatch("login", sendData);
+      axios
+        .post("http://127.0.0.1:8000/api/loginValidate", sendData)
+        .then(this.$store.dispatch("login", sendData))
+        .catch((e) => {
+          this.errorsEmail = e.response.data.errors.email;
+          this.errorsPassword = e.response.data.errors.password;
+        });
     },
     status(validation) {
       return {

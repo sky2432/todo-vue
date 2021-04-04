@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <HomeHeader></HomeHeader>
+    <TheHomeHeader></TheHomeHeader>
     <div class="container">
       <table class="table">
         <tr>
@@ -39,11 +39,11 @@
 </template>
 
 <script>
-import HomeHeader from "../components/HomeHeader";
+import TheHomeHeader from "../components/TheHomeHeader";
 import axios from "axios";
 export default {
   components: {
-    HomeHeader,
+    TheHomeHeader,
   },
   data() {
     return {
@@ -68,27 +68,33 @@ export default {
       };
     },
   },
+  watch: {
+    myProperty: {
+      immediate: true,
+      handler() {
+        this.showDoneTodo();
+      },
+    },
+  },
   methods: {
     async showDoneTodo() {
       const resData = await axios.get(
-        "http://127.0.0.1:8000/api/doneTodo/" + this.$store.state.loginUser.id
+        "http://127.0.0.1:8000/api/doneTodoLists/" +
+          this.$store.state.loginUser.id
       );
       this.todoLists = resData.data.data;
     },
     async returnTodo($id) {
-      await axios.put("http://127.0.0.1:8000/api/doneTodo/" + $id);
+      await axios.put("http://127.0.0.1:8000/api/doneTodoLists/" + $id);
       this.showDoneTodo();
     },
     async deleteTodo($id) {
       const deleteRes = await axios.delete(
-        "http://127.0.0.1:8000/api/doneTodo/" + $id
+        "http://127.0.0.1:8000/api/doneTodoLists/" + $id
       );
       console.log(deleteRes);
       this.showDoneTodo();
     },
-  },
-  created() {
-    this.showDoneTodo();
   },
 };
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <HomeHeader></HomeHeader>
+    <TheHomeHeader></TheHomeHeader>
     <div class="row justify-content-center container">
       <b-list-group class="col-4">
         <b-list-group-item button @click="show = 1"
@@ -22,7 +22,7 @@
             @change="fileSelected"
             v-if="showInput"
           ></b-form-file>
-          <p class="error" v-if="showError">{{ errorMessage }}</p>
+          <p class="error" v-if="showError">{{ errorFileMessage }}</p>
           <b-button variant="info" class="mt-3" @click="fileUpload"
             >設定</b-button
           >
@@ -31,16 +31,18 @@
 
       <div v-if="show === 2" class="col-8 content name">
         <div>
-          <b-form @submit.prevent="updateUser">
+          <b-form @submit.prevent="updateUser" novalidate>
             <b-form-group label="名前" label-for="name" class="label">
               <b-form-input
                 id="name"
                 v-model="userName"
                 required
               ></b-form-input>
-              <p class="error" v-if="this.errors.name">
-                ※入力された名前はすでに登録されています。
-              </p>
+              <div class="error" v-if="this.errorsName">
+                <p v-for="(error, index) in this.errorsName" :key="index">
+                  {{ error }}
+                </p>
+              </div>
             </b-form-group>
             <b-form-group
               label="メールアドレス"
@@ -53,9 +55,11 @@
                 v-model="userEmail"
                 required
               ></b-form-input>
-              <p class="error" v-if="this.errors.email">
-                ※入力されたメールアドレスはすでに登録されています。
-              </p>
+              <div class="error" v-if="this.errorsEmail">
+                <p v-for="(error, index) in this.errorsEmail" :key="index">
+                  {{ error }}
+                </p>
+              </div>
             </b-form-group>
             <div class="btn-wrap">
               <b-button variant="info" type="submit">変更</b-button>
@@ -96,21 +100,22 @@
 
 <script>
 import axios from "axios";
-import HomeHeader from "../components/HomeHeader";
+import TheHomeHeader from "../components/TheHomeHeader";
 export default {
   components: {
-    HomeHeader,
+    TheHomeHeader,
   },
   data() {
     return {
       show: 1,
       fileInfo: "",
-      errorMessage: "",
+      errorFileMessage: "※画像ファイルを選択して下さい",
       showError: false,
       showInput: true,
-      errors: "",
       userName: "",
       userEmail: "",
+      errorsName: [],
+      errorsEmail: [],
     };
   },
   computed: {
@@ -130,7 +135,6 @@ export default {
         this.$nextTick(function() {
           this.showInput = true;
         });
-        this.errorMessage = "※画像ファイルを選択して下さい";
         this.showError = true;
       } else {
         this.showError = false;
@@ -141,7 +145,7 @@ export default {
       formData.append("file", this.fileInfo);
       const userId = this.$store.state.loginUser.id;
       const resData = await axios.post(
-        "http://127.0.0.1:8000/api/file/" + userId,
+        "http://127.0.0.1:8000/api/files/" + userId,
         formData,
         {
           headers: {
@@ -173,9 +177,6 @@ export default {
         })
         .then((value) => {
           this.boxTwo = value;
-        })
-        .catch((err) => {
-          // An error occurred
         });
     },
 
@@ -186,20 +187,22 @@ export default {
         name: this.userName,
         email: this.userEmail,
       };
-      const resData = await axios.put(
-        "http://127.0.0.1:8000/api/updateUser/" + userId,
-        sendData
-      );
-      console.log(resData);
-      if (resData.data.message === "Ok") {
-        this.$store.commit("updateUser", resData.data.data);
-        this.errors = "";
-        this.showMsgBox();
-      }
-      if (resData.data.message === "error") {
-        this.errors = resData.data.data;
-      }
+      await axios
+        .put("http://127.0.0.1:8000/api/users/" + userId, sendData)
+        .then((response) => {
+          console.log(response);
+          this.$store.commit("updateUser", response.data.data);
+          this.errorsName = "";
+          this.errorsEmail = "";
+          this.showMsgBox();
+        })
+        .catch((e) => {
+          console.log(e.response);
+          this.errorsName = e.response.data.errors.name;
+          this.errorsEmail = e.response.data.errors.email;
+        });
     },
+    //ユーザーの名前・メールアドレスを取得
     getUserData() {
       this.userName = this.$store.state.loginUser.name;
       this.userEmail = this.$store.state.loginUser.email;
@@ -207,7 +210,7 @@ export default {
     // アカウント削除
     async deleteUser() {
       const userId = this.$store.state.loginUser.id;
-      await axios.delete("http://127.0.0.1:8000/api/deleteUser/" + userId);
+      await axios.delete("http://127.0.0.1:8000/api/users/" + userId);
       this.logout();
     },
     logout() {

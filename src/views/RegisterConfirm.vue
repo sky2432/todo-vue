@@ -9,7 +9,7 @@
         <b-list-group-item
           >メールアドレス: {{ showFormEmail }}</b-list-group-item
         >
-        <b-list-group-item>パスワード:　表示されません</b-list-group-item>
+        <b-list-group-item>パスワード:表示されません</b-list-group-item>
       </b-list-group>
 
       <div class="btn-wrap">
@@ -19,7 +19,7 @@
           @click="$router.push({ name: 'RegisterForm' })"
           >修正する</b-button
         >
-        <b-button class="submit-btn" variant="info" @click="register"
+        <b-button class="submit-btn" variant="info" @click="registerUser"
           >登録する</b-button
         >
       </div>
@@ -48,8 +48,8 @@ export default {
     },
   },
   methods: {
-    async register() {
-      const resData = await axios.post("http://127.0.0.1:8000/api/register", {
+    async registerUser() {
+      const resData = await axios.post("http://127.0.0.1:8000/api/users", {
         name: this.$store.state.formName,
         email: this.$store.state.formEmail,
         password: this.$store.state.formPassword,
@@ -58,10 +58,8 @@ export default {
       const sendData = {
         email: resData.data.data.email,
       };
-      const resMailData = axios.post(
-        "http://127.0.0.1:8000/api/sendRegisterMail",
-        sendData
-      );
+      //会員登録メール送信
+      axios.post("http://127.0.0.1:8000/api/sendRegisterMail", sendData);
       this.$store.commit("resetForm"); //Vuexに保存した会員登録フォーム情報をリセット
       this.$router.replace("/login");
     },

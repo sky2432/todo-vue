@@ -6,7 +6,7 @@
       </h1>
     </header>
     <div class="form">
-      <b-form @submit.prevent="formValidate">
+      <b-form @submit.prevent="formValidate" novalidate>
         <b-form-group label="名前" label-for="name">
           <b-form-input
             id="name"
@@ -14,10 +14,11 @@
             @input="storeFormName"
             required
           ></b-form-input>
-          <p class="error" v-if="this.errors.name">
-            ※入力された名前はすでに登録されています。
-          </p>
-          
+          <div class="error" v-if="this.errorsName">
+            <p v-for="(error, index) in this.errorsName" :key="index">
+              {{ error }}
+            </p>
+          </div>
         </b-form-group>
         <b-form-group label="メールアドレス" label-for="email">
           <b-form-input
@@ -27,9 +28,11 @@
             @input="storeFormEmail"
             required
           ></b-form-input>
-          <p class="error" v-if="this.errors.email">
-            ※入力されたメールアドレスはすでに登録されています。
-          </p>
+          <div class="error" v-if="this.errorsEmail">
+            <p v-for="(error, index) in this.errorsEmail" :key="index">
+              {{ error }}
+            </p>
+          </div>
         </b-form-group>
         <b-form-group label="パスワード" label-for="password">
           <b-form-input
@@ -38,9 +41,11 @@
             @input="storeFormPassword"
             required
           ></b-form-input>
-          <p class="error" v-if="this.errors.password">
-            ※パスワードは4文字以上です。
-          </p>
+          <div class="error" v-if="this.errorsPassword">
+            <p v-for="(error, index) in this.errorsPassword" :key="index">
+              {{ error }}
+            </p>
+          </div>
         </b-form-group>
         <div class="btn-wrap">
           <b-button variant="info" type="submit">確認</b-button>
@@ -58,7 +63,9 @@ export default {
       name: "",
       email: "",
       password: "",
-      errors: "",
+      errorsName: [],
+      errorsEmail: [],
+      errorsPassword: [],
     };
   },
   computed: {
@@ -88,16 +95,21 @@ export default {
         email: this.$store.state.formEmail,
         password: this.$store.state.formPassword,
       };
-      const resData = await axios.post(
-        "http://127.0.0.1:8000/api/formValidate",
-        sendData
-      );
-      this.errors = resData.data.data;
-      console.log(resData);
-      if (this.errors.length === 0) {
-        this.$router.push({
-          name: "RegisterConfirm",
-          });
+      await axios
+        .post("http://127.0.0.1:8000/api/formValidate", sendData)
+        .then((response) => console.log(response))
+        .catch((e) => {
+          console.log(e.response);
+          this.errorsName = e.response.data.errors.name;
+          this.errorsEmail = e.response.data.errors.email;
+          this.errorsPassword = e.response.data.errors.password;
+        });
+      const requirement =
+        this.errorsName.length === 0 &&
+        this.errorsEmail.length === 0 &&
+        this.errorsPassword.length === 0;
+      if (requirement) {
+        this.$router.push("/registerConfirm");
       }
     },
   },

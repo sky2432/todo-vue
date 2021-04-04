@@ -52,7 +52,7 @@ export default {
     async getUserImage() {
       const userId = this.$store.state.loginUser.id;
       const resData = await axios.get(
-        "http://127.0.0.1:8000/api/file/" + userId
+        "http://127.0.0.1:8000/api/files/" + userId
       );
       if (resData.data.data.file_path) {
         const userImage =
