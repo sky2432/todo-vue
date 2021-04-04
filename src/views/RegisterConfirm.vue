@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header>
-      <h1 class="title" @click="$router.push({ name: 'TopPage' })">確認画面</h1>
+      <h1 class="title" @click="$router.push('/')">確認画面</h1>
     </header>
     <div class="form">
       <b-list-group>
@@ -16,7 +16,7 @@
         <b-button
           type="submit"
           variant="info"
-          @click="$router.push({ name: 'RegisterForm' })"
+          @click="$router.push('/registerForm')"
           >修正する</b-button
         >
         <b-button class="submit-btn" variant="info" @click="registerUser"

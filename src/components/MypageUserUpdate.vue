@@ -1,0 +1,116 @@
+<template>
+  <div id="app">
+    <div class="content">
+      <div>
+        <b-form @submit.prevent="updateUser" novalidate>
+          <b-form-group label="名前" label-for="name" class="label">
+            <b-form-input id="name" v-model="userName" required></b-form-input>
+            <div class="error" v-if="this.errorsName">
+              <p v-for="(error, index) in this.errorsName" :key="index">
+                {{ error }}
+              </p>
+            </div>
+          </b-form-group>
+          <b-form-group label="メールアドレス" label-for="email" class="label">
+            <b-form-input
+              id="email"
+              type="email"
+              v-model="userEmail"
+              required
+            ></b-form-input>
+            <div class="error" v-if="this.errorsEmail">
+              <p v-for="(error, index) in this.errorsEmail" :key="index">
+                {{ error }}
+              </p>
+            </div>
+          </b-form-group>
+          <div class="btn-wrap">
+            <b-button variant="info" type="submit">変更</b-button>
+          </div>
+        </b-form>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import axios from "axios";
+export default {
+  data() {
+    return {
+      userName: "",
+      userEmail: "",
+      errorsName: [],
+      errorsEmail: [],
+    };
+  },
+
+  created() {
+    this.getUserData();
+  },
+
+  methods: {
+    //ユーザーの名前・メールアドレスを取得
+    getUserData() {
+      this.userName = this.$store.state.loginUser.name;
+      this.userEmail = this.$store.state.loginUser.email;
+    },
+
+    // 名前・メールアドレス変更
+    async updateUser() {
+      const userId = this.$store.state.loginUser.id;
+      const sendData = {
+        name: this.userName,
+        email: this.userEmail,
+      };
+      await axios
+        .put("http://127.0.0.1:8000/api/users/" + userId, sendData)
+        .then((response) => {
+          console.log(response);
+          this.$store.commit("updateUser", response.data.data);
+          this.errorsName = "";
+          this.errorsEmail = "";
+          this.showMsgBox();
+        })
+        .catch((e) => {
+          console.log(e.response);
+          this.errorsName = e.response.data.errors.name;
+          this.errorsEmail = e.response.data.errors.email;
+        });
+    },
+
+    showMsgBox() {
+      this.boxTwo = "";
+      this.$bvModal
+        .msgBoxOk("変更しました", {
+          title: "通知",
+          size: "sm",
+          buttonSize: "lg",
+          okVariant: "info",
+          headerClass: "p-2 border-bottom-0",
+          footerClass: "p-2 border-top-0",
+          centered: true,
+        })
+        .then((value) => {
+          this.boxTwo = value;
+        });
+    },
+  },
+};
+</script>
+
+<style scoped>
+.content {
+  border: 1px solid black;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+}
+
+.label {
+  text-align: left;
+}
+</style>

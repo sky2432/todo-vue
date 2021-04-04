@@ -100,7 +100,6 @@ export default {
 </script>
 
 <style scoped>
-/* todo-list */
 .container {
   width: 50%;
   margin: 0 auto;

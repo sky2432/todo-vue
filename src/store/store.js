@@ -57,13 +57,13 @@ export default new Vuex.Store({
           email: email,
           password: password,
         }
-      )
+      );
       commit("auth", responseLogin.data.auth);
       commit("user", responseLogin.data.data);
       if (responseLogin.data.auth === true) {
         // ログインメール送信
         const sendData = {
-          email: email
+          email: email,
         };
         axios.post("http://127.0.0.1:8000/api/sendLoginMail", sendData);
         // ホーム画面へ

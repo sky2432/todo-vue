@@ -6,14 +6,14 @@
         Todolist
       </b-navbar-brand>
       <b-navbar-nav class="mr-auto">
-        <b-nav-item @click="$router.push('/doneTodo')" class="mr-3">
+        <b-nav-item @click="$router.push('/doneTodo')">
           完了済みTodo
+        </b-nav-item>
+        <b-nav-item @click="$router.push('/')">
+          トップページ
         </b-nav-item>
       </b-navbar-nav>
 
-      <!-- <b-navbar-toggle target="nav-collapse"></b-navbar-toggle> -->
-
-      <!-- <b-collapse id="nav-collapse" is-nav> -->
       <b-navbar-nav class="ml-auto">
         <b-nav-item
           ><b-img fluid :src="displayUserImage" class="header-img"></b-img
@@ -29,7 +29,6 @@
           </b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
-      <!-- </b-collapse> -->
     </b-navbar>
   </div>
 </template>

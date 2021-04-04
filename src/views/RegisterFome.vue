@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header>
-      <h1 class="title" @click="$router.push({ name: 'TopPage' })">
+      <h1 class="title" @click="$router.push('/')">
         会員登録ページ
       </h1>
     </header>
@@ -79,6 +79,7 @@ export default {
       return this.$store.state.formPassword;
     },
   },
+
   methods: {
     storeFormName(value) {
       this.$store.commit("storeFormName", value);
@@ -89,6 +90,7 @@ export default {
     storeFormPassword(value) {
       this.$store.commit("storeFormPassword", value);
     },
+
     async formValidate() {
       const sendData = {
         name: this.$store.state.formName,
@@ -97,20 +99,15 @@ export default {
       };
       await axios
         .post("http://127.0.0.1:8000/api/formValidate", sendData)
-        .then((response) => console.log(response))
+        .then((response) =>
+          this.$router.push("/registerConfirm")
+        )
         .catch((e) => {
           console.log(e.response);
           this.errorsName = e.response.data.errors.name;
           this.errorsEmail = e.response.data.errors.email;
           this.errorsPassword = e.response.data.errors.password;
         });
-      const requirement =
-        this.errorsName.length === 0 &&
-        this.errorsEmail.length === 0 &&
-        this.errorsPassword.length === 0;
-      if (requirement) {
-        this.$router.push("/registerConfirm");
-      }
     },
   },
 

@@ -11,9 +11,9 @@
         </tr>
         <tr class="list" v-for="list in todoLists" :key="list.id">
           <td :style="{ color: checkDeadline(list.deadline) }">
-            <b-form-checkbox @change="checkTodo(list.id)">{{
-              list.todo_list
-            }}</b-form-checkbox>
+            <b-form-checkbox @change="checkTodo(list.id)">
+              {{ list.todo_list }}
+            </b-form-checkbox>
           </td>
           <td>
             {{ convertDeadline(list.deadline) }}
@@ -41,13 +41,12 @@
         </b-button>
       </div>
 
-      <AddModal ref="addModal" @reload-todo="showTodo"></AddModal>
-      <EditModal
+      <HomeAddModal ref="addModal" @reload-todo="showTodo"></HomeAddModal>
+      <HomeEditModal
         ref="editModal"
-        :ParentTodoLists="todoLists"
         @reload-todo="showTodo"
-      ></EditModal>
-      
+        :ParentTodoLists="todoLists"
+      ></HomeEditModal>
     </div>
   </div>
 </template>
@@ -55,14 +54,15 @@
 <script>
 import axios from "axios";
 import TheHomeHeader from "../components/TheHomeHeader";
-import AddModal from "../components/AddModal";
-import EditModal from "../components/EditModal";
+import HomeAddModal from "../components/HomeAddModal";
+import HomeEditModal from "../components/HomeEditModal";
+import $_createToday from "../helpers/utile";
 
 export default {
   components: {
     TheHomeHeader,
-    AddModal,
-    EditModal,
+    HomeAddModal,
+    HomeEditModal,
   },
   data() {
     return {
@@ -82,7 +82,7 @@ export default {
     convertDeadline() {
       return function(deadline) {
         if (deadline !== null) {
-          const today = this.createToday();
+          const today = this.$_createToday();
           const todoDay = this.createDeadlineDate(deadline);
           const tommorrow = this.createTomorrow();
           if (today.getTime() === todoDay.getTime()) {
@@ -105,26 +105,33 @@ export default {
           return this.blackColor;
         }
         const todoDeadline = this.createDeadlineDate(deadline);
-        const today = this.createToday();
+        const today = this.$_createToday();
         if (today <= todoDeadline) {
           return this.blackColor;
-        } else {
+        }
+        if (today > todoDeadline) {
           return this.redColor;
         }
       };
     },
   },
 
-  watch: {
-    myProperty: {
-      immediate: true,
-      handler() {
-        this.showTodo();
-      },
-    },
+  // watch: {
+  //   todoLists: {
+  //     immediate: true,
+  //     handler() {
+  //       this.showTodo();
+  //     },
+  //   },
+  // },
+
+  created() {
+    this.showTodo();
   },
 
   methods: {
+    ...$_createToday,
+
     //Todoリストの表示
     async showTodo() {
       const resData = await axios.get(
@@ -144,13 +151,6 @@ export default {
       return todoDeadline;
     },
 
-    //比較用の今日の日付を作成
-    createToday() {
-      const now = new Date();
-      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      return today;
-    },
-
     //比較用の明日の日付を作成
     createTomorrow() {
       const now = new Date();
@@ -163,7 +163,6 @@ export default {
       return tomorrow;
     },
 
-    // 期限の初期値(今日)設定
     setToday() {
       this.$refs.addModal.setToday();
     },
@@ -178,7 +177,6 @@ export default {
       await axios.delete("http://127.0.0.1:8000/api/todoLists/" + $id);
       this.showTodo();
     },
-
   },
 };
 </script>
