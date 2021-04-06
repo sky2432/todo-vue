@@ -7,6 +7,7 @@ import Login from "../views/Login.vue";
 import Home from "../views/Home.vue";
 import DoneTodo from "../views/DoneTodo.vue";
 import MyPage from "../views/MyPage.vue";
+import RequestPasswordReset from "../views/RequestPasswordReset.vue";
 import store from "../store/store";
 
 
@@ -22,16 +23,39 @@ const routes = [
     path: "/registerForm",
     name: "RegisterForm",
     component: RegisterForm,
+    beforeEnter(to, from, next) {
+      if (store.state.auth) {
+        next("/home");
+      }
+      next();
+    },
   },
   {
     path: "/registerConfirm",
     name: "RegisterConfirm",
     component: RegisterConfirm,
+    beforeEnter(to, from, next) {
+      if (store.state.auth) {
+        next("/home");
+      }
+      next();
+    },
   },
   {
     path: "/login",
     name: "Login",
     component: Login,
+    beforeEnter(to, from, next) {
+      if (store.state.auth) {
+        next("/home");
+      }
+      next();
+    },
+  },
+  {
+    path: "/requestPasswordReset",
+    name: "RequestPasswordReset",
+    component: RequestPasswordReset,
   },
   {
     path: "/home",

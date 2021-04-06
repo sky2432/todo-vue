@@ -2,12 +2,13 @@ import Vue from "vue";
 import Vuex from "vuex";
 import createPersistedState from "vuex-persistedstate";
 import router from "../router/index";
-import axios from "axios";
+import utilRepository from "../repositories/utilRepository";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   plugins: [createPersistedState()],
+
   state: {
     auth: "", //ログイン認証情報
     loginUser: "", //ログインユーザーの情報
@@ -16,6 +17,7 @@ export default new Vuex.Store({
     formPassword: "",
     userImage: "",
   },
+
   mutations: {
     auth(state, payload) {
       state.auth = payload;
@@ -29,15 +31,16 @@ export default new Vuex.Store({
     logout(state, payload) {
       state.auth = payload;
       state.loginUser = "";
+      state.userImage = "";
     },
-    storeFormName(state, value) {
-      state.formName = value;
+    storeFormName(state, payload) {
+      state.formName = payload;
     },
-    storeFormEmail(state, value) {
-      state.formEmail = value;
+    storeFormEmail(state, payload) {
+      state.formEmail = payload;
     },
-    storeFormPassword(state, value) {
-      state.formPassword = value;
+    storeFormPassword(state, payload) {
+      state.formPassword = payload;
     },
     resetForm(state) {
       state.formName = "";
@@ -48,34 +51,34 @@ export default new Vuex.Store({
       state.userImage = payload;
     },
   },
+
   actions: {
     //ログイン処理
     async login({ commit }, { email, password }) {
-      const responseLogin = await axios.post(
-        "http://127.0.0.1:8000/api/login",
-        {
-          email: email,
-          password: password,
-        }
-      );
-      commit("auth", responseLogin.data.auth);
-      commit("user", responseLogin.data.data);
-      if (responseLogin.data.auth === true) {
+      const sendLoginData = {
+        email: email,
+        password: password,
+      };
+      const redData = await utilRepository.login(sendLoginData);
+
+      commit("auth", redData.data.auth);
+      commit("user", redData.data.data);
+
+      if (redData.data.auth === true) {
         // ログインメール送信
-        const sendData = {
+        const sendMailData = {
           email: email,
         };
-        axios.post("http://127.0.0.1:8000/api/sendLoginMail", sendData);
-        // ホーム画面へ
+        await utilRepository.sendLoginMail(sendMailData);
+
         router.replace("/home");
       }
     },
     // ログアウト処理
     async logout({ commit }) {
-      const responseLogout = await axios.post(
-        "http://127.0.0.1:8000/api/logout"
-      );
-      commit("logout", responseLogout.data.auth);
+      const resData = await utilRepository.logout();
+
+      commit("logout", resData.data.auth);
       router.replace("/");
     },
   },

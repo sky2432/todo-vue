@@ -30,12 +30,17 @@
 </template>
 
 <script>
-import axios from "axios";
+import usersRepository from "../repositories/usersRepository";
+import { mapState } from "vuex";
+
 export default {
+  computed: {
+    ...mapState(["loginUser"]),
+  },
+
   methods: {
     async deleteUser() {
-      const userId = this.$store.state.loginUser.id;
-      await axios.delete("http://127.0.0.1:8000/api/users/" + userId);
+      await usersRepository.deleteUser(this.loginUser.id);
       this.logout();
     },
     logout() {

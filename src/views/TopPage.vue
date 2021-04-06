@@ -20,19 +20,6 @@
   </div>
 </template>
 
-<script>
-export default {
-  computed: {
-    showAuth() {
-      return this.$store.state.auth;
-    },
-    showName() {
-      return this.$store.state.loginUser;
-    },
-  },
-};
-</script>
-
 <style scoped>
 #app {
   height: 550px;

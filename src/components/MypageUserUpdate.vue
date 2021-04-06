@@ -34,7 +34,9 @@
 </template>
 
 <script>
-import axios from "axios";
+import usersRepository from "../repositories/usersRepository";
+import { mapState } from "vuex";
+
 export default {
   data() {
     return {
@@ -45,6 +47,10 @@ export default {
     };
   },
 
+  computed: {
+    ...mapState(["loginUser"]),
+  },
+
   created() {
     this.getUserData();
   },
@@ -52,19 +58,17 @@ export default {
   methods: {
     //ユーザーの名前・メールアドレスを取得
     getUserData() {
-      this.userName = this.$store.state.loginUser.name;
-      this.userEmail = this.$store.state.loginUser.email;
+      this.userName = this.loginUser.name;
+      this.userEmail = this.loginUser.email;
     },
-
+    
     // 名前・メールアドレス変更
     async updateUser() {
-      const userId = this.$store.state.loginUser.id;
       const sendData = {
         name: this.userName,
         email: this.userEmail,
       };
-      await axios
-        .put("http://127.0.0.1:8000/api/users/" + userId, sendData)
+      await usersRepository.updateUser(this.loginUser.id, sendData)
         .then((response) => {
           console.log(response);
           this.$store.commit("updateUser", response.data.data);
@@ -73,7 +77,6 @@ export default {
           this.showMsgBox();
         })
         .catch((e) => {
-          console.log(e.response);
           this.errorsName = e.response.data.errors.name;
           this.errorsEmail = e.response.data.errors.email;
         });

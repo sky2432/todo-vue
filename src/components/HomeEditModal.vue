@@ -26,16 +26,8 @@
           :show.sync="showPopover"
           placement="right"
         >
-          <!-- カレンダー -->
-          <div class="">
-            <b-calendar
-              v-model="updatedTodoDeadline"
-              width="200px"
-              label-help=""
-              nav-button-variant="info"
-              locale="ja"
-            ></b-calendar>
-          </div>
+          <BaseCalender v-model="updatedTodoDeadline"></BaseCalender>
+
           <!-- エラーメッセージ -->
           <p v-if="showDeadlineError" class="error">{{ deadlineError }}</p>
           <!-- ボタン -->
@@ -71,10 +63,14 @@
 </template>
 
 <script>
-import axios from "axios";
 import $_validateDeadline from "../helpers/utile";
+import BaseCalender from "../components/BaseCalender";
+import todoListsRepository from "../repositories/todoListsRepository.js";
 
 export default {
+  components: {
+    BaseCalender,
+  },
   props: {
     ParentTodoLists: {
       type: Array,
@@ -94,16 +90,12 @@ export default {
   methods: {
     ...$_validateDeadline,
 
-    showUpdateModal($id) {
-      this.$refs.commonModal.showUpdateModal($id);
-    },
-
     // 編集するTodoリストの取得
-    showUpdateModal($id) {
+    showUpdateModal(id) {
       let index = "";
       for (index in this.ParentTodoLists) {
         let list = this.ParentTodoLists[index];
-        if (list.id === $id) {
+        if (list.id === id) {
           this.updateTodoData = list;
           this.updatedTodo = list.todo_list;
           this.updatedTodoDeadline = list.deadline;
@@ -135,14 +127,12 @@ export default {
     //Todoリストを編集
     async updateTodo() {
       this.$bvModal.hide("edit-modal");
+      const todoId = this.updateTodoData.id;
       const sendData = {
         todo_list: this.updatedTodo,
         deadline: this.updatedTodoDeadline,
       };
-      await axios.put(
-        "http://127.0.0.1:8000/api/todoLists/" + this.updateTodoData.id,
-        sendData
-      );
+      await todoListsRepository.updateTodo(todoId, sendData);
       this.$emit("reload-todo");
     },
   },

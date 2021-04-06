@@ -26,16 +26,9 @@
           :show.sync="showPopover"
           placement="right"
         >
-          <!-- カレンダー -->
-          <div class="">
-            <b-calendar
-              v-model="todoDeadline"
-              width="200px"
-              label-help=""
-              nav-button-variant="info"
-              locale="ja"
-            ></b-calendar>
-          </div>
+        
+          <BaseCalender v-model="todoDeadline"></BaseCalender>
+
           <!-- エラーメッセージ -->
           <p v-if="showDeadlineError" class="error">{{ deadlineError }}</p>
           <!-- ボタン -->
@@ -71,9 +64,13 @@
 </template>
 
 <script>
-import axios from "axios";
 import $_validateDeadline from "../helpers/utile";
+import BaseCalender from "../components/BaseCalender";
+import todoListsRepository from "../repositories/todoListsRepository.js";
 export default {
+  components: {
+    BaseCalender,
+  },
   data() {
     return {
       newTodo: "",
@@ -129,7 +126,7 @@ export default {
         deadline: this.todoDeadline,
         status: true,
       };
-      await axios.post("http://127.0.0.1:8000/api/todoLists", sendData);
+      await todoListsRepository.createTodo(sendData);
       this.newTodo = "";
       this.todoDeadline = "";
       this.$emit("reload-todo");

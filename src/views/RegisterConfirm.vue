@@ -5,9 +5,9 @@
     </header>
     <div class="form">
       <b-list-group>
-        <b-list-group-item>名前: {{ showFormName }}</b-list-group-item>
+        <b-list-group-item>名前: {{ formName }}</b-list-group-item>
         <b-list-group-item
-          >メールアドレス: {{ showFormEmail }}</b-list-group-item
+          >メールアドレス: {{ formEmail }}</b-list-group-item
         >
         <b-list-group-item>パスワード:表示されません</b-list-group-item>
       </b-list-group>
@@ -28,7 +28,11 @@
 </template>
 
 <script>
-import axios from "axios";
+import usersRepository from "../repositories/usersRepository";
+import utilRepository from "../repositories/utilRepository";
+import { mapState, mapMutations } from "vuex";
+
+
 export default {
   data() {
     return {
@@ -40,33 +44,33 @@ export default {
     };
   },
   computed: {
-    showFormName() {
-      return this.$store.state.formName;
-    },
-    showFormEmail() {
-      return this.$store.state.formEmail;
-    },
+    ...mapState(["formName", "formEmail", "formPassword"]),
   },
+  
   methods: {
+    ...mapMutations(["resetForm"]),
+
     async registerUser() {
-      const resData = await axios.post("http://127.0.0.1:8000/api/users", {
-        name: this.$store.state.formName,
-        email: this.$store.state.formEmail,
-        password: this.$store.state.formPassword,
-      });
-      console.log(resData);
+      const userSendData = {
+        name: this.formName,
+        email: this.formEmail,
+        password: this.formPassword,
+      };
+      const resData = await usersRepository.createUser(userSendData);
+
+      //会員登録メール送信
       const sendData = {
         email: resData.data.data.email,
       };
-      //会員登録メール送信
-      axios.post("http://127.0.0.1:8000/api/sendRegisterMail", sendData);
-      this.$store.commit("resetForm"); //Vuexに保存した会員登録フォーム情報をリセット
+      utilRepository.sendRegisterMail(sendData)
+
+      this.resetForm;
       this.$router.replace("/login");
     },
   },
   beforeRouteLeave(to, from, next) {
     if (to.name != "RegisterForm") {
-      this.$store.commit("resetForm");
+      this.resetForm;
       next();
     } else {
       next();

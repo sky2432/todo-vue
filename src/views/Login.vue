@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header>
-      <h1 class="title" @click="$router.push({ name: 'TopPage' })">
+      <h1 class="title" @click="$router.push('/')">
         ログインページ
       </h1>
     </header>
@@ -12,8 +12,7 @@
           <b-form-input
             id="email"
             type="email"
-            v-model="$v.email.$model"
-            :class="status($v.email)"
+            v-model="email"
             required
           ></b-form-input>
           <div class="error" v-if="this.errorsEmail">
@@ -26,8 +25,7 @@
           <b-form-input
             id="password"
             type="password"
-            v-model="$v.password.$model"
-            :class="status($v.password)"
+            v-model="password"
             required
           ></b-form-input>
           <div class="error" v-if="this.errorsPassword">
@@ -35,6 +33,11 @@
               {{ error }}
             </p>
           </div>
+        </b-form-group>
+        <b-form-group>
+          <router-link to="/requestPasswordReset">
+            パスワードをお忘れですか？
+          </router-link>
         </b-form-group>
         <div class="btn-wrap">
           <b-button type="submit" variant="info">ログイン</b-button>
@@ -45,9 +48,8 @@
 </template>
 
 <script>
-import { required } from "vuelidate/lib/validators";
-import axios from "axios";
-import store from "../store/store";
+import utilRepository from "../repositories/utilRepository";
+
 export default {
   data() {
     return {
@@ -57,51 +59,26 @@ export default {
       errorsPassword: [],
     };
   },
-  validations: {
-    email: {
-      required,
-    },
-    password: {
-      required,
-    },
-  },
+
   methods: {
     login() {
       const sendData = {
         email: this.email,
         password: this.password,
       };
-      axios
-        .post("http://127.0.0.1:8000/api/loginValidate", sendData)
+      utilRepository
+        .loginValidate(sendData)
         .then(this.$store.dispatch("login", sendData))
         .catch((e) => {
           this.errorsEmail = e.response.data.errors.email;
           this.errorsPassword = e.response.data.errors.password;
         });
     },
-    status(validation) {
-      return {
-        dirty: validation.$dirty,
-        error: validation.$error,
-      };
-    },
-  },
-  beforeRouteEnter(to, from, next) {
-    if (store.state.auth) {
-      next("/home");
-    }
-    next();
   },
 };
 </script>
 
 <style scoped>
-.dirty {
-  border-color: forestgreen;
-  background: mintcream;
-}
-/* ------------------------------ */
-
 header {
   height: 70px;
   background-color: #16a2b8;

@@ -10,7 +10,7 @@
         <b-form-group label="名前" label-for="name">
           <b-form-input
             id="name"
-            :value="showFormName"
+            :value="formName"
             @input="storeFormName"
             required
           ></b-form-input>
@@ -24,7 +24,7 @@
           <b-form-input
             id="email"
             type="email"
-            :value="showFormEmail"
+            :value="formEmail"
             @input="storeFormEmail"
             required
           ></b-form-input>
@@ -37,7 +37,7 @@
         <b-form-group label="パスワード" label-for="password">
           <b-form-input
             id="password"
-            :value="showFormPassword"
+            :value="formPassword"
             @input="storeFormPassword"
             required
           ></b-form-input>
@@ -56,7 +56,9 @@
 </template>
 
 <script>
-import axios from "axios";
+import utilRepository from "../repositories/utilRepository";
+import {mapState, mapMutations} from "vuex";
+
 export default {
   data() {
     return {
@@ -68,42 +70,26 @@ export default {
       errorsPassword: [],
     };
   },
+
   computed: {
-    showFormName() {
-      return this.$store.state.formName;
-    },
-    showFormEmail() {
-      return this.$store.state.formEmail;
-    },
-    showFormPassword() {
-      return this.$store.state.formPassword;
-    },
+    ...mapState(["formName", "formEmail", "formPassword"]),
   },
 
   methods: {
-    storeFormName(value) {
-      this.$store.commit("storeFormName", value);
-    },
-    storeFormEmail(value) {
-      this.$store.commit("storeFormEmail", value);
-    },
-    storeFormPassword(value) {
-      this.$store.commit("storeFormPassword", value);
-    },
+    ...mapMutations(["storeFormName", "storeFormEmail", "storeFormPassword"]),
 
-    async formValidate() {
+    formValidate() {
       const sendData = {
-        name: this.$store.state.formName,
-        email: this.$store.state.formEmail,
-        password: this.$store.state.formPassword,
+        name: this.formName,
+        email: this.formEmail,
+        password: this.formPassword,
       };
-      await axios
-        .post("http://127.0.0.1:8000/api/formValidate", sendData)
+      utilRepository
+        .formValidate(sendData)
         .then((response) =>
           this.$router.push("/registerConfirm")
         )
         .catch((e) => {
-          console.log(e.response);
           this.errorsName = e.response.data.errors.name;
           this.errorsEmail = e.response.data.errors.email;
           this.errorsPassword = e.response.data.errors.password;
@@ -113,7 +99,7 @@ export default {
 
   beforeRouteLeave(to, from, next) {
     if (to.name != "RegisterConfirm") {
-      this.$store.commit("resetForm");
+      this.$store.commit('resetForm');
       next();
     } else {
       next();

@@ -39,8 +39,8 @@
 </template>
 
 <script>
+import todoListsDoneRepository from "../repositories/todoListsDoneRepository";
 import TheHomeHeader from "../components/TheHomeHeader";
-import axios from "axios";
 export default {
   components: {
     TheHomeHeader,
@@ -51,6 +51,10 @@ export default {
     };
   },
   computed: {
+    getUserId() {
+      return this.$store.state.loginUser.id;
+    },
+
     convertDay() {
       return function(updateDay) {
         const day = new Date(updateDay);
@@ -68,31 +72,24 @@ export default {
       };
     },
   },
-  watch: {
-    myProperty: {
-      immediate: true,
-      handler() {
-        this.showDoneTodo();
-      },
-    },
+
+  created() {
+    this.showDoneTodo();
   },
+
   methods: {
     async showDoneTodo() {
-      const resData = await axios.get(
-        "http://127.0.0.1:8000/api/doneTodoLists/" +
-          this.$store.state.loginUser.id
-      );
+      const resData = await todoListsDoneRepository.getTodo(this.getUserId);
       this.todoLists = resData.data.data;
     },
-    async returnTodo($id) {
-      await axios.put("http://127.0.0.1:8000/api/doneTodoLists/" + $id);
+
+    async returnTodo(id) {
+      await todoListsDoneRepository.returnTodo(id);
       this.showDoneTodo();
     },
-    async deleteTodo($id) {
-      const deleteRes = await axios.delete(
-        "http://127.0.0.1:8000/api/doneTodoLists/" + $id
-      );
-      console.log(deleteRes);
+
+    async deleteTodo(id) {
+      await todoListsDoneRepository.deleteTodo(id);
       this.showDoneTodo();
     },
   },

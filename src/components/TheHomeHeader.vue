@@ -16,9 +16,9 @@
 
       <b-navbar-nav class="ml-auto">
         <b-nav-item
-          ><b-img fluid :src="displayUserImage" class="header-img"></b-img
+          ><b-img fluid :src="userImage" class="header-img"></b-img
         ></b-nav-item>
-        <b-nav-item-dropdown right class="mr-3" :text="showUserName">
+        <b-nav-item-dropdown right class="mr-3" :text="loginUser.name">
           <b-dropdown-item @click="$router.push('/mypage')">
             <b-icon icon="gear-fill"></b-icon>
             設定
@@ -34,39 +34,34 @@
 </template>
 
 <script>
-import axios from "axios";
+import fileRepository from "../repositories/fileRepository";
+import { mapState } from "vuex";
+
 export default {
-  data() {
-    return {};
-  },
   computed: {
-    showUserName() {
-      return this.$store.state.loginUser.name;
-    },
-    displayUserImage() {
-      return this.$store.state.userImage;
-    },
+    ...mapState(["loginUser", "userImage"]),
   },
+
+  created() {
+    if (!this.userImage) {
+      this.getUserImage();
+    }
+  },
+
   methods: {
+
     async getUserImage() {
-      const userId = this.$store.state.loginUser.id;
-      const resData = await axios.get(
-        "http://127.0.0.1:8000/api/files/" + userId
-      );
+      const resData = await fileRepository.getImage(this.loginUser.id);
       if (resData.data.data.file_path) {
         const userImage =
           "http://127.0.0.1:8000/storage/image/" + resData.data.data.file_path;
         this.$store.commit("storeUserImage", userImage);
       }
     },
+
     logout() {
       this.$store.dispatch("logout");
     },
-  },
-  created() {
-    if (!this.userImage) {
-      this.getUserImage();
-    }
   },
 };
 </script>

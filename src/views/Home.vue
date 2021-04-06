@@ -2,7 +2,7 @@
   <div id="app">
     <TheHomeHeader></TheHomeHeader>
     <div class="container">
-      <p class="user-name">{{ showUserName }}のTodoリスト</p>
+      <p class="user-name">{{ loginUser.name }}のTodoリスト</p>
       <table class="table">
         <!-- Todoリストの表示 -->
         <tr>
@@ -52,11 +52,12 @@
 </template>
 
 <script>
-import axios from "axios";
 import TheHomeHeader from "../components/TheHomeHeader";
 import HomeAddModal from "../components/HomeAddModal";
 import HomeEditModal from "../components/HomeEditModal";
 import $_createToday from "../helpers/utile";
+import todoListsRepository from "../repositories/todoListsRepository.js";
+import { mapState } from "vuex";
 
 export default {
   components: {
@@ -73,10 +74,7 @@ export default {
     };
   },
   computed: {
-    // ユーザーネームの取得
-    showUserName() {
-      return this.$store.state.loginUser.name;
-    },
+    ...mapState(["loginUser"]),
 
     //期限日の表示を変える
     convertDeadline() {
@@ -116,15 +114,6 @@ export default {
     },
   },
 
-  // watch: {
-  //   todoLists: {
-  //     immediate: true,
-  //     handler() {
-  //       this.showTodo();
-  //     },
-  //   },
-  // },
-
   created() {
     this.showTodo();
   },
@@ -134,9 +123,7 @@ export default {
 
     //Todoリストの表示
     async showTodo() {
-      const resData = await axios.get(
-        "http://127.0.0.1:8000/api/todoLists/" + this.$store.state.loginUser.id
-      );
+      const resData = await todoListsRepository.getTodo(this.loginUser.id);
       this.todoLists = resData.data.data;
     },
 
@@ -168,13 +155,13 @@ export default {
     },
 
     //編集するTodoリストの取得
-    showUpdateModal($id) {
-      this.$refs.editModal.showUpdateModal($id);
+    showUpdateModal(id) {
+      this.$refs.editModal.showUpdateModal(id);
     },
 
     //Todoの完了
-    async checkTodo($id) {
-      await axios.delete("http://127.0.0.1:8000/api/todoLists/" + $id);
+    async checkTodo(id) {
+      await todoListsRepository.deleteTodo(id);
       this.showTodo();
     },
   },
