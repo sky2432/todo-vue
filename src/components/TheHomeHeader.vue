@@ -6,8 +6,11 @@
         Todolist
       </b-navbar-brand>
       <b-navbar-nav class="mr-auto">
-        <b-nav-item @click="$router.push('/doneTodo')">
-          完了済みTodo
+        <b-nav-item @click="$router.push('/todoToday')">
+          今日
+        </b-nav-item>
+        <b-nav-item @click="$router.push('/todoDone')">
+          完了済み
         </b-nav-item>
         <b-nav-item @click="$router.push('/')">
           トップページ
@@ -49,7 +52,6 @@ export default {
   },
 
   methods: {
-
     async getUserImage() {
       const resData = await fileRepository.getImage(this.loginUser.id);
       if (resData.data.data.file_path) {

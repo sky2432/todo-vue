@@ -5,11 +5,11 @@ import RegisterForm from "../views/RegisterFome.vue";
 import RegisterConfirm from "../views/RegisterConfirm.vue";
 import Login from "../views/Login.vue";
 import Home from "../views/Home.vue";
-import DoneTodo from "../views/DoneTodo.vue";
+import TodoToday from "../views/TodoToday.vue";
+import TodoDone from "../views/TodoDone.vue";
 import MyPage from "../views/MyPage.vue";
 import RequestPasswordReset from "../views/RequestPasswordReset.vue";
 import store from "../store/store";
-
 
 Vue.use(VueRouter);
 
@@ -66,9 +66,17 @@ const routes = [
     },
   },
   {
-    path: "/doneTodo",
-    name: "DoneTodo",
-    component: DoneTodo,
+    path: "/todoToday",
+    name: "TodoToday",
+    component: TodoToday,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/todoDone",
+    name: "TodoDone",
+    component: TodoDone,
     meta: {
       requiresAuth: true,
     },

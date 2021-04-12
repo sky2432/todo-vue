@@ -57,7 +57,7 @@
 
 <script>
 import utilRepository from "../repositories/utilRepository";
-import {mapState, mapMutations} from "vuex";
+import { mapState, mapMutations } from "vuex";
 
 export default {
   data() {
@@ -85,11 +85,10 @@ export default {
         password: this.formPassword,
       };
       utilRepository
-        .formValidate(sendData)
-        .then((response) =>
-          this.$router.push("/registerConfirm")
-        )
+        .registerConfirm(sendData)
+        .then((response) => this.$router.push("/registerConfirm"))
         .catch((e) => {
+          console.log(e);
           this.errorsName = e.response.data.errors.name;
           this.errorsEmail = e.response.data.errors.email;
           this.errorsPassword = e.response.data.errors.password;
@@ -99,7 +98,7 @@ export default {
 
   beforeRouteLeave(to, from, next) {
     if (to.name != "RegisterConfirm") {
-      this.$store.commit('resetForm');
+      this.$store.commit("resetForm");
       next();
     } else {
       next();

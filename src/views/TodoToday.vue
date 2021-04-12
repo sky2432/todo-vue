@@ -127,7 +127,7 @@ export default {
 
     //Todoリストの表示
     async showTodo() {
-      const resData = await todoListsRepository.getTodo(this.loginUser.id);
+      const resData = await todoListsRepository.getTodayTodo(this.loginUser.id);
       this.todoLists = resData.data.data;
     },
 

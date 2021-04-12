@@ -69,7 +69,7 @@ export default new Vuex.Store({
         const sendMailData = {
           email: email,
         };
-        await utilRepository.sendLoginMail(sendMailData);
+        utilRepository.sendLoginMail(sendMailData);
 
         router.replace("/home");
       }

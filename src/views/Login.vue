@@ -67,7 +67,7 @@ export default {
         password: this.password,
       };
       utilRepository
-        .loginValidate(sendData)
+        .loginConfirm(sendData)
         .then(this.$store.dispatch("login", sendData))
         .catch((e) => {
           this.errorsEmail = e.response.data.errors.email;

@@ -5,7 +5,7 @@
       <table class="table">
         <tr>
           <th>Todo</th>
-          <th>完了日時</th>
+          <th>完了日</th>
           <th></th>
         </tr>
         <tr class="list" v-for="list in todoLists" :key="list.id">
@@ -41,19 +41,20 @@
 <script>
 import todoListsDoneRepository from "../repositories/todoListsDoneRepository";
 import TheHomeHeader from "../components/TheHomeHeader";
+import { mapState } from "vuex";
 export default {
   components: {
     TheHomeHeader,
   },
+
   data() {
     return {
       todoLists: [],
     };
   },
+
   computed: {
-    getUserId() {
-      return this.$store.state.loginUser.id;
-    },
+    ...mapState(["loginUser"]),
 
     convertDay() {
       return function(updateDay) {
@@ -74,23 +75,23 @@ export default {
   },
 
   created() {
-    this.showDoneTodo();
+    this.showTodoDone();
   },
 
   methods: {
-    async showDoneTodo() {
-      const resData = await todoListsDoneRepository.getTodo(this.getUserId);
+    async showTodoDone() {
+      const resData = await todoListsDoneRepository.getTodo(this.loginUser.id);
       this.todoLists = resData.data.data;
     },
 
     async returnTodo(id) {
       await todoListsDoneRepository.returnTodo(id);
-      this.showDoneTodo();
+      this.showTodoDone();
     },
 
     async deleteTodo(id) {
       await todoListsDoneRepository.deleteTodo(id);
-      this.showDoneTodo();
+      this.showTodoDone();
     },
   },
 };

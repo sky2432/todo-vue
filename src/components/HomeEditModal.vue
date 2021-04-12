@@ -15,7 +15,7 @@
               @click="resetDeadlineError"
             >
               <b-icon icon="calendar2-check"></b-icon>
-              {{ updatedTodoDeadline }}
+              {{ convertDeadline(updatedTodoDeadline) }}
             </b-button>
           </div>
         </div>
@@ -30,6 +30,30 @@
 
           <!-- エラーメッセージ -->
           <p v-if="showDeadlineError" class="error">{{ deadlineError }}</p>
+
+          <!-- リマインダー -->
+          <b-form-select
+            :value="remindDay"
+            @input="setRemindDay"
+            :options="options"
+            size="sm"
+            class="mt-2"
+          ></b-form-select>
+
+          <b-form-timepicker
+            v-if="showRemindTime"
+            class="mt-2"
+            v-model="remindTime"
+            :placeholder="remindTime"
+            size="sm"
+            locale="ja"
+            label-close-button="閉じる"
+            close-button-variant="info"
+            minutes-step="1"
+            hide-header
+          >
+          </b-form-timepicker>
+
           <!-- ボタン -->
           <div class="my-3" style="text-align: right">
             <b-button
@@ -64,6 +88,8 @@
 
 <script>
 import $_validateDeadline from "../helpers/utile";
+import $_createDeadlineDate from "../helpers/utile";
+import $_createTomorrow from "../helpers/utile";
 import BaseCalender from "../components/BaseCalender";
 import todoListsRepository from "../repositories/todoListsRepository.js";
 
@@ -71,11 +97,13 @@ export default {
   components: {
     BaseCalender,
   },
+
   props: {
     ParentTodoLists: {
       type: Array,
     },
   },
+
   data() {
     return {
       updateTodoData: "",
@@ -84,11 +112,60 @@ export default {
       showPopover: false,
       deadlineError: "",
       showDeadlineError: false,
+      remindTime: "",
+      showRemindTime: false,
+      remindDay: null,
+      options: [
+        { value: null, text: "リマインドを設定" },
+        { value: 0, text: "当日" },
+        { value: 1, text: "1日前" },
+        { value: 2, text: "2日前" },
+      ],
     };
+  },
+
+  computed: {
+    convertDeadline() {
+      return function(deadline) {
+        if(deadline === null) {
+          return deadline;
+        }
+        if (deadline !== null) {
+          const today = this.$_createToday();
+          const todoDay = this.$_createDeadlineDate(deadline);
+          const tommorrow = this.$_createTomorrow();
+          if (today.getTime() === todoDay.getTime()) {
+            return "今日";
+          }
+          if (tommorrow.getTime() === todoDay.getTime()) {
+            return "明日";
+          }
+          const convertDay =
+            todoDay.getMonth() + 1 + "\t" + "/" + "\t" + todoDay.getDate();
+          return convertDay;
+        }
+      };
+    },
   },
 
   methods: {
     ...$_validateDeadline,
+    ...$_createDeadlineDate,
+    ...$_createTomorrow,
+
+    setRemindDay(event) {
+      this.remindDay = event;
+      this.chaneShowRemindTime(event);
+    },
+
+    chaneShowRemindTime(event) {
+      if (event !== null) {
+        this.showRemindTime = true;
+      }
+      if (event === null) {
+        this.showRemindTime = false;
+      }
+    },
 
     // 編集するTodoリストの取得
     showUpdateModal(id) {
@@ -99,7 +176,16 @@ export default {
           this.updateTodoData = list;
           this.updatedTodo = list.todo_list;
           this.updatedTodoDeadline = list.deadline;
+          this.remindDay = list.remind_day;
+          this.remindTime = list.remind_time;
         }
+      };
+      if(this.remindDay !== null) {
+        this.showRemindTime = true;
+      }
+      if(this.remindDay == null) {
+        this.showRemindTime = false;
+        this.remindTime = "09:00:00"
       }
     },
 
@@ -111,7 +197,9 @@ export default {
     //期限なしボタン
     clearDeadline() {
       this.showPopover = false;
-      this.updatedTodoDeadline = "";
+      this.updatedTodoDeadline = null;
+      this.remindDay = null;
+      this.showRemindTime = false;
     },
 
     // 設定ボタン
@@ -124,6 +212,12 @@ export default {
       this.$bvModal.hide("edit-modal");
     },
 
+    checkRemind() {
+      if (this.remindDay === null) {
+        this.remindTime = "";
+      }
+    },
+
     //Todoリストを編集
     async updateTodo() {
       this.$bvModal.hide("edit-modal");
@@ -131,6 +225,8 @@ export default {
       const sendData = {
         todo_list: this.updatedTodo,
         deadline: this.updatedTodoDeadline,
+        remind_day: this.remindDay,
+        remind_time: this.remindTime,
       };
       await todoListsRepository.updateTodo(todoId, sendData);
       this.$emit("reload-todo");

@@ -7,15 +7,23 @@
     </header>
 
     <div class="form">
-      <b-form @submit.prevent="login" novalidate>
-        <b-form-group label="メールアドレス" label-for="email">
+      <b-form @submit.prevent="sendMail" novalidate style="">
+        <b-icon icon="key" class="key-icon"></b-icon>
+          <p class="text">パスワードリセット用メールを送信します。<br>パスワードを再設定するアカウントのメールアドレスを入力してください</p>
+        <b-form-group label-for="email">
           <b-form-input
             id="email"
             type="email"
-            placeholder="アカウントのメールアドレスを入力してください"
+            placeholder="メールアドレスを入力"
             v-model="email"
             required
           ></b-form-input>
+          <div class="error" v-if="this.errorsEmail">
+            <p v-for="(error, index) in this.errorsEmail" :key="index">
+              {{ error }}
+            </p>
+          </div>
+        </b-form-group>
          
         <div class="btn-wrap">
           <b-button type="submit" variant="info">送信</b-button>
@@ -32,14 +40,18 @@ export default {
   data() {
     return {
       email: "",
-      password: "",
       errorsEmail: [],
-      errorsPassword: [],
     };
   },
 
   methods: {
-    
+    async sendMail() {
+      const sendData = {
+        email: this.email,
+      }
+      const resData = await utilRepository.sendPasswordResetMail(sendData);
+      console.log(resData);
+    }
   },
 };
 </script>
@@ -61,8 +73,11 @@ header {
   background-color: #dbdbdb;
   margin-top: 100px;
   padding: 20px;
+  text-align: center
 }
-.btn-wrap {
-  text-align: center;
+
+.key-icon {
+  width: 120px; 
+  height: 120px;
 }
 </style>
