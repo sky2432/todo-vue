@@ -1,16 +1,34 @@
 <template>
   <div id="app">
-    <b-navbar type="dark" variant="info" fixed="top">
-      <b-navbar-brand class="ml-3" href="#" @click="$router.push('/home')">
+    <b-navbar type="dark" variant="info">
+      <b-navbar-brand class="ml-3" href="#" @click="$router.push('/Home')" v-if="loginUser.role === 'user'">
         <b-icon icon="card-checklist"></b-icon>
         Todolist
       </b-navbar-brand>
-      <b-navbar-nav class="mr-auto">
+
+      <b-navbar-brand class="ml-3" href="#" @click="$router.push('/adminHome')" v-if="loginUser.role === 'admin'">
+        <b-icon icon="card-checklist"></b-icon>
+        Todolist
+      </b-navbar-brand>
+      
+      <b-navbar-nav class="mr-auto" v-if="loginUser.role === 'user'">
         <b-nav-item @click="$router.push('/todoToday')">
           今日
         </b-nav-item>
         <b-nav-item @click="$router.push('/todoDone')">
           完了済み
+        </b-nav-item>
+        <b-nav-item @click="$router.push('/')">
+          トップページ
+        </b-nav-item>
+      </b-navbar-nav>
+
+      <b-navbar-nav class="mr-auto" v-if="loginUser.role === 'admin'">
+        <b-nav-item >
+          ユーザー管理
+        </b-nav-item>
+        <b-nav-item >
+          お知らせ投稿
         </b-nav-item>
         <b-nav-item @click="$router.push('/')">
           トップページ

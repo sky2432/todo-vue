@@ -59,19 +59,24 @@ export default new Vuex.Store({
         email: email,
         password: password,
       };
-      const redData = await utilRepository.login(sendLoginData);
+      const resData = await utilRepository.login(sendLoginData);
 
-      commit("auth", redData.data.auth);
-      commit("user", redData.data.data);
+      commit("auth", resData.data.auth);
+      commit("user", resData.data.data);
 
-      if (redData.data.auth === true) {
+      if (resData.data.auth === true) {
         // ログインメール送信
         const sendMailData = {
           email: email,
         };
         utilRepository.sendLoginMail(sendMailData);
 
-        router.replace("/home");
+        if (resData.data.data.role === 'user') {
+          router.replace("/home");
+        }
+        if (resData.data.data.role === 'admin') {
+          router.replace("/adminHome");
+        }
       }
     },
     // ログアウト処理

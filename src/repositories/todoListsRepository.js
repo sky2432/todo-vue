@@ -20,6 +20,10 @@ export default {
 
   getTodayTodo(id) {
     return Repository.get(`todoToday/${id}`);
-  }
+  },
+
+  getUserTodo(userId) {
+    return Repository.get(`userTodo/${userId}`);
+  },
   
 };

@@ -1,5 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import RequestPasswordReset from "../views/RequestPasswordReset.vue";
+import multiguard from "vue-router-multiguard";
 import TopPage from "../views/TopPage.vue";
 import RegisterForm from "../views/RegisterFome.vue";
 import RegisterConfirm from "../views/RegisterConfirm.vue";
@@ -8,10 +10,21 @@ import Home from "../views/Home.vue";
 import TodoToday from "../views/TodoToday.vue";
 import TodoDone from "../views/TodoDone.vue";
 import MyPage from "../views/MyPage.vue";
-import RequestPasswordReset from "../views/RequestPasswordReset.vue";
+import AdminHome from "../views/AdminHome.vue";
+import AdminUsers from "../views/AdminUsers.vue";
 import store from "../store/store";
 
 Vue.use(VueRouter);
+
+const loginedUser = function(to, from, next) {
+  if (store.state.auth && store.state.loginUser.role === "user") {
+    next("/home");
+  }
+  if (store.state.auth && store.state.loginUser.role === "admin") {
+    next("/adminHome");
+  }
+  next();
+};
 
 const routes = [
   {
@@ -23,39 +36,25 @@ const routes = [
     path: "/registerForm",
     name: "RegisterForm",
     component: RegisterForm,
-    beforeEnter(to, from, next) {
-      if (store.state.auth) {
-        next("/home");
-      }
-      next();
-    },
+    beforeEnter: multiguard([loginedUser]),
   },
   {
     path: "/registerConfirm",
     name: "RegisterConfirm",
     component: RegisterConfirm,
-    beforeEnter(to, from, next) {
-      if (store.state.auth) {
-        next("/home");
-      }
-      next();
-    },
+    beforeEnter: multiguard([loginedUser]),
   },
   {
     path: "/login",
     name: "Login",
     component: Login,
-    beforeEnter(to, from, next) {
-      if (store.state.auth) {
-        next("/home");
-      }
-      next();
-    },
+    beforeEnter: multiguard([loginedUser]),
   },
   {
     path: "/requestPasswordReset",
     name: "RequestPasswordReset",
     component: RequestPasswordReset,
+    beforeEnter: multiguard([loginedUser]),
   },
   {
     path: "/home",
@@ -90,6 +89,23 @@ const routes = [
     },
   },
   {
+    path: "/adminHome",
+    name: "AdminHome",
+    component: AdminHome,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/adminUsers/:id",
+    name: "AdminUsers",
+    component: AdminUsers,
+    meta: {
+      requiresAuth: true,
+    },
+    props: true,
+  },
+  {
     path: "*",
     redirect: "/",
   },
@@ -112,9 +128,22 @@ router.beforeEach((to, from, next) => {
         redirect: to.fullPath,
       },
     });
-  } else {
-    next();
   }
+  if (store.state.loginUser.role === "user") {
+    if (to.name === "AdminHome" || to.name === "AdminUsers") {
+      next("/");
+    }
+  }
+  if (store.state.loginUser.role === "admin") {
+    if (
+      to.name === "Home" ||
+      to.name === "TodoToday" ||
+      to.name === "TodoDone"
+    ) {
+      next("/");
+    }
+  }
+  next();
 });
 
 export default router;

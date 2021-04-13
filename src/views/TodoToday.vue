@@ -1,7 +1,10 @@
 <template>
   <div id="app">
     <TheHomeHeader></TheHomeHeader>
-    <div class="container">
+    <div class="loading-container" v-if="loading">
+      <b-spinner label="Loading..." class="loading" variant="info"></b-spinner>
+    </div>
+    <div class="container" v-if="showTable">
       <p class="user-name">{{ loginUser.name }}のTodoリスト</p>
       <table class="table">
         <!-- Todoリストの表示 -->
@@ -9,7 +12,7 @@
           <th>Todo</th>
           <th style="text-align: right">期限</th>
         </tr>
-        <tr class="list" v-for="list in todoLists" :key="list.id">
+        <tr class="list" v-for="list in itemsForList" :key="list.id" id="my-table">
           <td :style="{ color: checkDeadline(list.deadline) }">
             <b-form-checkbox @change="checkTodo(list.id)">
               {{ list.todo_list }}
@@ -32,6 +35,24 @@
           </td>
         </tr>
       </table>
+
+      <b-pagination
+        v-model="currentPage"
+        :total-rows="rows"
+        :per-page="perPage"
+        aria-controls="my-table"
+        align="center"
+        class="mt-3"
+        size="sm"
+        pills
+      >
+        <template #first-text><span class="text-info">«</span></template>
+        <template #prev-text><span class="text-info">‹</span></template>
+        <template #next-text><span class="text-info">›</span></template>
+        <template #last-text><span class="text-info">»</span></template>
+      </b-pagination>
+
+      <hr class="line" />
 
       <!-- 新規登録ボタン -->
       <div class="btn-wrap">
@@ -73,6 +94,10 @@ export default {
       isActive: false,
       redColor: "red",
       blackColor: "black",
+      loading: true,
+      showTable: false,
+      perPage: 5,
+      currentPage: 1,
     };
   },
   computed: {
@@ -114,6 +139,17 @@ export default {
         }
       };
     },
+
+    rows() {
+      return this.todoLists.length;
+    },
+
+    itemsForList() {
+      return this.todoLists.slice(
+        (this.currentPage - 1) * this.perPage,
+        this.currentPage * this.perPage
+      );
+    },
   },
 
   created() {
@@ -129,6 +165,8 @@ export default {
     async showTodo() {
       const resData = await todoListsRepository.getTodayTodo(this.loginUser.id);
       this.todoLists = resData.data.data;
+      this.loading = false;
+      this.showTable = true;
     },
 
     // 新規登録ボタン
@@ -158,13 +196,12 @@ export default {
   width: 50%;
   margin: 0 auto;
   background-color: #f0f0f0;
-  margin-top: 150px;
+  margin-top: 50px;
   margin-bottom: 100px;
   padding: 20px;
   box-shadow: 0 7px #e1e0e0;
 }
 .list {
-  border-bottom: 1px solid #16a2b8;
   margin-bottom: 15px;
 }
 .btn-wrap {
@@ -172,5 +209,17 @@ export default {
 }
 .edit-btn-wrap {
   text-align: right;
+}
+.loading-container {
+  display: grid;
+  grid-template-columns: 100vw;
+  grid-template-rows: 80vh;
+}
+.loading {
+  justify-self: center;
+  align-self: center;
+}
+.line {
+  border-color: #16a2b8;
 }
 </style>
