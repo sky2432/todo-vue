@@ -49,7 +49,7 @@
             locale="ja"
             label-close-button="閉じる"
             close-button-variant="info"
-            minutes-step="1"
+            minutes-step="10"
             hide-header
           >
           </b-form-timepicker>

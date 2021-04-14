@@ -24,12 +24,12 @@
       </b-navbar-nav>
 
       <b-navbar-nav class="mr-auto" v-if="loginUser.role === 'admin'">
-        <b-nav-item >
+        <!-- <b-nav-item >
           ユーザー管理
         </b-nav-item>
         <b-nav-item >
           お知らせ投稿
-        </b-nav-item>
+        </b-nav-item> -->
         <b-nav-item @click="$router.push('/')">
           トップページ
         </b-nav-item>
