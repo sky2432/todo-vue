@@ -1,49 +1,67 @@
 <template>
   <div id="app">
     <TheHomeHeader></TheHomeHeader>
-    <div class="container row">
-      <div class="content col-6">
-        <div>
-          <p>
-            <img class="userImage" :src="createFileURL" />
-          </p>
-          <p>{{ user.name }}</p>
-          <p>{{ user.email }}</p>
+    <div class="wrapper">
+      <div class="container row">
+        <div class="content col-6">
+          <div>
+            <p>
+              <img class="userImage" :src="createFileURL" />
+            </p>
+            <p>{{ user.name }}</p>
+            <p>{{ user.email }}</p>
+          </div>
         </div>
-      </div>
-      <div class="todo col-6">
-        <p>Todo一覧</p>
+        <div class="todo col-6">
+          <p>Todo一覧</p>
 
-        <div v-if="loading" class="loading-container">
-          <b-spinner
-            label="Loading..."
-            class="loading"
-            variant="info"
-          ></b-spinner>
-        </div>
+          <div v-if="loading" class="loading-container">
+            <b-spinner
+              label="Loading..."
+              class="loading"
+              variant="info"
+            ></b-spinner>
+          </div>
 
-        <div v-if="showTable" class="todo-wrap">
-          <b-list-group>
-            <b-list-group-item
-              v-for="list in itemsForList"
-              :key="list.id"
-              id="my-table"
-              :style="{ color: chengeColor(list) }"
-            >
-              <b-icon icon="check2-square" v-if="list.status === 0"></b-icon>
-              <b-icon icon="square" v-if="list.status === 1"></b-icon>
-              {{ list.todo_list }}
-            </b-list-group-item>
-          </b-list-group>
+          <div v-if="showTable" class="todo-wrap">
+            <b-list-group>
+              <b-list-group-item
+                v-for="list in itemsForList"
+                :key="list.id"
+                :style="{ color: chengeColor(list) }"
+                id="my-table"
+              >
+                <div :id="`popover-target-${list.id}`">
+                  <b-icon
+                    icon="check2-square"
+                    v-if="list.status === 0"
+                  ></b-icon>
+                  <b-icon icon="square" v-if="list.status === 1"></b-icon>
+                  {{ cutLength(list.todo_list) }}
+                </div>
 
-          <b-pagination
-            v-model="currentPage"
-            :total-rows="rows"
-            :per-page="perPage"
-            aria-controls="my-table"
-            align="center"
-            class="mt-3"
-          ></b-pagination>
+                <!-- Todo全文表示ポップオーバー -->
+                <b-popover
+                  v-if="checkLength(list.todo_list)"
+                  :target="`popover-target-${list.id}`"
+                  triggers="hover"
+                  placement="top"
+                >
+                  {{ list.todo_list }}
+                </b-popover>
+              </b-list-group-item>
+            </b-list-group>
+
+            <!-- ページネーション -->
+            <b-pagination
+              v-model="currentPage"
+              :total-rows="rows"
+              :per-page="perPage"
+              aria-controls="my-table"
+              align="center"
+              class="mt-3"
+            ></b-pagination>
+          </div>
         </div>
       </div>
     </div>
@@ -78,6 +96,7 @@ export default {
     createFileURL() {
       return "http://127.0.0.1:8000/storage/image/" + this.user.file_path;
     },
+
     chengeColor() {
       return function(list) {
         if (list.status === 1) {
@@ -88,6 +107,25 @@ export default {
         }
       };
     },
+
+    checkLength() {
+      return function(todo_list) {
+        if (todo_list.length > 10) {
+          return true;
+        }
+        return false;
+      };
+    },
+
+    cutLength() {
+      return function(todo_list) {
+        if (todo_list.length > 10) {
+          return todo_list.substr(0, 10) + "...";
+        }
+        return todo_list;
+      };
+    },
+
     rows() {
       return this.todoLists.length;
     },
@@ -120,19 +158,7 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  width: 80%;
-  margin: 0 auto;
-  background-color: #f0f0f0;
-  margin-top: 50px;
-  margin-bottom: 100px;
-  padding: 20px;
-  box-shadow: 0 7px #e1e0e0;
-}
 .content {
-  /* border: 1px solid black; */
-  background-color: #fff;
-  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -147,7 +173,6 @@ export default {
   border-radius: 50%;
 }
 .todo {
-  background-color: #fff;
   padding: 20px;
   height: 400px;
   position: relative;

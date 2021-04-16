@@ -1,55 +1,65 @@
 <template>
   <div id="app">
     <TheHomeHeader></TheHomeHeader>
-    <div class="loading-container" v-if="loading">
-      <b-spinner label="Loading..." class="loading" variant="info"></b-spinner>
-    </div>
-    <div class="container" v-if="showTable">
-      <table class="table">
-        <p>ユーザー管理</p>
-        <!-- Todoリストの表示 -->
-        <tr>
-          <th>id</th>
-          <th></th>
-          <th>ユーザー名</th>
-          <th>メールアドレス</th>
-        </tr>
-        <tr class="list" v-for="user in itemsForList" :key="user.id" id="my-table">
-          <td>
-            {{ user.id }}
-          </td>
-          <td style="text-align: right">
-            <img class="userImage" :src="createFileURL(user.file_path)" />
-          </td>
-          <td>
-            {{ user.name }}
-          </td>
-          <td>
-            {{ user.email }}
-          </td>
-          <!-- 詳細ボタン -->
-          <td class="edit-btn-wrap">
-            <b-button
-              variant="info"
-              size="sm"
-              @click="moveUserDeatail(user.id)"
-            >
-              <b-icon icon="pencil-square"></b-icon>
-              詳細
-            </b-button>
-          </td>
-        </tr>
-      </table>
+    <div class="wrapper">
+      <b-spinner
+        v-if="loading"
+        label="Loading..."
+        class="loading"
+        variant="info"
+      ></b-spinner>
+      <div class="container" v-if="showTable">
+        <table class="table">
+          <p>ユーザー管理</p>
+          <!-- Todoリストの表示 -->
+          <tr>
+            <th>id</th>
+            <th></th>
+            <th>ユーザー名</th>
+            <th>メールアドレス</th>
+            <th></th>
+          </tr>
+          <tr
+            class="list"
+            v-for="user in itemsForList"
+            :key="user.id"
+            id="my-table"
+          >
+            <td>
+              {{ user.id }}
+            </td>
+            <td style="text-align: right">
+              <img class="userImage" :src="createFileURL(user.file_path)" />
+            </td>
+            <td>
+              {{ user.name }}
+            </td>
+            <td>
+              {{ user.email }}
+            </td>
+            <!-- 詳細ボタン -->
+            <td class="detail-btn-wrap">
+              <b-button
+                variant="outline-info"
+                size="sm"
+                @click="moveUserDeatail(user.id)"
+              >
+                <b-icon icon="pencil-square"></b-icon>
+                詳細
+              </b-button>
+            </td>
+          </tr>
+        </table>
 
-      <b-pagination
-        v-model="currentPage"
-        :total-rows="rows"
-        :per-page="perPage"
-        aria-controls="my-table"
-        align="center"
-        class="mt-4"
-      ></b-pagination>
-
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="rows"
+          :per-page="perPage"
+          aria-controls="my-table"
+          align="center"
+          class="mt-4"
+        ></b-pagination>
+      </div>
     </div>
   </div>
 </template>
@@ -116,23 +126,13 @@ export default {
 .user-name {
   color: rgb(133, 133, 133);
 }
-.container {
-  width: 80%;
-  margin: 0 auto;
-  background-color: #f0f0f0;
-  margin-top: 50px;
-  margin-bottom: 100px;
-  padding: 20px;
-  box-shadow: 0 7px #e1e0e0;
-}
-.list {
+.table {
   border-bottom: 1px solid #16a2b8;
-  margin-bottom: 15px;
 }
 .btn-wrap {
   text-align: center;
 }
-.edit-btn-wrap {
+.detail-btn-wrap {
   text-align: right;
 }
 .userImage {
@@ -140,14 +140,5 @@ export default {
   height: 30px;
   object-fit: cover;
   border-radius: 50%;
-}
-.loading-container {
-  display: grid;
-  grid-template-columns: 100vw;
-  grid-template-rows: 80vh;
-}
-.loading {
-  justify-self: center;
-  align-self: center;
 }
 </style>

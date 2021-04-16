@@ -10,7 +10,7 @@
           <div class="ml-1">
             <b-button
               id="edit-popover"
-              variant="info"
+              variant="outline-info"
               ref="button"
               @click="resetDeadlineError"
             >
@@ -49,7 +49,7 @@
             locale="ja"
             label-close-button="閉じる"
             close-button-variant="info"
-            minutes-step="1"
+            minutes-step="10"
             hide-header
           >
           </b-form-timepicker>
@@ -59,14 +59,14 @@
             <b-button
               @click="clearDeadline"
               size="md"
-              variant="danger"
+              variant="outline-danger"
               class="mr-2"
               >期限なし</b-button
             >
             <b-button
               @click="setUpdateDeadline"
               size="md"
-              variant="info"
+              variant="outline-info"
               class="mr-2"
               >設定</b-button
             >
@@ -75,10 +75,10 @@
       </template>
 
       <template #modal-footer>
-        <b-button size="lg" variant="danger" @click="editCancel">
+        <b-button size="lg" variant="outline-danger" @click="editCancel">
           キャンセル
         </b-button>
-        <b-button size="lg" variant="info" @click="updateTodo">
+        <b-button size="lg" variant="outline-info" @click="updateTodo">
           編集
         </b-button>
       </template>

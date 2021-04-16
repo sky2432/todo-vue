@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="content">
+    <div class="mypage-content">
       <div>
         <p>
           <img class="userImage" :src="userImage" />
@@ -12,7 +12,7 @@
           v-if="showInput"
         ></b-form-file>
         <p class="error" v-if="showError">{{ errorFileMessage }}</p>
-        <b-button variant="info" class="mt-3" @click="fileUpload"
+        <b-button variant="outline-info" class="mt-3" @click="fileUpload"
           >設定</b-button
         >
       </div>
@@ -31,7 +31,7 @@ export default {
       showError: false,
       showInput: true,
       errorFileMessage: "※画像ファイルを選択して下さい",
-    }
+    };
   },
   computed: {
     ...mapState(["loginUser", "userImage"]),
@@ -41,7 +41,6 @@ export default {
     fileSelected(event) {
       this.fileInfo = event.target.files[0];
       if (!this.fileInfo.type.match("image.*")) {
-
         this.showInput = false;
         this.$nextTick(function() {
           this.showInput = true;
@@ -56,7 +55,10 @@ export default {
     async fileUpload() {
       const formData = new FormData();
       formData.append("file", this.fileInfo);
-      const resData = await fileRepository.uploadImage(this.loginUser.id, formData);
+      const resData = await fileRepository.uploadImage(
+        this.loginUser.id,
+        formData
+      );
 
       if (resData.data.data.file_path) {
         const userImage =
@@ -67,23 +69,13 @@ export default {
         this.$nextTick(function() {
           this.showInput = true;
         });
-        
       }
     },
-  }
+  },
 };
 </script>
 
 <style scoped>
-.content {
-  border: 1px solid black;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 20px;
-}
 .userImage {
   width: 200px;
   height: 200px;

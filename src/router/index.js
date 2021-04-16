@@ -12,6 +12,7 @@ import TodoDone from "../views/TodoDone.vue";
 import MyPage from "../views/MyPage.vue";
 import AdminHome from "../views/AdminHome.vue";
 import AdminUsers from "../views/AdminUsers.vue";
+import Statistics from "../views/Statistics.vue";
 import store from "../store/store";
 
 Vue.use(VueRouter);
@@ -84,6 +85,14 @@ const routes = [
     path: "/mypage",
     name: "MyPage",
     component: MyPage,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/statistics",
+    name: "Statistics",
+    component: Statistics,
     meta: {
       requiresAuth: true,
     },

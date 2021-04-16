@@ -1,22 +1,26 @@
 <template>
   <div id="app">
     <TheHomeHeader></TheHomeHeader>
-    <div class="row justify-content-center container">
-      <b-list-group class="col-4">
-        <b-list-group-item button @click="currentComponent = 'MypageProfile'"
-          >プロフィール</b-list-group-item
-        >
-        <b-list-group-item button @click="currentComponent = 'MypageUserUpdate'"
-          >各種変更</b-list-group-item
-        >
-        <b-list-group-item button @click="currentComponent = 'MypageUserDelete'"
-          >アカウント削除</b-list-group-item
-        >
-      </b-list-group>
+      <div class="row justify-content-center container">
+        <b-list-group class="col-4">
+          <b-list-group-item button @click="currentComponent = 'MypageProfile'"
+            >プロフィール</b-list-group-item
+          >
+          <b-list-group-item
+            button
+            @click="currentComponent = 'MypageUserUpdate'"
+            >各種変更</b-list-group-item
+          >
+          <b-list-group-item
+            button
+            @click="currentComponent = 'MypageUserDelete'"
+            >アカウント削除</b-list-group-item
+          >
+        </b-list-group>
 
-      <component class="col-8" :is="currentComponent"></component>
+        <component class="col-8" :is="currentComponent"></component>
+      </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -41,9 +45,8 @@ export default {
 
 <style scoped>
 .container {
-  width: 80%;
   margin: 0 auto;
-  margin-top: 100px;
-  overflow: hidden;
+  margin-top: 8vw;
+  height: 430px;
 }
 </style>

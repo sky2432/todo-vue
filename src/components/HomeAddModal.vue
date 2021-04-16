@@ -10,7 +10,7 @@
           <div class="ml-1 col-4">
             <b-button
               id="add-popover"
-              variant="info"
+              variant="outline-info"
               @click="resetDeadlineError"
             >
               <b-icon icon="calendar2-check"></b-icon>
@@ -59,14 +59,14 @@
             <b-button
               @click="clearDeadline"
               size="md"
-              variant="danger"
+              variant="outline-danger"
               class="mr-2"
               >期限なし</b-button
             >
             <b-button
               @click="setAddDeadline"
               size="md"
-              variant="info"
+              variant="outline-info"
               class="mr-2"
               >設定</b-button
             >
@@ -75,10 +75,10 @@
       </template>
 
       <template #modal-footer>
-        <b-button size="lg" variant="danger" @click="addCancel">
+        <b-button size="lg" variant="outline-danger" @click="addCancel">
           キャンセル
         </b-button>
-        <b-button size="lg" variant="info" @click="createTodo">
+        <b-button size="lg" variant="outline-info" @click="createTodo">
           登録
         </b-button>
       </template>

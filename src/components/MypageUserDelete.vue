@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="content">
+    <div class="mypage-content">
       <div>
         <div class="mb-1">
           <b-alert show variant="danger">
@@ -9,7 +9,7 @@
               アカウントを削除すると、これまでのデータはすべて削除されます。
             </p>
           </b-alert>
-          <b-button v-b-modal.delete-confirm-modal variant="danger"
+          <b-button v-b-modal.delete-confirm-modal variant="outline-danger"
             >アカウントを削除</b-button
           >
         </div>
@@ -17,10 +17,10 @@
       <b-modal id="delete-confirm-modal" title="確認" centered>
         <p class="my-4">本当に削除しますか？</p>
         <template #modal-footer>
-          <b-button size="lg" variant="danger" @click="deleteUser">
+          <b-button size="lg" variant="outline-danger" @click="deleteUser">
             はい
           </b-button>
-          <b-button size="lg" variant="info" @click="deleteCancel">
+          <b-button size="lg" variant="outline-info" @click="deleteCancel">
             いいえ
           </b-button>
         </template>
@@ -52,15 +52,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.content {
-  border: 1px solid black;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 20px;
-}
-</style>

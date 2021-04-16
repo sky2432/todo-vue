@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="full-page">
     <router-view />
   </div>
 </template>
@@ -187,4 +187,45 @@ select {
   color: red;
 }
 
+#full-page {
+  height: 100vh;
+  width: 100vw;
+  background-color: #f5f9fc;
+}
+
+.wrapper {
+  height: calc(100vh - 70px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  padding: 20px;
+  background: hsl(0 0% 100%);
+  box-shadow: 0 2.5rem 2rem -2rem hsl(200 50% 20% / 40%);
+}
+
+.header {
+  height: 70px;
+  background-color: #16a2b8;
+}
+
+.header-title {
+  line-height: 70px;
+  text-align: center;
+  color: white;
+  cursor: pointer;
+}
+
+.mypage-content {
+  border: 1px solid black;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  height: 100%;
+}
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="content">
+    <div class="mypage-content">
       <div>
         <b-form @submit.prevent="updateUser" novalidate>
           <b-form-group label="名前" label-for="name" class="label">
@@ -25,7 +25,7 @@
             </div>
           </b-form-group>
           <div class="btn-wrap">
-            <b-button variant="info" type="submit">変更</b-button>
+            <b-button variant="outline-info" type="submit">変更</b-button>
           </div>
         </b-form>
       </div>
@@ -61,14 +61,15 @@ export default {
       this.userName = this.loginUser.name;
       this.userEmail = this.loginUser.email;
     },
-    
+
     // 名前・メールアドレス変更
     async updateUser() {
       const sendData = {
         name: this.userName,
         email: this.userEmail,
       };
-      await usersRepository.updateUser(this.loginUser.id, sendData)
+      await usersRepository
+        .updateUser(this.loginUser.id, sendData)
         .then((response) => {
           console.log(response);
           this.$store.commit("updateUser", response.data.data);
@@ -103,16 +104,6 @@ export default {
 </script>
 
 <style scoped>
-.content {
-  border: 1px solid black;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 20px;
-}
-
 .label {
   text-align: left;
 }

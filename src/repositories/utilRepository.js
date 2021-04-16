@@ -27,5 +27,13 @@ export default {
 
   sendPasswordResetMail(payload) {
     return Repository.post("/forgot-password", payload);
-  }
+  },
+
+  getDayGraph(payload) {
+    return Repository.post("/statistics/day", payload);
+  },
+
+  getMonthGraph(payload) {
+    return Repository.post("/statistics/month", payload);
+  },
 };

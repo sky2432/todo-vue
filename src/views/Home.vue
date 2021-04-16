@@ -1,47 +1,91 @@
 <template>
   <div id="app">
     <TheHomeHeader></TheHomeHeader>
-    <div class="loading-container" v-if="loading">
-      <b-spinner label="Loading..." class="loading" variant="info"></b-spinner>
-    </div>
-    <div class="container" v-if="showTable">
-      <p class="user-name">{{ loginUser.name }}のTodoリスト</p>
-      <table class="table">
-        <!-- Todoリストの表示 -->
-        <tr class="table-row">
-          <th>Todo</th>
-          <th style="text-align: right">期限</th>
-        </tr>
-        <tr
-          class="table-row"
-          v-for="list in itemsForList"
-          :key="list.id"
-          id="my-table"
-        >
-          <td :style="{ color: checkDeadline(list.deadline) }">
-            <b-form-checkbox @change="checkTodo(list.id)">
-              {{ list.todo_list }}
-            </b-form-checkbox>
-          </td>
-          <td style="text-align: right">
-            {{ convertDeadline(list.deadline) }}
-          </td>
-          <!-- 編集ボタン -->
-          <td class="edit-btn-wrap">
-            <b-button
-              variant="info"
-              size="sm"
-              v-b-modal.edit-modal
-              @click="showUpdateModal(list.id)"
-            >
-              <b-icon icon="pencil-square"></b-icon>
-              編集
-            </b-button>
-          </td>
-        </tr>
-      </table>
+    <div class="wrapper">
+      <!-- ローディング -->
+      <b-spinner
+        class="loading"
+        v-if="loading"
+        label="Loading..."
+        variant="info"
+      ></b-spinner>
 
-      <div class="fixed-content">
+      <div class="container" v-if="showTable">
+        <p class="user-name">{{ loginUser.name }}のTodoリスト<span class="ml-3">{{ showToday }}</span></p>
+        <table class="table">
+          <!-- Todoリストの表示 -->
+          <thead>
+            <tr style="width: 100%;">
+              <th style="width: 50%;">Todo</th>
+              <th style="width: 25%;">期限</th>
+              <th style="width: 25%;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="list in itemsForList" :key="list.id" id="my-table">
+              <td
+                :style="{ color: checkDeadline(list.deadline) }"
+                :id="`popover-target-${list.id}`"
+              >
+                <b-form-checkbox @change="checkTodo(list.id)">
+                  {{ cutLength(list.todo_list) }}
+                </b-form-checkbox>
+              </td>
+
+              <!-- Todo全文表示ポップオーバー -->
+              <b-popover
+                v-if="checkLength(list.todo_list)"
+                :target="`popover-target-${list.id}`"
+                triggers="hover"
+                placement="top"
+              >
+                {{ list.todo_list }}
+              </b-popover>
+
+              <td :style="{ color: checkDeadline(list.deadline) }">
+                {{ convertDeadline(list.deadline) }}
+              </td>
+
+              <!-- リマインド・編集ボタン -->
+              <td class="edit-btn-wrap">
+                <!-- リマインドボタン -->
+                <b-button
+                  class="mr-3"
+                  variant="outline-info"
+                  size="sm"
+                  :id="`remind-target-${list.id}`"
+                  v-if="list.remind_day !== null"
+                >
+                  <b-icon icon="alarm"></b-icon>
+                </b-button>
+
+                <!-- リマインドポップオーバー -->
+                <b-popover
+                  v-if="list.remind_day !== null"
+                  :target="`remind-target-${list.id}`"
+                  triggers="hover"
+                  placement="top"
+                >
+                  {{ convertRemindDay(list.remind_day)
+                  }}{{ convertRemindTime(list.remind_time) }}
+                </b-popover>
+
+                <!-- 編集ボタン -->
+                <b-button
+                  variant="outline-info"
+                  size="sm"
+                  v-b-modal.edit-modal
+                  @click="showUpdateModal(list.id)"
+                >
+                  <b-icon icon="pencil-square"></b-icon>
+                  編集
+                </b-button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ページネーション -->
         <b-pagination
           v-model="currentPage"
           :total-rows="rows"
@@ -62,19 +106,23 @@
 
         <!-- 新規登録ボタン -->
         <div class="btn-wrap">
-          <b-button v-b-modal.add-modal variant="info" @click="setToday">
+          <b-button
+            v-b-modal.add-modal
+            variant="outline-info"
+            @click="setToday"
+          >
             <b-icon icon="file-arrow-up"></b-icon>
             新規登録
           </b-button>
         </div>
-      </div>
 
-      <HomeAddModal ref="addModal" @reload-todo="showTodo"></HomeAddModal>
-      <HomeEditModal
-        ref="editModal"
-        @reload-todo="showTodo"
-        :ParentTodoLists="todoLists"
-      ></HomeEditModal>
+        <HomeAddModal ref="addModal" @reload-todo="showTodo"></HomeAddModal>
+        <HomeEditModal
+          ref="editModal"
+          @reload-todo="showTodo"
+          :ParentTodoLists="todoLists"
+        ></HomeEditModal>
+      </div>
     </div>
   </div>
 </template>
@@ -109,6 +157,46 @@ export default {
   computed: {
     ...mapState(["loginUser"]),
 
+    showToday() {
+      const today = new Date();
+      return "本日:\t" + (today.getMonth() + 1) + "\t" + "/" + "\t" + today.getDate();
+    },
+
+    //期限が過ぎたTodoは赤色で表示
+    checkDeadline() {
+      return function(deadline) {
+        if (deadline === null) {
+          return this.blackColor;
+        }
+        const todoDeadline = this.$_createDeadlineDate(deadline);
+        const today = this.$_createToday();
+        if (today <= todoDeadline) {
+          return this.blackColor;
+        }
+        if (today > todoDeadline) {
+          return this.redColor;
+        }
+      };
+    },
+
+    checkLength() {
+      return function(todo_list) {
+        if (todo_list.length > 10) {
+          return true;
+        }
+        return false;
+      };
+    },
+
+    cutLength() {
+      return function(todo_list) {
+        if (todo_list.length > 10) {
+          return todo_list.substr(0, 10) + "...";
+        }
+        return todo_list;
+      };
+    },
+
     // 期限日の表示を変える
     convertDeadline() {
       return function(deadline) {
@@ -129,19 +217,29 @@ export default {
       };
     },
 
-    //期限が過ぎたTodoは赤色で表示
-    checkDeadline() {
-      return function(deadline) {
-        if (deadline === null) {
-          return this.blackColor;
+    convertRemindDay() {
+      return function(remind_day) {
+        if (remind_day !== null) {
+          if (remind_day === 0) {
+            return "当日\t";
+          }
+          if (remind_day === 1) {
+            return "1日前\t";
+          }
+          if (remind_day === 2) {
+            return "2日前\t";
+          }
         }
-        const todoDeadline = this.$_createDeadlineDate(deadline);
-        const today = this.$_createToday();
-        if (today <= todoDeadline) {
-          return this.blackColor;
-        }
-        if (today > todoDeadline) {
-          return this.redColor;
+      };
+    },
+
+    convertRemindTime() {
+      return function(remind_time) {
+        if (remind_time !== null) {
+          if (remind_time.slice(0, 1) === "0") {
+            return remind_time.slice(1, 5);
+          }
+          return remind_time.slice(0, 5);
         }
       };
     },
@@ -195,36 +293,16 @@ export default {
 </script>
 
 <style scoped>
-
 .user-name {
   color: rgb(133, 133, 133);
 }
-.container {
-  width: 50%;
-  margin: 0 auto;
-  background-color: #f0f0f0;
-  margin-top: 50px;
-  padding: 20px;
-  box-shadow: 0 7px #e1e0e0;
-}
-
 .btn-wrap {
   text-align: center;
 }
 .edit-btn-wrap {
   text-align: right;
 }
-.loading-container {
-  display: grid;
-  grid-template-columns: 100vw;
-  grid-template-rows: 80vh;
-}
-.loading {
-  justify-self: center;
-  align-self: center;
-}
 .line {
   border-color: #16a2b8;
 }
-
 </style>
