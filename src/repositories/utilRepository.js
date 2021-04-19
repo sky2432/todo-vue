@@ -1,12 +1,12 @@
 import Repository from "./Repository";
 
 export default {
-  loginConfirm(payload) {
-    return Repository.post("/loginConfirm", payload);
+  registerConfirm(payload) {
+    return Repository.post("/userRegister/confirm", payload);
   },
 
-  registerConfirm(payload) {
-    return Repository.post("/userRegisterConfirm", payload);
+  loginConfirm(payload) {
+    return Repository.post("/login/confirm", payload);
   },
 
   login(payload) {
@@ -18,22 +18,14 @@ export default {
   },
 
   sendLoginMail(payload) {
-    return Repository.post("/sendLoginMail", payload);
+    return Repository.post("/sendMail/login", payload);
   },
 
   sendRegisterMail(payload) {
-    return Repository.post("/sendRegisterMail", payload);
+    return Repository.post("/sendMail/register", payload);
   },
 
   sendPasswordResetMail(payload) {
     return Repository.post("/forgot-password", payload);
-  },
-
-  getDayGraph(payload) {
-    return Repository.post("/statistics/day", payload);
-  },
-
-  getMonthGraph(payload) {
-    return Repository.post("/statistics/month", payload);
   },
 };

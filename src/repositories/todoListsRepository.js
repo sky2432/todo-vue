@@ -14,16 +14,16 @@ export default {
     return Repository.put(`${resource}/${id}`, payload);
   },
   
-  deleteTodo(id) {
+  checkTodo(id) {
     return Repository.delete(`${resource}/${id}`);
   },
 
   getTodayTodo(id) {
-    return Repository.get(`todoToday/${id}`);
+    return Repository.get(`${resource}/today/${id}`);
   },
 
   getUserTodo(userId) {
-    return Repository.get(`userTodo/${userId}`);
+    return Repository.get(`${resource}/user/${userId}`);
   },
   
 };

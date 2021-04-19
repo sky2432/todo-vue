@@ -104,7 +104,11 @@
 
         <!-- 新規登録ボタン -->
         <div class="btn-wrap">
-          <b-button v-b-modal.add-modal variant="outline-info" @click="setToday">
+          <b-button
+            v-b-modal.add-modal
+            variant="outline-info"
+            @click="setToday"
+          >
             <b-icon icon="file-arrow-up"></b-icon>
             新規登録
           </b-button>
@@ -126,7 +130,7 @@ import TheHomeHeader from "../components/TheHomeHeader";
 import HomeAddModal from "../components/HomeAddModal";
 import HomeEditModal from "../components/HomeEditModal";
 import $_createToday from "../helpers/utile";
-import $_createDeadlineDate from "../helpers/utile";
+import $_createSpecificDate from "../helpers/utile";
 import $_createTomorrow from "../helpers/utile";
 import todoListsRepository from "../repositories/todoListsRepository.js";
 import { mapState } from "vuex";
@@ -158,7 +162,7 @@ export default {
         if (deadline === null) {
           return this.blackColor;
         }
-        const todoDeadline = this.$_createDeadlineDate(deadline);
+        const todoDeadline = this.$_createSpecificDate(deadline);
         const today = this.$_createToday();
         if (today <= todoDeadline) {
           return this.blackColor;
@@ -192,7 +196,7 @@ export default {
       return function(deadline) {
         if (deadline !== null) {
           const today = this.$_createToday();
-          const todoDay = this.$_createDeadlineDate(deadline);
+          const todoDay = this.$_createSpecificDate(deadline);
           const tommorrow = this.$_createTomorrow();
           if (today.getTime() === todoDay.getTime()) {
             return "今日";
@@ -252,7 +256,7 @@ export default {
 
   methods: {
     ...$_createToday,
-    ...$_createDeadlineDate,
+    ...$_createSpecificDate,
     ...$_createTomorrow,
 
     //Todoリストの表示

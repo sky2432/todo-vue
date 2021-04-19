@@ -88,7 +88,7 @@
 
 <script>
 import $_validateDeadline from "../helpers/utile";
-import $_createDeadlineDate from "../helpers/utile";
+import $_createSpecificDate from "../helpers/utile";
 import $_createTomorrow from "../helpers/utile";
 import BaseCalender from "../components/BaseCalender";
 import todoListsRepository from "../repositories/todoListsRepository.js";
@@ -127,12 +127,12 @@ export default {
   computed: {
     convertDeadline() {
       return function(deadline) {
-        if(deadline === null) {
+        if (deadline === null) {
           return deadline;
         }
         if (deadline !== null) {
           const today = this.$_createToday();
-          const todoDay = this.$_createDeadlineDate(deadline);
+          const todoDay = this.$_createSpecificDate(deadline);
           const tommorrow = this.$_createTomorrow();
           if (today.getTime() === todoDay.getTime()) {
             return "今日";
@@ -150,7 +150,7 @@ export default {
 
   methods: {
     ...$_validateDeadline,
-    ...$_createDeadlineDate,
+    ...$_createSpecificDate,
     ...$_createTomorrow,
 
     setRemindDay(event) {
@@ -168,7 +168,7 @@ export default {
     },
 
     // 編集するTodoリストの取得
-    showUpdateModal(id) {
+    getTodoData(id) {
       let index = "";
       for (index in this.ParentTodoLists) {
         let list = this.ParentTodoLists[index];
@@ -179,13 +179,13 @@ export default {
           this.remindDay = list.remind_day;
           this.remindTime = list.remind_time;
         }
-      };
-      if(this.remindDay !== null) {
+      }
+      if (this.remindDay !== null) {
         this.showRemindTime = true;
       }
-      if(this.remindDay == null) {
+      if (this.remindDay == null) {
         this.showRemindTime = false;
-        this.remindTime = "09:00:00"
+        this.remindTime = "09:00:00";
       }
     },
 

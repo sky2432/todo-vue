@@ -89,7 +89,7 @@
 <script>
 import $_validateDeadline from "../helpers/utile";
 import $_createToday from "../helpers/utile";
-import $_createDeadlineDate from "../helpers/utile";
+import $_createSpecificDate from "../helpers/utile";
 import $_createTomorrow from "../helpers/utile";
 import BaseCalender from "../components/BaseCalender";
 import todoListsRepository from "../repositories/todoListsRepository.js";
@@ -124,7 +124,7 @@ export default {
         }
         if (deadline !== null) {
           const today = this.$_createToday();
-          const todoDay = this.$_createDeadlineDate(deadline);
+          const todoDay = this.$_createSpecificDate(deadline);
           const tommorrow = this.$_createTomorrow();
           if (today.getTime() === todoDay.getTime()) {
             return "今日";
@@ -143,7 +143,7 @@ export default {
   methods: {
     ...$_createToday,
     ...$_validateDeadline,
-    ...$_createDeadlineDate,
+    ...$_createSpecificDate,
     ...$_createTomorrow,
 
     setRemindDay(event) {

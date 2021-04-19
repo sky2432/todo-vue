@@ -11,7 +11,11 @@
       ></b-spinner>
 
       <div class="container" v-if="showTable">
-        <p class="user-name">{{ loginUser.name }}のTodoリスト<span class="ml-3">{{ showToday }}</span></p>
+        <p class="user-name">
+          {{ loginUser.name }}のTodoリスト<span class="ml-3">{{
+            showToday
+          }}</span>
+        </p>
         <table class="table">
           <!-- Todoリストの表示 -->
           <thead>
@@ -132,7 +136,7 @@ import TheHomeHeader from "../components/TheHomeHeader";
 import HomeAddModal from "../components/HomeAddModal";
 import HomeEditModal from "../components/HomeEditModal";
 import $_createToday from "../helpers/utile";
-import $_createDeadlineDate from "../helpers/utile";
+import $_createSpecificDate from "../helpers/utile";
 import $_createTomorrow from "../helpers/utile";
 import todoListsRepository from "../repositories/todoListsRepository.js";
 import { mapState } from "vuex";
@@ -159,7 +163,9 @@ export default {
 
     showToday() {
       const today = new Date();
-      return "本日:\t" + (today.getMonth() + 1) + "\t" + "/" + "\t" + today.getDate();
+      return (
+        "本日:\t" + (today.getMonth() + 1) + "\t" + "/" + "\t" + today.getDate()
+      );
     },
 
     //期限が過ぎたTodoは赤色で表示
@@ -168,7 +174,7 @@ export default {
         if (deadline === null) {
           return this.blackColor;
         }
-        const todoDeadline = this.$_createDeadlineDate(deadline);
+        const todoDeadline = this.$_createSpecificDate(deadline);
         const today = this.$_createToday();
         if (today <= todoDeadline) {
           return this.blackColor;
@@ -202,7 +208,7 @@ export default {
       return function(deadline) {
         if (deadline !== null) {
           const today = this.$_createToday();
-          const todoDay = this.$_createDeadlineDate(deadline);
+          const todoDay = this.$_createSpecificDate(deadline);
           const tommorrow = this.$_createTomorrow();
           if (today.getTime() === todoDay.getTime()) {
             return "今日";
@@ -262,7 +268,7 @@ export default {
 
   methods: {
     ...$_createToday,
-    ...$_createDeadlineDate,
+    ...$_createSpecificDate,
     ...$_createTomorrow,
 
     //Todoリストの表示
@@ -280,12 +286,12 @@ export default {
 
     // 編集ボタン
     showUpdateModal(id) {
-      this.$refs.editModal.showUpdateModal(id);
+      this.$refs.editModal.getTodoData(id);
     },
 
     //Todoの完了
     async checkTodo(id) {
-      await todoListsRepository.deleteTodo(id);
+      await todoListsRepository.checkTodo(id);
       this.showTodo();
     },
   },

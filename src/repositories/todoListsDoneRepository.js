@@ -1,6 +1,6 @@
 import Repository from "./Repository";
 
-const resource = "/todoListsDone";
+const resource = "/todoLists/done";
 export default {
   getTodo(userId) {
     return Repository.get(`${resource}/${userId}`);

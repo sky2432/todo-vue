@@ -8,10 +8,59 @@
         </div>
         <div class="graph col-6">
           <b-tabs content-class="mt-3">
-            <b-tab title="日" active @click="showDayGraph"></b-tab>
-            <b-tab title="週"></b-tab>
-            <b-tab title="月" @click="showMonthGraph"></b-tab>
+            <b-tab title="日" active @click="showDayGraph">
+              <b-button
+                class="mr-3"
+                variant="outline-info"
+                size="sm"
+                @click="backDayGraph"
+                >‹</b-button
+              >
+              <b-button
+                variant="outline-info"
+                size="sm"
+                @click="forwardDayGraph"
+                :disabled="disabledDayButton"
+              >
+                ›
+              </b-button>
+            </b-tab>
+            <b-tab title="週" @click="showWeekGraph">
+              <b-button
+                class="mr-3"
+                variant="outline-info"
+                size="sm"
+                @click="backWeekGraph"
+                >‹</b-button
+              >
+              <b-button
+                variant="outline-info"
+                size="sm"
+                @click="forwardWeekGraph"
+                :disabled="disabledWeekButton"
+              >
+                ›
+              </b-button>
+            </b-tab>
+            <b-tab title="月" @click="showMonthGraph">
+              <b-button
+                class="mr-3"
+                variant="outline-info"
+                size="sm"
+                @click="backMonthGraph"
+                >‹</b-button
+              >
+              <b-button
+                variant="outline-info"
+                size="sm"
+                @click="forwardMonthGraph"
+                :disabled="disabledMonthButton"
+              >
+                ›
+              </b-button>
+            </b-tab>
           </b-tabs>
+
           <div class="spinner-wrap">
             <b-spinner
               class="loading"
@@ -35,7 +84,10 @@
 <script>
 import TheHomeHeader from "../components/TheHomeHeader";
 import StatisticsChart from "../components/StatisticsChart";
-import utilRepository from "../repositories/utilRepository";
+import statisticsRepository from "../repositories/statisticsRepository";
+import { mapState } from "vuex";
+import $_createToday from "../helpers/utile";
+import $_createSpecificDate from "../helpers/utile";
 
 export default {
   components: {
@@ -44,8 +96,8 @@ export default {
   },
   data() {
     return {
-      loading: true,
-      loaded: false,
+      loading: false,
+      loaded: true,
       chartData: {
         labels: [],
         datasets: [
@@ -81,36 +133,121 @@ export default {
     };
   },
 
+  computed: {
+    ...mapState(["loginUser"]),
+
+    disabledDayButton() {
+      const today = this.$_createToday();
+      const graphDate = this.$_createSpecificDate(this.chartData.labels[6]);
+      if (today.getTime() === graphDate.getTime()) {
+        return true;
+      }
+      return false;
+    },
+
+    disabledMonthButton() {
+      const now = new Date();
+      const thisMonth = new Date(now.getFullYear(), now.getMonth());
+
+      const graphNow = new Date(this.chartData.labels[6]);
+      const graphMonth = new Date(graphNow.getFullYear(), graphNow.getMonth());
+
+      if (thisMonth.getTime() === graphMonth.getTime()) {
+        return true;
+      }
+      return false;
+    },
+
+    disabledWeekButton() {
+      const now = new Date();
+      var day = now.getDay(),
+        diff = now.getDate() - day + (day == 0 ? -6 : 1);
+      const starOfWeek = this.$_createSpecificDate(now.setDate(diff));
+      const graphDate = this.$_createSpecificDate(this.chartData.labels[6]);
+
+      if (starOfWeek.getTime() === graphDate.getTime()) {
+        return true;
+      }
+      return false;
+    },
+  },
+
   created() {
     this.showDayGraph();
   },
 
   methods: {
+    ...$_createToday,
+    ...$_createSpecificDate,
+
+    //日グラフ
     async showDayGraph() {
-      this.resetData();
-      const sendDate = {
-        id: this.$store.state.loginUser.id,
-      };
-      const resData = await utilRepository.getDayGraph(sendDate);
-      const Data = resData.data.data;
-      this.insertData(Data);
-      this.changeLoad();
+      this.multipleMethods(0, 0, "getDayGraph");
     },
 
+    //日グラフ戻る
+    backDayGraph() {
+      this.multipleMethods(1, 0, "getBackDayGraph");
+    },
+
+    //日グラフ進む
+    async forwardDayGraph() {
+      this.multipleMethods(1, 6, "getForwardDayGraph");
+    },
+
+    //週グラフ
+    async showWeekGraph() {
+      this.multipleMethods(0, 0, "getWeekGraph");
+    },
+
+    //週グラフ戻る
+    async backWeekGraph() {
+      this.multipleMethods(1, 0, "getBackWeekGraph");
+    },
+
+    //週グラフ進む
+    async forwardWeekGraph() {
+      this.multipleMethods(1, 6, "getForwardWeekGraph");
+    },
+
+    //月グラフ
     async showMonthGraph() {
-      this.resetData();
-      const sendDate = {
-        id: this.$store.state.loginUser.id,
-      };
-      const resData = await utilRepository.getMonthGraph(sendDate);
+      this.multipleMethods(0, 0, "getMonthGraph");
+    },
+
+    //月グラフ戻る
+    async backMonthGraph() {
+      this.multipleMethods(1, 0, "getBackMonthGraph");
+    },
+
+    //月グラフ進
+    async forwardMonthGraph() {
+      this.multipleMethods(1, 6, "getForwardMonthGraph");
+    },
+
+    async multipleMethods(type, index, methodName) {
+      this.changeLoading();
+      var sendDate = "";
+      if (type === 0) {
+        sendDate = {
+          id: this.loginUser.id,
+        };
+      }
+      if (type === 1) {
+        sendDate = {
+          id: this.loginUser.id,
+          data: this.chartData.labels[index],
+        };
+      }
+      const resData = await statisticsRepository[methodName](sendDate);
       const Data = resData.data.data;
+
+      this.resetData();
       this.insertData(Data);
-      this.changeLoad();
+      this.changeLoading();
     },
 
     resetData() {
-      this.loading = true;
-      this.loaded = false;
       this.chartData.labels = [];
       this.chartData.datasets[0].data = [];
     },
@@ -122,9 +259,9 @@ export default {
       }
     },
 
-    changeLoad() {
-      this.loading = false;
-      this.loaded = true;
+    changeLoading() {
+      this.loading = !this.loading;
+      this.loaded = !this.loaded;
     },
   },
 };
