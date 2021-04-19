@@ -4,60 +4,93 @@
     <div class="wrapper">
       <div class="container row">
         <div class="overview col-6">
-          <p>概要</p>
+          <p class="overview-title">概要</p>
+          <div class="spinner-wrap">
+            <b-spinner
+              class="loading"
+              v-if="overviewLoading"
+              label="Loading..."
+              variant="info"
+            ></b-spinner>
+          </div>
+          <b-row v-if="overviewLoaded" class="count-wrap">
+            <b-col>
+              <p class="count">{{ dayCount }}</p>
+              <p class="count-text">今日の完了数</p>
+            </b-col>
+            <b-col>
+              <p class="count">{{ allCount }}</p>
+              <p class="count-text">全期間の完了数</p>
+            </b-col>
+            <div class="w-100 blank"></div>
+            <b-col>
+              <p class="count">{{ monthCount }}</p>
+              <p class="count-text">今月の完了数</p>
+            </b-col>
+            <b-col>
+              <p class="count">{{ dayAvg }}</p>
+              <p class="count-text">1日あたりの平均完了数</p>
+            </b-col>
+          </b-row>
         </div>
         <div class="graph col-6">
           <b-tabs content-class="mt-3">
+            <!-- 日グラフ -->
             <b-tab title="日" active @click="showDayGraph">
-              <b-button
-                class="mr-3"
-                variant="outline-info"
-                size="sm"
-                @click="backDayGraph"
-                >‹</b-button
-              >
-              <b-button
-                variant="outline-info"
-                size="sm"
-                @click="forwardDayGraph"
-                :disabled="disabledDayButton"
-              >
-                ›
-              </b-button>
+              <div v-if="loaded">
+                <b-button variant="outline-info" size="sm" @click="backDayGraph"
+                  >‹</b-button
+                >
+                <span class="term">{{ showDayTerm }}</span>
+                <b-button
+                  variant="outline-info"
+                  size="sm"
+                  @click="forwardDayGraph"
+                  :disabled="disabledDayButton"
+                >
+                  ›
+                </b-button>
+              </div>
             </b-tab>
+            <!-- 週グラフ -->
             <b-tab title="週" @click="showWeekGraph">
-              <b-button
-                class="mr-3"
-                variant="outline-info"
-                size="sm"
-                @click="backWeekGraph"
-                >‹</b-button
-              >
-              <b-button
-                variant="outline-info"
-                size="sm"
-                @click="forwardWeekGraph"
-                :disabled="disabledWeekButton"
-              >
-                ›
-              </b-button>
+              <div v-if="loaded">
+                <b-button
+                  variant="outline-info"
+                  size="sm"
+                  @click="backWeekGraph"
+                  >‹</b-button
+                >
+                <span class="term">{{ showWeekTerm }}</span>
+                <b-button
+                  variant="outline-info"
+                  size="sm"
+                  @click="forwardWeekGraph"
+                  :disabled="disabledWeekButton"
+                >
+                  ›
+                </b-button>
+              </div>
             </b-tab>
+            <!-- 月グラフ -->
             <b-tab title="月" @click="showMonthGraph">
-              <b-button
-                class="mr-3"
-                variant="outline-info"
-                size="sm"
-                @click="backMonthGraph"
-                >‹</b-button
-              >
-              <b-button
-                variant="outline-info"
-                size="sm"
-                @click="forwardMonthGraph"
-                :disabled="disabledMonthButton"
-              >
-                ›
-              </b-button>
+              <div v-if="loaded">
+                <b-button
+                  variant="outline-info"
+                  size="sm"
+                  @click="backMonthGraph"
+                  >‹</b-button
+                >
+                <span class="term">{{ showMonthTerm }}</span>
+                <b-button
+                  variant="outline-info"
+                  size="sm"
+                  @click="forwardMonthGraph"
+                  :disabled="disabledMonthButton"
+                >
+                  ›
+                </b-button>
+              </div>
             </b-tab>
           </b-tabs>
 
@@ -98,6 +131,12 @@ export default {
     return {
       loading: false,
       loaded: true,
+      overviewLoading: true,
+      overviewLoaded: false,
+      allCount: "",
+      dayCount: "",
+      monthCount: "",
+      dayAvg: "",
       chartData: {
         labels: [],
         datasets: [
@@ -145,7 +184,99 @@ export default {
       return false;
     },
 
+    disabledWeekButton() {
+      return this.checkWeekGraphEnd();
+    },
+
     disabledMonthButton() {
+      return this.checkMonthGraphEnd();
+    },
+
+    showDayTerm() {
+      const begin = this.createTermDate(0);
+      const end = this.createTermDate(6);
+      return `${begin} ~ ${end}`;
+    },
+
+    showWeekTerm() {
+      const begin = this.createTermDate(0);
+      var end = "";
+      if (this.checkWeekGraphEnd() === true) {
+        end = this.createTermToday();
+      }
+      if (this.checkWeekGraphEnd() === false) {
+        const graphEnd = new Date(this.chartData.labels[6]);
+        const weekEnd = new Date(
+          graphEnd.getFullYear(),
+          graphEnd.getMonth(),
+          graphEnd.getDate() + 6
+        );
+        console.log(weekEnd);
+        end = this.convertDateFormat(weekEnd, "YYYY年MM月DD日");
+      }
+      return `${begin} ~ ${end}`;
+    },
+
+    showMonthTerm() {
+      const begin = this.createTermDate(0);
+      var end = "";
+      if (this.checkMonthGraphEnd() === true) {
+        end = this.createTermToday();
+      }
+      if (this.checkMonthGraphEnd() === false) {
+        const graphNow = new Date(this.chartData.labels[6]);
+        const graphMonth = new Date(
+          graphNow.getFullYear(),
+          graphNow.getMonth() + 1,
+          graphNow.getDate() - 1
+        );
+        end = this.convertDateFormat(graphMonth, "YYYY年MM月DD日");
+      }
+      return `${begin} ~ ${end}`;
+    },
+  },
+
+  created() {
+    this.showDayGraph();
+    this.showCountData();
+  },
+
+  methods: {
+    ...$_createToday,
+    ...$_createSpecificDate,
+
+    async showCountData() {
+      // await this.wrapGetCountData();
+      this.getCountData("getDayCount", "dayCount");
+      this.getCountData("getAllCount", "allCount");
+      this.getCountData("getMonthCount", "monthCount");
+      await this.getCountData("getDayAvg", "dayAvg");
+      this.overviewLoading = false;
+      this.overviewLoaded = true;
+    },
+
+    async getCountData(methodName, dataName) {
+      const sendDate = {
+        id: this.loginUser.id,
+      };
+      const resData = await statisticsRepository[methodName](sendDate);
+      this[dataName] = resData.data.data;
+    },
+
+    checkWeekGraphEnd() {
+      const now = new Date();
+      var day = now.getDay(),
+        diff = now.getDate() - day + (day == 0 ? -6 : 1);
+      const startOfWeek = this.$_createSpecificDate(now.setDate(diff));
+      const graphDate = this.$_createSpecificDate(this.chartData.labels[6]);
+
+      if (startOfWeek.getTime() === graphDate.getTime()) {
+        return true;
+      }
+      return false;
+    },
+
+    checkMonthGraphEnd() {
       const now = new Date();
       const thisMonth = new Date(now.getFullYear(), now.getMonth());
 
@@ -158,27 +289,26 @@ export default {
       return false;
     },
 
-    disabledWeekButton() {
-      const now = new Date();
-      var day = now.getDay(),
-        diff = now.getDate() - day + (day == 0 ? -6 : 1);
-      const starOfWeek = this.$_createSpecificDate(now.setDate(diff));
-      const graphDate = this.$_createSpecificDate(this.chartData.labels[6]);
-
-      if (starOfWeek.getTime() === graphDate.getTime()) {
-        return true;
-      }
-      return false;
+    createTermDate(index) {
+      const date = this.convertDateFormat(
+        new Date(this.chartData.labels[index]),
+        "YYYY年MM月DD日"
+      );
+      return date;
     },
-  },
 
-  created() {
-    this.showDayGraph();
-  },
+    createTermToday() {
+      const date = this.convertDateFormat(new Date(), "YYYY年MM月DD日");
+      return date;
+    },
 
-  methods: {
-    ...$_createToday,
-    ...$_createSpecificDate,
+    convertDateFormat(date, format) {
+      format = format.replace(/YYYY/, date.getFullYear());
+      format = format.replace(/MM/, date.getMonth() + 1);
+      format = format.replace(/DD/, date.getDate());
+
+      return format;
+    },
 
     //日グラフ
     async showDayGraph() {
@@ -272,6 +402,29 @@ export default {
   height: 400px;
 }
 
+.overview-title {
+  font-size: 30px;
+  color: #666666;
+}
+
+.count-wrap {
+  margin: 60px 0 0 0px;
+  text-align: center;
+}
+
+.blank {
+  height: 20px;
+}
+
+.count {
+  font-size: 30px;
+  margin-bottom: 0;
+}
+
+.count-text {
+  color: #666666;
+}
+
 .graph {
   height: 400px;
   position: relative;
@@ -286,5 +439,10 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.term {
+  padding: 0 25px;
+  color: #666666;
 }
 </style>

@@ -37,4 +37,22 @@ export default {
   getForwardMonthGraph(payload) {
     return Repository.post(`${resource}/month/forward`, payload);
   },
+
+  getDayCount(payload) {
+    return Repository.post(`${resource}/count/day`, payload);
+  },
+
+  getAllCount(payload) {
+    return Repository.post(`${resource}/count/all`, payload);
+  },
+
+  getMonthCount(payload) {
+    return Repository.post(`${resource}/count/month`, payload);
+  },
+
+  getDayAvg(payload) {
+    return Repository.post(`${resource}/avarage/day`, payload);
+  }
+
+  
 };

@@ -41,12 +41,19 @@
               {{ convertDay(list.done_at) }}
             </td>
             <td>
-              <b-button variant="outline-info" size="sm" @click="returnTodo(list.id)"
+              <b-button
+                variant="outline-info"
+                size="sm"
+                @click="returnTodo(list.id)"
                 >戻す</b-button
               >
             </td>
             <td>
-              <b-button variant="outline-info" size="sm" @click="deleteTodo(list.id)">
+              <b-button
+                variant="outline-info"
+                size="sm"
+                @click="deleteTodo(list.id)"
+              >
                 <b-icon icon="trash"></b-icon>
                 削除</b-button
               >
@@ -101,16 +108,11 @@ export default {
     convertDay() {
       return function(done_at) {
         const day = new Date(done_at);
-        const doneDay =
-          day.getFullYear() +
-          "\t" +
-          "/" +
-          "\t" +
-          (day.getMonth() + 1) +
-          "\t" +
-          "/" +
-          "\t" +
-          day.getDate();
+        const doneDay = `${day.getFullYear()} 
+          /
+          ${day.getMonth() + 1} 
+          /
+          ${day.getDate()}`;
         return doneDay;
       };
     },
