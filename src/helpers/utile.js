@@ -5,14 +5,23 @@ export default {
     return today;
   },
 
-  $_createSpecificDate(date) {
-    const todo = new Date(date);
-    const todoDeadline = new Date(
-      todo.getFullYear(),
-      todo.getMonth(),
-      todo.getDate()
+  $_createSpecificDate(value) {
+    const date = new Date(value);
+    const specificDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
     );
-    return todoDeadline;
+    return specificDate;
+  },
+
+  $_createSpecificMonth(value) {
+    const date = new Date(value);
+    const specificMonth = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+    );
+    return specificMonth;
   },
 
   //比較用の明日の日付を作成
@@ -23,8 +32,8 @@ export default {
     return tomorrow;
   },
 
-  $_validateDeadline(date) {
-    const select = new Date(date);
+  $_validateDeadline(value) {
+    const select = new Date(value);
     const selectDay = new Date(
       select.getFullYear(),
       select.getMonth(),

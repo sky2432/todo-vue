@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import utilRepository from "../repositories/utilRepository";
+import usersRepository from "../repositories/usersRepository";
 import { mapState, mapMutations } from "vuex";
 
 export default {
@@ -86,7 +86,7 @@ export default {
         email: this.formEmail,
         password: this.formPassword,
       };
-      utilRepository
+      usersRepository
         .registerConfirm(sendData)
         .then((response) => this.$router.push("/registerConfirm"))
         .catch((e) => {

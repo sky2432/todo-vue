@@ -13,32 +13,37 @@
               variant="info"
             ></b-spinner>
           </div>
-          <b-row v-if="overviewLoaded" class="count-wrap">
-            <b-col>
-              <p class="count">{{ dayCount }}</p>
+          <div v-if="overviewLoaded" class="row count-wrap">
+            <div class="col">
+              <p class="count">{{ countData[0] }}</p>
               <p class="count-text">今日の完了数</p>
-            </b-col>
-            <b-col>
-              <p class="count">{{ allCount }}</p>
+            </div>
+            <div class="col">
+              <p class="count">{{ countData[1] }}</p>
               <p class="count-text">全期間の完了数</p>
-            </b-col>
+            </div>
             <div class="w-100 blank"></div>
-            <b-col>
-              <p class="count">{{ monthCount }}</p>
+            <div class="col">
+              <p class="count">{{ countData[2] }}</p>
               <p class="count-text">今月の完了数</p>
-            </b-col>
-            <b-col>
-              <p class="count">{{ dayAvg }}</p>
+            </div>
+            <div class="col">
+              <p class="count">{{ countData[3] }}</p>
               <p class="count-text">1日あたりの平均完了数</p>
-            </b-col>
-          </b-row>
+            </div>
+          </div>
         </div>
+
         <div class="graph col-6">
-          <b-tabs content-class="mt-3">
+          <b-tabs content-class="mt-3" align="center" fill>
             <!-- 日グラフ -->
-            <b-tab title="日" active @click="showDayGraph">
+            <b-tab title="日" active @click="showDayGraph" class="tab">
               <div v-if="loaded">
-                <b-button variant="outline-info" size="sm" @click="backDayGraph"
+                <b-button
+                  variant="outline-info"
+                  size="sm"
+                  @click="backDayGraph"
+                  :disabled="disableDayBackButton"
                   >‹</b-button
                 >
                 <span class="term">{{ showDayTerm }}</span>
@@ -46,19 +51,20 @@
                   variant="outline-info"
                   size="sm"
                   @click="forwardDayGraph"
-                  :disabled="disabledDayButton"
+                  :disabled="disableDayForwardButton"
                 >
                   ›
                 </b-button>
               </div>
             </b-tab>
             <!-- 週グラフ -->
-            <b-tab title="週" @click="showWeekGraph">
+            <b-tab title="週" @click="showWeekGraph" class="tab">
               <div v-if="loaded">
                 <b-button
                   variant="outline-info"
                   size="sm"
                   @click="backWeekGraph"
+                  :disabled="disableWeekBackButton"
                   >‹</b-button
                 >
                 <span class="term">{{ showWeekTerm }}</span>
@@ -66,19 +72,20 @@
                   variant="outline-info"
                   size="sm"
                   @click="forwardWeekGraph"
-                  :disabled="disabledWeekButton"
+                  :disabled="disableWeekForwardButton"
                 >
                   ›
                 </b-button>
               </div>
             </b-tab>
             <!-- 月グラフ -->
-            <b-tab title="月" @click="showMonthGraph">
+            <b-tab title="月" @click="showMonthGraph" class="tab">
               <div v-if="loaded">
                 <b-button
                   variant="outline-info"
                   size="sm"
                   @click="backMonthGraph"
+                  :disabled="disableMonthBackButton"
                   >‹</b-button
                 >
                 <span class="term">{{ showMonthTerm }}</span>
@@ -86,7 +93,7 @@
                   variant="outline-info"
                   size="sm"
                   @click="forwardMonthGraph"
-                  :disabled="disabledMonthButton"
+                  :disabled="disableMonthForwardButton"
                 >
                   ›
                 </b-button>
@@ -102,12 +109,14 @@
               variant="info"
             ></b-spinner>
           </div>
-          <StatisticsChart
-            class="chart"
-            v-if="loaded"
-            :chartData="chartData"
-            :options="chartOptions"
-          ></StatisticsChart>
+          <div class="graph-wrap">
+            <StatisticsChart
+              class="chart"
+              v-if="loaded"
+              :chartData="chartData"
+              :options="chartOptions"
+            ></StatisticsChart>
+          </div>
         </div>
       </div>
     </div>
@@ -121,6 +130,7 @@ import statisticsRepository from "../repositories/statisticsRepository";
 import { mapState } from "vuex";
 import $_createToday from "../helpers/utile";
 import $_createSpecificDate from "../helpers/utile";
+import $_createSpecificMonth from "../helpers/utile";
 
 export default {
   components: {
@@ -133,15 +143,12 @@ export default {
       loaded: true,
       overviewLoading: true,
       overviewLoaded: false,
-      allCount: "",
-      dayCount: "",
-      monthCount: "",
-      dayAvg: "",
+      countData: [],
+      userbeginDate: "",
       chartData: {
         labels: [],
         datasets: [
           {
-            label: "Todo完了数",
             data: [],
             backgroundColor: "rgba(153, 102, 255, 0.2)",
             borderColor: "rgba(153, 102, 255, 1)",
@@ -150,12 +157,31 @@ export default {
         ],
       },
       chartOptions: {
+        legend: {
+          display: false,
+        },
+        title: {
+          display: true,
+          text: "Todo完了数",
+        },
         scales: {
           xAxes: [
             {
-              scaleLabel: {
-                display: true,
-                labelString: "",
+              ticks: {
+                callback: function(value) {
+                  var format = "";
+                  if (value.length === 10) {
+                    format = "MM月DD日";
+                  }
+                  if (value.length === 7) {
+                    format = "MM月";
+                  }
+                  const date = new Date(value);
+                  format = format.replace(/MM/, date.getMonth() + 1);
+                  format = format.replace(/DD/, date.getDate());
+
+                  return format;
+                },
               },
             },
           ],
@@ -175,7 +201,25 @@ export default {
   computed: {
     ...mapState(["loginUser"]),
 
-    disabledDayButton() {
+    disableDayBackButton() {
+      const begin = this.$_createSpecificDate(this.loginUser.created_at);
+
+      return this.checkGraphBegin(begin, "$_createSpecificDate");
+    },
+
+    disableWeekBackButton() {
+      const begin = this.createStartOfWeek(1, this.loginUser.created_at);
+
+      return this.checkGraphBegin(begin, "$_createSpecificDate");
+    },
+
+    disableMonthBackButton() {
+      const begin = this.$_createSpecificMonth(this.loginUser.created_at);
+
+      return this.checkGraphBegin(begin, "$_createSpecificMonth");
+    },
+
+    disableDayForwardButton() {
       const today = this.$_createToday();
       const graphDate = this.$_createSpecificDate(this.chartData.labels[6]);
       if (today.getTime() === graphDate.getTime()) {
@@ -184,11 +228,11 @@ export default {
       return false;
     },
 
-    disabledWeekButton() {
+    disableWeekForwardButton() {
       return this.checkWeekGraphEnd();
     },
 
-    disabledMonthButton() {
+    disableMonthForwardButton() {
       return this.checkMonthGraphEnd();
     },
 
@@ -211,7 +255,6 @@ export default {
           graphEnd.getMonth(),
           graphEnd.getDate() + 6
         );
-        console.log(weekEnd);
         end = this.convertDateFormat(weekEnd, "YYYY年MM月DD日");
       }
       return `${begin} ~ ${end}`;
@@ -238,36 +281,37 @@ export default {
 
   created() {
     this.showDayGraph();
-    this.showCountData();
+    this.getCountData();
   },
 
   methods: {
     ...$_createToday,
     ...$_createSpecificDate,
+    ...$_createSpecificMonth,
 
-    async showCountData() {
-      // await this.wrapGetCountData();
-      this.getCountData("getDayCount", "dayCount");
-      this.getCountData("getAllCount", "allCount");
-      this.getCountData("getMonthCount", "monthCount");
-      await this.getCountData("getDayAvg", "dayAvg");
+    checkGraphBegin(begin, methodName) {
+      for (let i = 0; i < this.chartData.labels.length; i++) {
+        const graphDate = this[methodName](this.chartData.labels[i]);
+
+        if (begin.getTime() === graphDate.getTime()) {
+          return true;
+        }
+      }
+      return false;
+    },
+
+    async getCountData() {
+      const sendDate = {
+        id: this.loginUser.id,
+      };
+      const resData = await statisticsRepository.getAllCountData(sendDate);
+      this.countData = resData.data.data;
       this.overviewLoading = false;
       this.overviewLoaded = true;
     },
 
-    async getCountData(methodName, dataName) {
-      const sendDate = {
-        id: this.loginUser.id,
-      };
-      const resData = await statisticsRepository[methodName](sendDate);
-      this[dataName] = resData.data.data;
-    },
-
     checkWeekGraphEnd() {
-      const now = new Date();
-      var day = now.getDay(),
-        diff = now.getDate() - day + (day == 0 ? -6 : 1);
-      const startOfWeek = this.$_createSpecificDate(now.setDate(diff));
+      const startOfWeek = this.createStartOfWeek(0);
       const graphDate = this.$_createSpecificDate(this.chartData.labels[6]);
 
       if (startOfWeek.getTime() === graphDate.getTime()) {
@@ -276,12 +320,25 @@ export default {
       return false;
     },
 
+    createStartOfWeek(type, value) {
+      let date = "";
+      if (type === 0) {
+        date = new Date();
+      }
+      if (type === 1) {
+        date = new Date(value);
+      }
+      const day = date.getDay(),
+        diff = date.getDate() - day + (day == 0 ? -6 : 1);
+      const startOfWeek = this.$_createSpecificDate(date.setDate(diff));
+      return startOfWeek;
+    },
+
     checkMonthGraphEnd() {
       const now = new Date();
       const thisMonth = new Date(now.getFullYear(), now.getMonth());
 
-      const graphNow = new Date(this.chartData.labels[6]);
-      const graphMonth = new Date(graphNow.getFullYear(), graphNow.getMonth());
+      const graphMonth = this.$_createSpecificMonth(this.chartData.labels[6]);
 
       if (thisMonth.getTime() === graphMonth.getTime()) {
         return true;
@@ -312,50 +369,50 @@ export default {
 
     //日グラフ
     async showDayGraph() {
-      this.multipleMethods(0, 0, "getDayGraph");
+      this.getGraphData(0, 0, "getDayGraph");
     },
 
     //日グラフ戻る
     backDayGraph() {
-      this.multipleMethods(1, 0, "getBackDayGraph");
+      this.getGraphData(1, 0, "getBackDayGraph");
     },
 
     //日グラフ進む
     async forwardDayGraph() {
-      this.multipleMethods(1, 6, "getForwardDayGraph");
+      this.getGraphData(1, 6, "getForwardDayGraph");
     },
 
     //週グラフ
     async showWeekGraph() {
-      this.multipleMethods(0, 0, "getWeekGraph");
+      this.getGraphData(0, 0, "getWeekGraph");
     },
 
     //週グラフ戻る
     async backWeekGraph() {
-      this.multipleMethods(1, 0, "getBackWeekGraph");
+      this.getGraphData(1, 0, "getBackWeekGraph");
     },
 
     //週グラフ進む
     async forwardWeekGraph() {
-      this.multipleMethods(1, 6, "getForwardWeekGraph");
+      this.getGraphData(1, 6, "getForwardWeekGraph");
     },
 
     //月グラフ
     async showMonthGraph() {
-      this.multipleMethods(0, 0, "getMonthGraph");
+      this.getGraphData(0, 0, "getMonthGraph");
     },
 
     //月グラフ戻る
     async backMonthGraph() {
-      this.multipleMethods(1, 0, "getBackMonthGraph");
+      this.getGraphData(1, 0, "getBackMonthGraph");
     },
 
     //月グラフ進
     async forwardMonthGraph() {
-      this.multipleMethods(1, 6, "getForwardMonthGraph");
+      this.getGraphData(1, 6, "getForwardMonthGraph");
     },
 
-    async multipleMethods(type, index, methodName) {
+    async getGraphData(type, index, methodName) {
       this.changeLoading();
       var sendDate = "";
       if (type === 0) {
@@ -398,8 +455,8 @@ export default {
 </script>
 
 <style scoped>
-.overview {
-  height: 400px;
+.container {
+  height: 440px;
 }
 
 .overview-title {
@@ -425,8 +482,16 @@ export default {
   color: #666666;
 }
 
+.tab {
+  text-align: center;
+}
+
+.graph-wrap {
+  display: flex;
+  justify-content: center;
+}
+
 .graph {
-  height: 400px;
   position: relative;
 }
 

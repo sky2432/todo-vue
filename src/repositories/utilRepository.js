@@ -1,10 +1,6 @@
 import Repository from "./Repository";
 
 export default {
-  registerConfirm(payload) {
-    return Repository.post("/userRegister/confirm", payload);
-  },
-
   loginConfirm(payload) {
     return Repository.post("/login/confirm", payload);
   },
@@ -25,7 +21,7 @@ export default {
     return Repository.post("/sendMail/register", payload);
   },
 
-  sendPasswordResetMail(payload) {
-    return Repository.post("/forgot-password", payload);
-  },
+  // sendPasswordResetMail(payload) {
+  //   return Repository.post("/forgot-password", payload);
+  // },
 };

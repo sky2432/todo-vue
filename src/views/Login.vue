@@ -72,6 +72,8 @@ export default {
         .loginConfirm(sendData)
         .then(this.$store.dispatch("login", sendData))
         .catch((e) => {
+          this.errorsEmail = "";
+          this.errorsPassword = "";
           this.errorsEmail = e.response.data.errors.email;
           this.errorsPassword = e.response.data.errors.password;
         });

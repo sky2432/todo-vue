@@ -39,12 +39,13 @@ export default {
 
               // Just naively convert to string for now
               var dataString = dataset.data[index].toString();
+              if (dataString === "0") return;
 
               // Make sure alignment settings are correct
               ctx.textAlign = "center";
               ctx.textBaseline = "middle";
 
-              var padding = 0;
+              var padding = -15;
               var position = element.tooltipPosition();
               ctx.fillText(
                 dataString,
