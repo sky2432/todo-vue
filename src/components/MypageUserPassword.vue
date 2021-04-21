@@ -1,19 +1,23 @@
 <template>
   <div id="app">
     <div class="mypage-content">
-      <div>
-        <b-form @submit.prevent="updatePassword" novalidate>
+      <div class="form-wrap">
+        <b-form class="form" @submit.prevent="updatePassword" novalidate>
           <b-form-group
             label="現在のパスワード"
             label-for="currentPassword"
-            class="label"
+            class="label password-form"
           >
             <b-form-input
               id="currentPassword"
-              type="password"
               v-model="currentPassword"
-              required
+              :type="currentPasswordInputType"
             ></b-form-input>
+            <b-icon
+              :icon="currentPasswordIconType"
+              class="eye-icon"
+              @click="changeEyeChecked('current')"
+            ></b-icon>
             <div class="error" v-if="this.errorsCurrentPassword">
               <p
                 v-for="(error, index) in this.errorsCurrentPassword"
@@ -23,43 +27,29 @@
               </p>
             </div>
           </b-form-group>
+
           <b-form-group
             label="新しいパスワード"
             label-for="newPassword"
-            class="label"
+            class="label password-form"
           >
             <b-form-input
               id="newPassword"
-              type="password"
+              :type="newPasswordInputType"
               v-model="newPassword"
-              required
             ></b-form-input>
+            <b-icon
+              :icon="newPasswordIconType"
+              class="eye-icon"
+              @click="changeEyeChecked('new')"
+            ></b-icon>
             <div class="error" v-if="this.errorsNewPassword">
               <p v-for="(error, index) in this.errorsNewPassword" :key="index">
                 {{ error }}
               </p>
             </div>
           </b-form-group>
-          <b-form-group
-            label="新しいパスワードの確認"
-            label-for="newPasswordConfirm"
-            class="label"
-          >
-            <b-form-input
-              id="newPasswordConfirm"
-              type="password"
-              v-model="newPasswordConfirm"
-              required
-            ></b-form-input>
-            <div class="error" v-if="this.errorsNewPasswordConfirm">
-              <p
-                v-for="(error, index) in this.errorsNewPasswordConfirm"
-                :key="index"
-              >
-                {{ error }}
-              </p>
-            </div>
-          </b-form-group>
+
           <div class="btn-wrap">
             <b-button variant="outline-info" type="submit">変更</b-button>
           </div>
@@ -78,24 +68,39 @@ export default {
     return {
       currentPassword: "",
       newPassword: "",
-      newPasswordConfirm: "",
+      currentPasswordEyeChecked: false,
+      newPasswordEyeChecked: false,
       errorsCurrentPassword: [],
       errorsNewPassword: [],
-      errorsNewPasswordConfirm: [],
     };
   },
 
   computed: {
     ...mapState(["loginUser"]),
+
+    currentPasswordInputType() {
+      return this.currentPasswordEyeChecked ? "text" : "password";
+    },
+
+    currentPasswordIconType() {
+      return this.currentPasswordEyeChecked ? "eye-slash" : "eye";
+    },
+
+    newPasswordInputType() {
+      return this.newPasswordEyeChecked ? "text" : "password";
+    },
+
+    newPasswordIconType() {
+      return this.newPasswordEyeChecked ? "eye-slash" : "eye";
+    },
   },
 
   methods: {
     updatePassword() {
       const sendData = {
         id: this.loginUser.id,
-        current_password: this.currentPassword,
-        new_password: this.newPassword,
-        new_password_confirmation: this.newPasswordConfirm,
+        currentPassword: this.currentPassword,
+        newPassword: this.newPassword,
       };
       usersRepository
         .updatePassword(sendData)
@@ -104,20 +109,16 @@ export default {
           this.showMsgBox();
         })
         .catch((e) => {
-          this.errorsCurrentPassword = e.response.data.errors.current_password;
-          this.errorsNewPassword = e.response.data.errors.new_password;
-          this.errorsNewPasswordConfirm =
-            e.response.data.errors.new_password_confirmation;
+          this.errorsCurrentPassword = e.response.data.errors.currentPassword;
+          this.errorsNewPassword = e.response.data.errors.newPassword;
         });
     },
 
     resetData() {
-      this.errorsCurrentPassword = "";
-      this.errorsNewPassword = "";
-      this.errorsNewPasswordConfirm = "";
       this.currentPassword = "";
       this.newPassword = "";
-      this.newPasswordConfirm = "";
+      this.errorsCurrentPassword = "";
+      this.errorsNewPassword = "";
     },
 
     showMsgBox() {
@@ -136,11 +137,24 @@ export default {
           this.boxTwo = value;
         });
     },
+
+    changeEyeChecked(type) {
+      if (type === "current") {
+        this.currentPasswordEyeChecked = !this.currentPasswordEyeChecked;
+      }
+      if (type === "new") {
+        this.newPasswordEyeChecked = !this.newPasswordEyeChecked;
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
+.form-wrap {
+  width: 50%;
+}
+
 .label {
   text-align: left;
 }

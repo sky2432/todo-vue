@@ -16,7 +16,7 @@
               required
             ></b-form-input>
             <div class="error" v-if="this.errorsName">
-              <p v-for="(error, index) in this.errorsName" :key="index">
+              <p class="error-message" v-for="(error, index) in this.errorsName" :key="index">
                 {{ error }}
               </p>
             </div>
@@ -30,20 +30,31 @@
               required
             ></b-form-input>
             <div class="error" v-if="this.errorsEmail">
-              <p v-for="(error, index) in this.errorsEmail" :key="index">
+              <p class="error-message" v-for="(error, index) in this.errorsEmail" :key="index">
                 {{ error }}
               </p>
             </div>
           </b-form-group>
-          <b-form-group label="パスワード" label-for="password">
+          <b-form-group
+            label="パスワード"
+            label-for="password"
+            class="password-form"
+          >
             <b-form-input
               id="password"
               :value="formPassword"
               @input="storeFormPassword"
-              required
-            ></b-form-input>
+              :type="inputType"
+            >
+            </b-form-input>
+            <b-icon
+              :icon="iconType"
+              class="eye-icon"
+              @click="changeEyeChecked"
+            ></b-icon>
+
             <div class="error" v-if="this.errorsPassword">
-              <p v-for="(error, index) in this.errorsPassword" :key="index">
+              <p class="error-message" v-for="(error, index) in this.errorsPassword" :key="index">
                 {{ error }}
               </p>
             </div>
@@ -67,6 +78,7 @@ export default {
       name: "",
       email: "",
       password: "",
+      eyeChecked: false,
       errorsName: [],
       errorsEmail: [],
       errorsPassword: [],
@@ -75,6 +87,14 @@ export default {
 
   computed: {
     ...mapState(["formName", "formEmail", "formPassword"]),
+
+    inputType() {
+      return this.eyeChecked ? "text" : "password";
+    },
+
+    iconType() {
+      return this.eyeChecked ? "eye-slash" : "eye";
+    },
   },
 
   methods: {
@@ -90,11 +110,14 @@ export default {
         .registerConfirm(sendData)
         .then((response) => this.$router.push("/registerConfirm"))
         .catch((e) => {
-          console.log(e);
           this.errorsName = e.response.data.errors.name;
           this.errorsEmail = e.response.data.errors.email;
           this.errorsPassword = e.response.data.errors.password;
+          console.log(this.errorsName);
         });
+    },
+    changeEyeChecked() {
+      this.eyeChecked = !this.eyeChecked;
     },
   },
 

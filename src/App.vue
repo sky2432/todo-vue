@@ -187,6 +187,10 @@ select {
   color: red;
 }
 
+.error-message {
+  margin-bottom: 0px;
+}
+
 #full-page {
   height: 100vh;
   width: 100vw;
@@ -227,5 +231,16 @@ select {
   text-align: center;
   padding: 20px;
   height: 100%;
+}
+
+.password-form {
+  position: relative;
+}
+
+.eye-icon {
+  cursor: pointer;
+  position: absolute;
+  top: 42px;
+  right: 10px;
 }
 </style>

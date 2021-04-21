@@ -22,13 +22,16 @@
               </p>
             </div>
           </b-form-group>
-          <b-form-group label="パスワード" label-for="password">
+          <b-form-group
+            label="パスワード"
+            label-for="password"
+          >
             <b-form-input
               id="password"
-              type="password"
               v-model="password"
-              required
+              type="password"
             ></b-form-input>
+
             <div class="error" v-if="this.errorsPassword">
               <p v-for="(error, index) in this.errorsPassword" :key="index">
                 {{ error }}
@@ -72,12 +75,11 @@ export default {
         .loginConfirm(sendData)
         .then(this.$store.dispatch("login", sendData))
         .catch((e) => {
-          this.errorsEmail = "";
-          this.errorsPassword = "";
           this.errorsEmail = e.response.data.errors.email;
           this.errorsPassword = e.response.data.errors.password;
         });
     },
+
   },
 };
 </script>

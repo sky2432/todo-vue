@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="mypage-content">
-      <div>
+      <div class="form-wrap">
         <b-form @submit.prevent="updateUser" novalidate>
           <b-form-group label="名前" label-for="name" class="label">
             <b-form-input id="name" v-model="userName" required></b-form-input>
@@ -104,6 +104,10 @@ export default {
 </script>
 
 <style scoped>
+.form-wrap {
+  width: 50%;
+}
+
 .label {
   text-align: left;
 }
