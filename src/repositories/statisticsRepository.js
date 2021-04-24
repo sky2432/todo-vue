@@ -41,4 +41,12 @@ export default {
   getAllCountData(payload) {
     return Repository.post(`${resource}/count`, payload);
   },
+
+  getDoneDate(payload) {
+    return Repository.post(`${resource}/doneDate`, payload);
+  },
+
+  getContinuousData(payload) {
+    return Repository.post(`${resource}/continuous`, payload);
+  },
 };

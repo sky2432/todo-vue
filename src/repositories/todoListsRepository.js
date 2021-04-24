@@ -25,5 +25,9 @@ export default {
   getUserTodo(userId) {
     return Repository.get(`${resource}/user/${userId}`);
   },
+
+  getTodoForCalender(userId) {
+    return Repository.get(`${resource}/calender/${userId}`);
+  },
   
 };

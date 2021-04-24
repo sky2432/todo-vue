@@ -17,10 +17,7 @@ export default {
 
   $_createSpecificMonth(value) {
     const date = new Date(value);
-    const specificMonth = new Date(
-      date.getFullYear(),
-      date.getMonth(),
-    );
+    const specificMonth = new Date(date.getFullYear(), date.getMonth());
     return specificMonth;
   },
 
@@ -47,5 +44,13 @@ export default {
     } else {
       this.showPopover = false;
     }
+  },
+
+  //0埋めY-m-dフォーマットの作成
+  $_convertDateToString(date) {
+    const day = `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(
+      -2
+    )}-${("0" + date.getDate()).slice(-2)}`;
+    return day;
   },
 };

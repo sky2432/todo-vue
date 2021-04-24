@@ -2,7 +2,7 @@
   <div id="app">
     <div class="tab-page row">
       <div class="overview col-6">
-        <p class="overview-title">概要</p>
+        <!-- <p class="overview-title">概要</p> -->
         <div class="spinner-wrap">
           <b-spinner
             class="loading"
@@ -458,13 +458,14 @@ export default {
   box-shadow: 0 2.5rem 2rem -2rem hsl(200 50% 20% / 40%);
 }
 
-.overview-title {
-  font-size: 30px;
-  color: #666666;
+.overview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
 .count-wrap {
-  margin: 60px 0 0 0px;
   text-align: center;
 }
 

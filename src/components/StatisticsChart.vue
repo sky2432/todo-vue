@@ -17,7 +17,7 @@ export default {
   },
   mounted() {
     this.addPlugin({
-      afterDatasetsDraw: function(chart, easing) {
+      afterDatasetsDraw: function(chart) {
         // To only draw at the end of animation, check for easing === 1
         var ctx = chart.ctx;
 

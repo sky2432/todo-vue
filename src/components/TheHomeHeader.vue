@@ -25,6 +25,10 @@
           <b-icon icon="check2-square"></b-icon>
           完了<span class="vertical-bar">|</span>
         </b-nav-item>
+        <b-nav-item @click="$router.push('/calender')">
+          <b-icon icon="calendar2"></b-icon>
+          カレンダー<span class="vertical-bar">|</span>
+        </b-nav-item>
         <b-nav-item @click="$router.push('/')">
           トップページ
         </b-nav-item>

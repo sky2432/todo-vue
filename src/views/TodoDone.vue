@@ -14,7 +14,6 @@
             <th>Todo</th>
             <th>完了日</th>
             <th></th>
-            <th></th>
           </tr>
           <tr
             class="list"
@@ -40,15 +39,15 @@
             <td class="done-todo">
               {{ convertDay(list.done_at) }}
             </td>
-            <td>
+
+            <td class="btn-wrap">
               <b-button
+                class="mr-5"
                 variant="outline-info"
                 size="sm"
                 @click="returnTodo(list.id)"
                 >戻す</b-button
               >
-            </td>
-            <td>
               <b-button
                 variant="outline-info"
                 size="sm"
@@ -176,9 +175,11 @@ export default {
 .done-todo {
   color: grey;
 }
+
 .btn-wrap {
-  text-align: center;
+  text-align: right;
 }
+
 .line {
   border-color: #16a2b8;
 }

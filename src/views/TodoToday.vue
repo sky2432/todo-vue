@@ -24,7 +24,6 @@
             id="my-table"
           >
             <td
-              :style="{ color: checkDeadline(list.deadline) }"
               :id="`popover-target-${list.id}`"
             >
               <b-form-checkbox @change="checkTodo(list.id)">
@@ -56,7 +55,7 @@
                 :id="`remind-target-${list.id}`"
                 v-if="list.remind_day !== null"
               >
-                <b-icon icon="clock"></b-icon>
+                <b-icon icon="alarm"></b-icon>
               </b-button>
 
               <!-- リマインドポップオーバー -->
@@ -155,23 +154,6 @@ export default {
   },
   computed: {
     ...mapState(["loginUser"]),
-
-    //期限が過ぎたTodoは赤色で表示
-    checkDeadline() {
-      return function(deadline) {
-        if (deadline === null) {
-          return this.blackColor;
-        }
-        const todoDeadline = this.$_createSpecificDate(deadline);
-        const today = this.$_createToday();
-        if (today <= todoDeadline) {
-          return this.blackColor;
-        }
-        if (today > todoDeadline) {
-          return this.redColor;
-        }
-      };
-    },
 
     checkLength() {
       return function(todo_list) {
@@ -274,12 +256,12 @@ export default {
 
     // 編集ボタン
     showUpdateModal(id) {
-      this.$refs.editModal.showUpdateModal(id);
+      this.$refs.editModal.getTodoData(id);
     },
 
     //Todoの完了
     async checkTodo(id) {
-      await todoListsRepository.deleteTodo(id);
+      await todoListsRepository.checkTodo(id);
       this.showTodo();
     },
   },
@@ -294,9 +276,11 @@ export default {
 .btn-wrap {
   text-align: center;
 }
+
 .edit-btn-wrap {
   text-align: right;
 }
+
 .line {
   border-color: #16a2b8;
 }

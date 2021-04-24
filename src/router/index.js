@@ -13,6 +13,7 @@ import MyPage from "../views/MyPage.vue";
 import AdminHome from "../views/AdminHome.vue";
 import AdminUsers from "../views/AdminUsers.vue";
 import Statistics from "../views/Statistics.vue";
+import Calender from "../views/Calender.vue";
 import store from "../store/store";
 
 Vue.use(VueRouter);
@@ -77,6 +78,14 @@ const routes = [
     path: "/todoDone",
     name: "TodoDone",
     component: TodoDone,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/calender",
+    name: "Calender",
+    component: Calender,
     meta: {
       requiresAuth: true,
     },
