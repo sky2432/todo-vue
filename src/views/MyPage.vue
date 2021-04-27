@@ -36,6 +36,7 @@ import MypageProfile from "../components/MypageProfile";
 import MypageUserUpdate from "../components/MypageUserUpdate";
 import MypageUserPassword from "../components/MypageUserPassword";
 import MypageUserDelete from "../components/MypageUserDelete";
+
 export default {
   components: {
     TheHomeHeader,

@@ -8,6 +8,7 @@
         class="loading"
         variant="info"
       ></b-spinner>
+      
       <div class="container" v-if="showTable">
         <p class="display-today">
           {{ showToday }}
@@ -15,7 +16,7 @@
 
         <ul>
           <li
-            v-for="list in itemsForList"
+            v-for="list in ListsForPaginate"
             :key="list.id"
             id="my-table"
             class="todo-line"
@@ -74,21 +75,10 @@
           </li>
         </ul>
 
-        <b-pagination
-          v-model="currentPage"
-          :total-rows="rows"
-          :per-page="perPage"
-          aria-controls="my-table"
-          align="center"
-          class="mt-3"
-          size="sm"
-          pills
-        >
-          <template #first-text><span class="text-info">«</span></template>
-          <template #prev-text><span class="text-info">‹</span></template>
-          <template #next-text><span class="text-info">›</span></template>
-          <template #last-text><span class="text-info">»</span></template>
-        </b-pagination>
+        <BasePagination
+          :lists="todoLists"
+          @paginate="ListsForPaginate = $event"
+        ></BasePagination>
 
         <hr class="line" />
 
@@ -119,29 +109,30 @@
 import TheHomeHeader from "../components/TheHomeHeader";
 import HomeAddModal from "../components/HomeAddModal";
 import HomeEditModal from "../components/HomeEditModal";
+import BasePagination from "../components/BasePagination";
 import todoListsRepository from "../repositories/todoListsRepository.js";
 import { mapState } from "vuex";
-import $_createToday from "../helpers/utile";
-import $_createSpecificDate from "../helpers/utile";
-import $_isLongLength from "../helpers/utile";
-import $_cutLength from "../helpers/utile";
+import windowWidthMixin from "../mixins/windowWidthMixin";
 
 export default {
   components: {
     TheHomeHeader,
     HomeAddModal,
     HomeEditModal,
+    BasePagination,
   },
+
+  mixins: [windowWidthMixin],
+
   data() {
     return {
       todoLists: [],
+      ListsForPaginate: [],
       loading: true,
       showTable: false,
-      perPage: 5,
-      currentPage: 1,
-      width: window.innerWidth,
     };
   },
+
   computed: {
     ...mapState(["loginUser"]),
 
@@ -152,13 +143,13 @@ export default {
 
     checkLength() {
       return function(todo_list) {
-        return this.$_isLongLength(todo_list, this.width);
+        return this.$helpers.$_isLongLength(todo_list, this.width);
       };
     },
 
     cutLength() {
       return function(todo_list) {
-        return this.$_cutLength(todo_list, this.width);
+        return this.$helpers.$_cutLength(todo_list, this.width);
       };
     },
 
@@ -166,8 +157,8 @@ export default {
     convertDeadline() {
       return function(deadline) {
         if (deadline !== null) {
-          const today = this.$_createToday();
-          const todoDay = this.$_createSpecificDate(deadline);
+          const today = this.$helpers.$_createToday();
+          const todoDay = this.$helpers.$_createSpecificDate(deadline);
           if (today.getTime() === todoDay.getTime()) {
             return "今日";
           }
@@ -177,40 +168,14 @@ export default {
 
     convertRemindDay() {
       return function(remind_day) {
-        if (remind_day !== null) {
-          if (remind_day === 0) {
-            return "当日\t";
-          }
-          if (remind_day === 1) {
-            return "1日前\t";
-          }
-          if (remind_day === 2) {
-            return "2日前\t";
-          }
-        }
+        return this.$helpers.$_convertRemindDay(remind_day);
       };
     },
 
     convertRemindTime() {
       return function(remind_time) {
-        if (remind_time !== null) {
-          if (remind_time.slice(0, 1) === "0") {
-            return remind_time.slice(1, 5);
-          }
-          return remind_time.slice(0, 5);
-        }
+        return this.$helpers.$_convertRemindTime(remind_time)
       };
-    },
-
-    rows() {
-      return this.todoLists.length;
-    },
-
-    itemsForList() {
-      return this.todoLists.slice(
-        (this.currentPage - 1) * this.perPage,
-        this.currentPage * this.perPage
-      );
     },
   },
 
@@ -218,20 +183,7 @@ export default {
     this.showTodo();
   },
 
-  mounted() {
-    window.addEventListener("resize", this.handleResize);
-  },
-
-  beforeDestroy() {
-    window.removeEventListener("resize", this.handleResize);
-  },
-
   methods: {
-    ...$_createToday,
-    ...$_createSpecificDate,
-    ...$_isLongLength,
-    ...$_cutLength,
-
     //Todoリストの表示
     async showTodo() {
       const resData = await todoListsRepository.getTodayTodo(this.loginUser.id);
@@ -254,10 +206,6 @@ export default {
     async checkTodo(id) {
       await todoListsRepository.checkTodo(id);
       this.showTodo();
-    },
-
-    handleResize() {
-      this.width = window.innerWidth;
     },
   },
 };

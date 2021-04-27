@@ -23,7 +23,7 @@ const loginedUser = function(to, from, next) {
     next("/home");
   }
   if (store.state.auth && store.state.loginUser.role === "admin") {
-    next("/adminHome");
+    next("/admin/home");
   }
   next();
 };
@@ -107,7 +107,7 @@ const routes = [
     },
   },
   {
-    path: "/adminHome",
+    path: "/admin/home",
     name: "AdminHome",
     component: AdminHome,
     meta: {
@@ -115,7 +115,7 @@ const routes = [
     },
   },
   {
-    path: "/adminUsers/:id",
+    path: "/admin/users/:id",
     name: "AdminUsers",
     component: AdminUsers,
     meta: {
@@ -156,7 +156,8 @@ router.beforeEach((to, from, next) => {
     if (
       to.name === "Home" ||
       to.name === "TodoToday" ||
-      to.name === "TodoDone"
+      to.name === "TodoDone" ||
+      to.name === "Statistics"
     ) {
       next("/");
     }

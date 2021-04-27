@@ -2,19 +2,29 @@
   <div id="app">
     <TheHomeHeader></TheHomeHeader>
     <div class="wrapper">
-      <div class="container">
+      <div class="spinner-wrap" v-if="loading">
+        <b-spinner
+          class="loading"
+          label="Loading..."
+          variant="info"
+        ></b-spinner>
+      </div>
+      <div class="container" v-show="loaded">
         <b-tabs>
           <b-tab title="完了数" active>
-            <StatisticsDoneCount></StatisticsDoneCount>
+            <StatisticsDoneCount @loaded="changeloading"></StatisticsDoneCount>
           </b-tab>
           <b-tab title="継続記録">
-            <StatisticsContinuousRecord></StatisticsContinuousRecord>
+            <StatisticsContinuousRecord
+              @loaded="changeloading"
+            ></StatisticsContinuousRecord>
           </b-tab>
         </b-tabs>
       </div>
     </div>
   </div>
 </template>
+
 
 <script>
 import TheHomeHeader from "../components/TheHomeHeader";
@@ -26,6 +36,19 @@ export default {
     TheHomeHeader,
     StatisticsDoneCount,
     StatisticsContinuousRecord,
+  },
+  data() {
+    return {
+      loading: true,
+      loaded: false,
+    };
+  },
+
+  methods: {
+    changeloading() {
+      this.loading = false;
+      this.loaded = true;
+    },
   },
 };
 </script>
@@ -44,6 +67,13 @@ export default {
 
   .container {
     margin-top: 50px;
+  }
+
+  .spinner-wrap {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 </style>

@@ -17,10 +17,10 @@
             type="submit"
             variant="outline-info"
             @click="$router.push('/registerForm')"
-            >修正する</b-button
+            >修正</b-button
           >
           <b-button class="submit-btn" variant="outline-info" @click="registerUser"
-            >登録する</b-button
+            >登録</b-button
           >
         </div>
       </div>

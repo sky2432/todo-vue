@@ -2,18 +2,18 @@
   <div id="app">
     <TheHomeHeader></TheHomeHeader>
     <div class="wrapper">
-      <b-spinner
-        v-if="loading"
-        label="Loading..."
-        class="loading"
-        variant="info"
-      ></b-spinner>
+      <div class="spinner-wrap" v-if="loading">
+        <b-spinner
+          label="Loading..."
+          class="loading"
+          variant="info"
+        ></b-spinner>
+      </div>
       <div class="container" v-if="showTable" ref="test">
         <v-calendar
           class="calender"
           :min-date="minDate"
           v-if="isFullSize"
-          is-expanded
         >
           <template #day-content="props">
             <div
@@ -38,12 +38,16 @@
           </template>
         </v-calendar>
 
-        <div v-if="isPhoneSize">
-          <v-date-picker v-model="date" is-expanded />
-          {{date}}
-          <div class="display-todo">
-            
-          </div>
+        <div v-if="isMobileSize">
+          <v-date-picker :attributes="attrs" v-model="date" is-expanded />
+          <b-list-group class="display-todo">
+            <b-list-group-item
+              v-for="(item, index) in returnTodoOfDay"
+              :key="index"
+              :style="{ color: mobileTodoColor }"
+              >{{ item }}</b-list-group-item
+            >
+          </b-list-group>
         </div>
       </div>
     </div>
@@ -56,31 +60,51 @@ import todoListsRepository from "../repositories/todoListsRepository";
 import $_convertDateToString from "../helpers/utile";
 import $_createToday from "../helpers/utile";
 import { mapState } from "vuex";
+import windowWidthMixin from "../mixins/windowWidthMixin";
+
 export default {
   components: {
     TheHomeHeader,
   },
+
+  mixins: [windowWidthMixin],
 
   data() {
     return {
       todoLists: "",
       loading: true,
       showTable: false,
-      width: window.innerWidth,
       isFullSize: true,
-      isPhoneSize: false,
+      isMobileSize: false,
       date: new Date(),
+      attrs: [
+        {
+          key: "today",
+          highlight: true,
+          dates: new Date(),
+        },
+      ],
     };
   },
 
   watch: {
     width() {
-      this.selectCalendar();
+      this.changeCalendarType();
     },
   },
 
   computed: {
     ...mapState(["loginUser"]),
+
+    mobileTodoColor() {
+      if (this.$_createToday() > this.date) {
+        return "rgb(255, 91, 91)";
+      }
+    },
+
+    returnTodoOfDay() {
+      return this.createTodoOfDay(this.date);
+    },
 
     cutLength() {
       return function(item) {
@@ -186,25 +210,20 @@ export default {
   },
 
   mounted() {
-    window.addEventListener("resize", this.handleResize);
-    this.selectCalendar();
-  },
-
-  beforeDestroy() {
-    window.removeEventListener("resize", this.handleResize);
+    this.changeCalendarType();
   },
 
   methods: {
     ...$_createToday,
     ...$_convertDateToString,
 
-    selectCalendar() {
-      if (this.width >= 993) {
+    changeCalendarType() {
+      if (this.width >= 992) {
         this.isFullSize = true;
-        this.isPhoneSize = false;
-      } else {
+        this.isMobileSize = false;
+      } else if (this.width < 992) {
         this.isFullSize = false;
-        this.isPhoneSize = true;
+        this.isMobileSize = true;
       }
     },
 
@@ -236,9 +255,6 @@ export default {
       this.showTable = true;
     },
 
-    handleResize() {
-      this.width = window.innerWidth;
-    },
   },
 };
 </script>
@@ -248,8 +264,16 @@ export default {
   height: 570px;
 }
 
+.spinner-wrap {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .calender {
   height: 100%;
+  width: 100%;
 }
 
 .day {
@@ -279,5 +303,20 @@ export default {
 .cell {
   border: 1px solid #efefef;
   margin: 0 -1px -1px 0;
+}
+
+.display-todo {
+  margin-top: 10px;
+}
+
+@media screen and (max-width: 992px) {
+  .wrapper {
+    display: block;
+  }
+
+  .container {
+    margin-top: 50px;
+    height: auto;
+  }
 }
 </style>

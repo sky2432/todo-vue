@@ -75,7 +75,7 @@ export default new Vuex.Store({
           router.replace("/home");
         }
         if (resData.data.data.role === 'admin') {
-          router.replace("/adminHome");
+          router.replace("/admin/home");
         }
       }
     },

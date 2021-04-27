@@ -2,15 +2,7 @@
   <div id="app">
     <div class="tab-page">
       <div class="overview">
-        <div class="spinner-wrap">
-          <b-spinner
-            class="loading"
-            v-if="overviewLoading"
-            label="Loading..."
-            variant="info"
-          ></b-spinner>
-        </div>
-        <div v-if="overviewLoaded" class="row count-wrap">
+        <div  class="row count-wrap">
           <div class="col">
             <p class="count">{{ countData[0] }}</p>
             <p class="count-text">今日の完了数</p>
@@ -123,9 +115,6 @@
 import StatisticsChart from "../components/StatisticsChart";
 import statisticsRepository from "../repositories/statisticsRepository";
 import { mapState } from "vuex";
-import $_createToday from "../helpers/utile";
-import $_createSpecificDate from "../helpers/utile";
-import $_createSpecificMonth from "../helpers/utile";
 
 export default {
   components: {
@@ -135,8 +124,6 @@ export default {
     return {
       loading: false,
       loaded: true,
-      overviewLoading: true,
-      overviewLoaded: false,
       countData: [],
       userbeginDate: "",
       chartData: {
@@ -196,7 +183,7 @@ export default {
     ...mapState(["loginUser"]),
 
     disableDayBackButton() {
-      const begin = this.$_createSpecificDate(this.loginUser.created_at);
+      const begin = this.$helpers.$_createSpecificDate(this.loginUser.created_at);
 
       return this.checkGraphBegin(begin, "$_createSpecificDate");
     },
@@ -208,14 +195,14 @@ export default {
     },
 
     disableMonthBackButton() {
-      const begin = this.$_createSpecificMonth(this.loginUser.created_at);
+      const begin = this.$helpers.$_createSpecificMonth(this.loginUser.created_at);
 
       return this.checkGraphBegin(begin, "$_createSpecificMonth");
     },
 
     disableDayForwardButton() {
-      const today = this.$_createToday();
-      const graphDate = this.$_createSpecificDate(this.chartData.labels[6]);
+      const today = this.$helpers.$_createToday();
+      const graphDate = this.$helpers.$_createSpecificDate(this.chartData.labels[6]);
       if (today.getTime() === graphDate.getTime()) {
         return true;
       }
@@ -279,13 +266,9 @@ export default {
   },
 
   methods: {
-    ...$_createToday,
-    ...$_createSpecificDate,
-    ...$_createSpecificMonth,
-
     checkGraphBegin(begin, methodName) {
       for (let i = 0; i < this.chartData.labels.length; i++) {
-        const graphDate = this[methodName](this.chartData.labels[i]);
+        const graphDate = this.$helpers[methodName](this.chartData.labels[i]);
 
         if (begin.getTime() === graphDate.getTime()) {
           return true;
@@ -300,13 +283,11 @@ export default {
       };
       const resData = await statisticsRepository.getAllCountData(sendDate);
       this.countData = resData.data.data;
-      this.overviewLoading = false;
-      this.overviewLoaded = true;
     },
 
     checkWeekGraphEnd() {
       const startOfWeek = this.createStartOfWeek(0);
-      const graphDate = this.$_createSpecificDate(this.chartData.labels[6]);
+      const graphDate = this.$helpers.$_createSpecificDate(this.chartData.labels[6]);
 
       if (startOfWeek.getTime() === graphDate.getTime()) {
         return true;
@@ -324,7 +305,7 @@ export default {
       }
       const day = date.getDay(),
         diff = date.getDate() - day + (day == 0 ? -6 : 1);
-      const startOfWeek = this.$_createSpecificDate(date.setDate(diff));
+      const startOfWeek = this.$helpers.$_createSpecificDate(date.setDate(diff));
       return startOfWeek;
     },
 
@@ -332,7 +313,7 @@ export default {
       const now = new Date();
       const thisMonth = new Date(now.getFullYear(), now.getMonth());
 
-      const graphMonth = this.$_createSpecificMonth(this.chartData.labels[6]);
+      const graphMonth = this.$helpers.$_createSpecificMonth(this.chartData.labels[6]);
 
       if (thisMonth.getTime() === graphMonth.getTime()) {
         return true;
@@ -540,9 +521,6 @@ export default {
     font-size: 12px;
     padding: 0 10px;
   }
-  /* .chart {
-    width: 85%;
-  } */
 }
 
 @media screen and (max-width: 500px) {

@@ -7,6 +7,15 @@ import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 import Vuelidate from "vuelidate";
 import VCalendar from "v-calendar";
+import helpers from "./helpers/utile";
+
+const plugin = {
+  install() {
+    Vue.prototype.$helpers = helpers;
+  },
+};
+
+Vue.use(plugin);
 // import PrettyCheckbox from "pretty-checkbox-vue";
 
 // Vue.use(PrettyCheckbox);

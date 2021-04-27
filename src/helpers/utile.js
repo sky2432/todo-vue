@@ -55,7 +55,7 @@ export default {
 
   $_isLongLength(value, width) {
     if (width >= 960) {
-      if (value.length > 30) {
+      if (value.length > 25) {
         return true;
       }
       return false;
@@ -82,8 +82,8 @@ export default {
 
   $_cutLength(value, width) {
     if (width >= 960) {
-      if (value.length > 30) {
-        return value.substr(0, 30) + "...";
+      if (value.length > 25) {
+        return value.substr(0, 25) + "...";
       }
       return value;
     }
@@ -104,6 +104,29 @@ export default {
         return value.substr(0, 5) + "...";
       }
       return value;
+    }
+  },
+
+  $_convertRemindDay(value) {
+    if (value !== null) {
+      if (value === 0) {
+        return "当日\t";
+      }
+      if (value === 1) {
+        return "1日前\t";
+      }
+      if (value === 2) {
+        return "2日前\t";
+      }
+    }
+  },
+
+  $_convertRemindTime(value) {
+    if (value !== null) {
+      if (value.slice(0, 1) === "0") {
+        return value.slice(1, 5);
+      }
+      return value.slice(0, 5);
     }
   },
 };

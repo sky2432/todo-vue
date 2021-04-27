@@ -89,9 +89,6 @@
 </template>
 
 <script>
-import $_isBeforeToday from "../helpers/utile";
-import $_createSpecificDate from "../helpers/utile";
-import $_createTomorrow from "../helpers/utile";
 import BaseCalender from "../components/BaseCalender";
 import todoListsRepository from "../repositories/todoListsRepository.js";
 
@@ -132,17 +129,16 @@ export default {
           return deadline;
         }
         if (deadline !== null) {
-          const today = this.$_createToday();
-          const todoDay = this.$_createSpecificDate(deadline);
-          const tommorrow = this.$_createTomorrow();
+          const today = this.$helpers.$_createToday();
+          const todoDay = this.$helpers.$_createSpecificDate(deadline);
+          const tommorrow = this.$helpers.$_createTomorrow();
           if (today.getTime() === todoDay.getTime()) {
             return "今日";
           }
           if (tommorrow.getTime() === todoDay.getTime()) {
             return "明日";
           }
-          const convertDay =
-            todoDay.getMonth() + 1 + "\t" + "/" + "\t" + todoDay.getDate();
+          const convertDay = `${todoDay.getMonth() + 1} / ${todoDay.getDate()}`;
           return convertDay;
         }
       };
@@ -150,10 +146,6 @@ export default {
   },
 
   methods: {
-    ...$_isBeforeToday,
-    ...$_createSpecificDate,
-    ...$_createTomorrow,
-
     setRemindDay(event) {
       this.remindDay = event;
       this.chaneShowRemindTime(event);
@@ -205,7 +197,7 @@ export default {
 
     // 設定ボタン
     setUpdateDeadline() {
-      const resulet = this.$_isBeforeToday(this.updatedTodoDeadline);
+      const resulet = this.$helpers.$_isBeforeToday(this.updatedTodoDeadline);
       if (resulet) {
         this.showPopover = false;
       } else {

@@ -190,6 +190,7 @@ li {
 
 .error {
   color: red;
+  margin-bottom: 0;
 }
 
 .error-message {
@@ -218,6 +219,7 @@ li {
 .header {
   height: 70px;
   background-color: #16a2b8;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
 }
 
 .header-title {

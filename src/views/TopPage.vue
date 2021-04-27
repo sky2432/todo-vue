@@ -2,7 +2,7 @@
   <div id="app">
     <div class="wrapper">
       <div class="wrap">
-        <h1 class="title">Todo list</h1>
+        <h1 class="title">TodoList</h1>
         <div class="btn-wrap">
           <b-button
             variant="outline-info"
@@ -26,12 +26,15 @@
 .wrapper {
   height: 100vh;
 }
+
 .wrap {
   text-align: center;
 }
+
 .title {
   padding-bottom: 20px;
 }
+
 .registration-btn {
   margin-right: 20px;
 }

@@ -8,10 +8,11 @@
         class="loading"
         variant="info"
       ></b-spinner>
+      
       <div class="container" v-if="showTable">
         <ul>
           <li
-            v-for="list in itemsForList"
+            v-for="list in ListsForPaginate"
             :key="list.id"
             id="my-table"
             class="todo-line"
@@ -66,21 +67,10 @@
           </li>
         </ul>
 
-        <b-pagination
-          v-model="currentPage"
-          :total-rows="rows"
-          :per-page="perPage"
-          aria-controls="my-table"
-          align="center"
-          class="mt-3"
-          size="sm"
-          pills
-        >
-          <template #first-text><span class="text-info">«</span></template>
-          <template #prev-text><span class="text-info">‹</span></template>
-          <template #next-text><span class="text-info">›</span></template>
-          <template #last-text><span class="text-info">»</span></template>
-        </b-pagination>
+        <BasePagination
+          :lists="todoLists"
+          @paginate="ListsForPaginate = $event"
+        ></BasePagination>
 
         <hr class="line" />
       </div>
@@ -90,23 +80,25 @@
 
 <script>
 import TheHomeHeader from "../components/TheHomeHeader";
+import BasePagination from "../components/BasePagination";
 import todoListsDoneRepository from "../repositories/todoListsDoneRepository";
 import { mapState } from "vuex";
-import $_isLongLength from "../helpers/utile";
-import $_cutLength from "../helpers/utile";
+import windowWidthMixin from "../mixins/windowWidthMixin";
+
 export default {
   components: {
     TheHomeHeader,
+    BasePagination,
   },
+
+  mixins: [windowWidthMixin],
 
   data() {
     return {
       todoLists: [],
+      ListsForPaginate: [],
       loading: true,
       showTable: false,
-      perPage: 5,
-      currentPage: 1,
-      width: window.innerWidth,
     };
   },
 
@@ -123,25 +115,14 @@ export default {
 
     checkLength() {
       return function(todo_list) {
-        return this.$_isLongLength(todo_list, this.width);
+        return this.$helpers.$_isLongLength(todo_list, this.width);
       };
     },
 
     cutLength() {
       return function(todo_list) {
-        return this.$_cutLength(todo_list, this.width);
+        return this.$helpers.$_cutLength(todo_list, this.width);
       };
-    },
-
-    rows() {
-      return this.todoLists.length;
-    },
-
-    itemsForList() {
-      return this.todoLists.slice(
-        (this.currentPage - 1) * this.perPage,
-        this.currentPage * this.perPage
-      );
     },
   },
 
@@ -149,18 +130,7 @@ export default {
     this.showTodoDone();
   },
 
-  mounted() {
-    window.addEventListener("resize", this.handleResize);
-  },
-
-  beforeDestroy() {
-    window.removeEventListener("resize", this.handleResize);
-  },
-
   methods: {
-    ...$_isLongLength,
-    ...$_cutLength,
-
     async showTodoDone() {
       const resData = await todoListsDoneRepository.getTodo(this.loginUser.id);
       this.todoLists = resData.data.data;
@@ -178,9 +148,6 @@ export default {
       this.showTodoDone();
     },
 
-    handleResize() {
-      this.width = window.innerWidth;
-    },
   },
 };
 </script>
@@ -188,6 +155,7 @@ export default {
 <style scoped>
 .done-todo {
   color: grey;
+  cursor: default;
 }
 
 .done-check-icon {

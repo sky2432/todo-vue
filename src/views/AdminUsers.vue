@@ -2,8 +2,16 @@
   <div id="app">
     <TheHomeHeader></TheHomeHeader>
     <div class="wrapper">
-      <div class="container row">
-        <div class="content col-6">
+      <div class="spinner-wrap" v-if="loading">
+        <b-spinner
+          label="Loading..."
+          class="loading"
+          variant="info"
+        ></b-spinner>
+      </div>
+
+      <div class="container" v-if="showTable">
+        <div class="content">
           <div>
             <p>
               <img class="userImage" :src="createFileURL" />
@@ -12,21 +20,13 @@
             <p>{{ user.email }}</p>
           </div>
         </div>
-        <div class="todo col-6">
+        <div class="todo">
           <p>Todo一覧</p>
 
-          <div v-if="loading" class="loading-container">
-            <b-spinner
-              label="Loading..."
-              class="loading"
-              variant="info"
-            ></b-spinner>
-          </div>
-
-          <div v-if="showTable" class="todo-wrap">
+          <div class="todo-wrap">
             <b-list-group>
               <b-list-group-item
-                v-for="list in itemsForList"
+                v-for="list in ListsForPaginate"
                 :key="list.id"
                 :style="{ color: chengeColor(list) }"
                 id="my-table"
@@ -53,14 +53,11 @@
             </b-list-group>
 
             <!-- ページネーション -->
-            <b-pagination
-              v-model="currentPage"
-              :total-rows="rows"
-              :per-page="perPage"
-              aria-controls="my-table"
-              align="center"
-              class="mt-3"
-            ></b-pagination>
+            <BasePagination
+              :lists="todoLists"
+              size="md"
+              @paginate="ListsForPaginate = $event"
+            ></BasePagination>
           </div>
         </div>
       </div>
@@ -70,23 +67,25 @@
 
 <script>
 import TheHomeHeader from "../components/TheHomeHeader";
+import BasePagination from "../components/BasePagination";
 import usersRepository from "../repositories/usersRepository";
 import todoListsRepository from "../repositories/todoListsRepository.js";
+import windowWidthMixin from "../mixins/windowWidthMixin";
 
 export default {
-  props: ["id"],
   components: {
     TheHomeHeader,
+    BasePagination,
   },
+
+  props: ["id"],
+  mixins: [windowWidthMixin],
 
   data() {
     return {
       user: "",
       todoLists: [],
-      perPage: 5,
-      currentPage: 1,
-      greyColor: "grey",
-      blackColor: "black",
+      ListsForPaginate: [],
       loading: true,
       showTable: false,
     };
@@ -100,40 +99,24 @@ export default {
     chengeColor() {
       return function(list) {
         if (list.status === 1) {
-          return this.blackColor;
+          return "black";
         }
         if (list.status === 0) {
-          return this.greyColor;
+          return "grey";
         }
       };
     },
 
     checkLength() {
       return function(todo_list) {
-        if (todo_list.length > 10) {
-          return true;
-        }
-        return false;
+        return this.$helpers.$_isLongLength(todo_list, this.width);
       };
     },
 
     cutLength() {
       return function(todo_list) {
-        if (todo_list.length > 10) {
-          return todo_list.substr(0, 10) + "...";
-        }
-        return todo_list;
+        return this.$helpers.$_cutLength(todo_list, this.width);
       };
-    },
-
-    rows() {
-      return this.todoLists.length;
-    },
-    itemsForList() {
-      return this.todoLists.slice(
-        (this.currentPage - 1) * this.perPage,
-        this.currentPage * this.perPage
-      );
     },
   },
 
@@ -147,6 +130,7 @@ export default {
       const resData = await usersRepository.showUser(this.id);
       this.user = resData.data.data;
     },
+
     async showTodo() {
       const resData = await todoListsRepository.getUserTodo(this.id);
       this.todoLists = resData.data.data;
@@ -158,7 +142,19 @@ export default {
 </script>
 
 <style scoped>
+.container {
+  display: flex;
+}
+
+.spinner-wrap {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .content {
+  width: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -166,21 +162,40 @@ export default {
   padding: 20px;
   height: 400px;
 }
+
 .userImage {
   width: 200px;
   height: 200px;
   object-fit: cover;
   border-radius: 50%;
 }
+
 .todo {
+  width: 50%;
   padding: 20px;
   height: 400px;
-  position: relative;
 }
-.loading-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+
+@media screen and (max-width: 768px) {
+  .wrapper {
+    display: block;
+  }
+
+  .container {
+    height: auto;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 50px;
+  }
+
+  .content {
+    width: 100%;
+    height: auto;
+  }
+
+  .todo {
+    width: 100%;
+    height: auto;
+  }
 }
 </style>

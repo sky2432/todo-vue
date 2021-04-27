@@ -8,57 +8,53 @@
         class="loading"
         variant="info"
       ></b-spinner>
+      
       <div class="container" v-if="showTable">
-        <table class="table">
-          <p>ユーザー管理</p>
-          <!-- Todoリストの表示 -->
-          <tr>
-            <th>id</th>
-            <th></th>
-            <th>ユーザー名</th>
-            <th>メールアドレス</th>
-            <th></th>
-          </tr>
-          <tr
-            class="list"
-            v-for="user in itemsForList"
+        <ul>
+          <li
+            v-for="user in ListsForPaginate"
             :key="user.id"
             id="my-table"
+            class="user-line"
           >
-            <td>
+            <div class="user-id">
               {{ user.id }}
-            </td>
-            <td style="text-align: right">
-              <img class="userImage" :src="createFileURL(user.file_path)" />
-            </td>
-            <td>
-              {{ user.name }}
-            </td>
-            <td>
-              {{ user.email }}
-            </td>
-            <!-- 詳細ボタン -->
-            <td class="detail-btn-wrap">
-              <b-button
-                variant="outline-info"
-                size="sm"
-                @click="moveUserDeatail(user.id)"
-              >
-                <b-icon icon="pencil-square"></b-icon>
-                詳細
-              </b-button>
-            </td>
-          </tr>
-        </table>
+            </div>
+            <div
+              class="user-data"
+              v-b-modal.edit-modal
+              @click="moveUserDeatail(user.id)"
+            >
+              <div class="user-name">
+                <img class="user-image" :src="createFileURL(user.file_path)" />
+                {{ user.name }}
+              </div>
 
-        <b-pagination
-          v-model="currentPage"
-          :total-rows="rows"
-          :per-page="perPage"
-          aria-controls="my-table"
-          align="center"
-          class="mt-4"
-        ></b-pagination>
+              <div class="user-email-wrap">
+                <i
+                  class="far fa-envelope"
+                  :id="`popover-target-${user.id}`"
+                ></i>
+                <span class="user-email">{{ user.email }}</span>
+              </div>
+
+              <b-popover
+                v-if="width < 576"
+                :target="`popover-target-${user.id}`"
+                triggers="hover"
+                placement="top"
+              >
+                {{ user.email }}
+              </b-popover>
+            </div>
+          </li>
+        </ul>
+
+        <BasePagination
+          :lists="users"
+          size="md"
+          @paginate="ListsForPaginate = $event"
+        ></BasePagination>
       </div>
     </div>
   </div>
@@ -66,41 +62,38 @@
 
 <script>
 import TheHomeHeader from "../components/TheHomeHeader";
+import BasePagination from "../components/BasePagination";
 import usersRepository from "../repositories/usersRepository";
+import windowWidthMixin from "../mixins/windowWidthMixin";
+
 
 export default {
   components: {
     TheHomeHeader,
+    BasePagination,
   },
+
+  mixins: [windowWidthMixin],
+
   data() {
     return {
       users: [],
+      ListsForPaginate: [],
       loading: true,
       showTable: false,
-      perPage: 5,
-      currentPage: 1,
     };
   },
+
   computed: {
     createFileURL() {
       return function(file_path) {
         return "http://127.0.0.1:8000/storage/image/" + file_path;
       };
     },
-    rows() {
-      return this.users.length;
-    },
-    itemsForList() {
-      return this.users.slice(
-        (this.currentPage - 1) * this.perPage,
-        this.currentPage * this.perPage
-      );
-    },
   },
 
   created() {
     this.getUser();
-    console.log("created");
   },
 
   methods: {
@@ -110,6 +103,7 @@ export default {
       this.loading = false;
       this.showTable = true;
     },
+
     moveUserDeatail(userId) {
       this.$router.push({
         name: "AdminUsers",
@@ -123,22 +117,57 @@ export default {
 </script>
 
 <style scoped>
-.user-name {
-  color: rgb(133, 133, 133);
-}
-.table {
-  border-bottom: 1px solid #16a2b8;
-}
-.btn-wrap {
-  text-align: center;
-}
-.detail-btn-wrap {
-  text-align: right;
-}
-.userImage {
+.user-image {
   width: 30px;
   height: 30px;
   object-fit: cover;
   border-radius: 50%;
+}
+
+.user-line {
+  display: flex;
+}
+
+.user-line:hover {
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #daf0f3;
+}
+
+.user-id {
+  width: 50px;
+  padding: 15px 0px 15px 10px;
+  color: #16a2b8;
+}
+
+.user-data {
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid lightgray;
+  padding: 15px 0;
+}
+
+.user-name {
+  width: 40%;
+}
+
+.user-email-wrap {
+  width: 60%;
+}
+
+.fa-envelope {
+  padding-right: 10px;
+  color: #16a2b8;
+}
+
+@media screen and (max-width: 576px) {
+  .user-email-wrap {
+    text-align: right;
+    padding-right: 10px;
+  }
+
+  .user-email {
+    display: none;
+  }
 }
 </style>

@@ -1,15 +1,7 @@
 <template>
   <div id="app">
     <div class="tab-page">
-      <div class="spinner-wrap">
-        <b-spinner
-          class="loading"
-          v-if="loading"
-          label="Loading..."
-          variant="info"
-        ></b-spinner>
-      </div>
-      <div v-if="loaded" class="view-wrap">
+      <div class="view-wrap">
         <div class="overview">
           <div class="row count-wrap">
             <div class="col">
@@ -47,14 +39,10 @@
 <script>
 import { mapState } from "vuex";
 import statisticsRepository from "../repositories/statisticsRepository";
-import $_createToday from "../helpers/utile";
-import $_convertDateToString from "../helpers/utile";
 
 export default {
   data() {
     return {
-      loading: true,
-      loaded: false,
       currentCount: "",
       highestCount: "",
       doneDateLists: [],
@@ -66,9 +54,9 @@ export default {
 
     dateClass() {
       return function(date) {
-        const day = this.$_convertDateToString(date);
+        const day = this.$helpers.$_convertDateToString(date);
         const judge = this.doneDateLists.indexOf(day);
-        if (date.getTime() === this.$_createToday().getTime()) {
+        if (date.getTime() === this.$helpers.$_createToday().getTime()) {
           return "red";
         }
         if (judge !== -1) {
@@ -80,7 +68,7 @@ export default {
 
     checkClass() {
       return function(date) {
-        const day = this.$_convertDateToString(date);
+        const day = this.$helpers.$_convertDateToString(date);
         const judge = this.doneDateLists.indexOf(day);
         if (judge !== -1) {
           return true;
@@ -101,9 +89,6 @@ export default {
   },
 
   methods: {
-    ...$_createToday,
-    ...$_convertDateToString,
-
     async getDoneDate() {
       const sendData = {
         id: this.$store.state.loginUser.id,
@@ -119,8 +104,7 @@ export default {
       const resData = await statisticsRepository.getContinuousData(sendData);
       this.currentCount = resData.data.current;
       this.highestCount = resData.data.highest;
-      this.loading = false;
-      this.loaded = true;
+      this.$emit("loaded");
     },
   },
 };

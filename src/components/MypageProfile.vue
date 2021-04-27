@@ -3,7 +3,7 @@
     <div class="mypage-content">
       <div>
         <p>
-          <img class="userImage" :src="userImage" />
+          <img class="user-image" :src="userImage" />
         </p>
         <p>{{ loginUser.name }}</p>
         <b-form-file
@@ -33,9 +33,11 @@ export default {
       errorFileMessage: "※画像ファイルを選択して下さい",
     };
   },
+
   computed: {
     ...mapState(["loginUser", "userImage"]),
   },
+
   methods: {
     // プロフィール画像設定
     fileSelected(event) {
@@ -76,15 +78,10 @@ export default {
 </script>
 
 <style scoped>
-.userImage {
+.user-image {
   width: 200px;
   height: 200px;
   object-fit: cover;
   border-radius: 50%;
 }
-
-@media screen and (max-width: 768px) {
-  
-}
-
 </style>
