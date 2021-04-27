@@ -183,6 +183,11 @@ select {
   box-sizing: border-box;
 }
 
+ul,
+li {
+  list-style: none;
+}
+
 .error {
   color: red;
 }
@@ -242,5 +247,58 @@ select {
   position: absolute;
   top: 42px;
   right: 10px;
+}
+
+/* todo表示関連 */
+.display-today {
+  padding-left: 10px;
+  color: rgb(133, 133, 133);
+}
+
+.add-btn-wrap {
+  text-align: center;
+}
+
+.line {
+  border-color: #16a2b8;
+}
+
+.todo-line {
+  display: flex;
+}
+
+.todo-line:hover {
+  border-radius: 5px;
+  background-color: #daf0f3;
+}
+
+.check-wrap {
+  padding: 15px 0 15px 10px;
+}
+
+.todo-content-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid lightgray;
+  padding: 15px 0;
+}
+
+.todo-txt-wrap {
+  display: flex;
+}
+
+.todo-icon-date-wrap {
+  display: flex;
+}
+
+.todo-icon {
+  cursor: pointer;
+  color: #16a2b8;
+}
+
+.todo-date {
+  width: 50px;
+  margin-bottom: 0px;
 }
 </style>

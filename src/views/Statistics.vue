@@ -4,10 +4,10 @@
     <div class="wrapper">
       <div class="container">
         <b-tabs>
-          <b-tab title="完了数">
+          <b-tab title="完了数" active>
             <StatisticsDoneCount></StatisticsDoneCount>
           </b-tab>
-          <b-tab title="継続記録" active>
+          <b-tab title="継続記録">
             <StatisticsContinuousRecord></StatisticsContinuousRecord>
           </b-tab>
         </b-tabs>
@@ -35,5 +35,15 @@ export default {
   padding: 0px;
   background: none;
   box-shadow: none;
+}
+
+@media screen and (max-width: 992px) {
+  .wrapper {
+    display: block;
+  }
+
+  .container {
+    margin-top: 50px;
+  }
 }
 </style>

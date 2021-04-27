@@ -1,8 +1,7 @@
 <template>
   <div id="app">
-    <div class="tab-page row">
-      <div class="overview col-6">
-        <!-- <p class="overview-title">概要</p> -->
+    <div class="tab-page">
+      <div class="overview">
         <div class="spinner-wrap">
           <b-spinner
             class="loading"
@@ -32,7 +31,7 @@
         </div>
       </div>
 
-      <div class="graph col-6">
+      <div class="graph">
         <b-tabs content-class="mt-3" align="center" fill>
           <!-- 日グラフ -->
           <b-tab title="日" active @click="showDayGraph" class="tab">
@@ -99,7 +98,7 @@
           </b-tab>
         </b-tabs>
 
-        <div class="spinner-wrap">
+        <div class="graph-spinner-wrap">
           <b-spinner
             class="loading"
             v-if="loading"
@@ -107,7 +106,6 @@
             variant="info"
           ></b-spinner>
         </div>
-
         <div class="graph-wrap">
           <StatisticsChart
             class="chart"
@@ -456,13 +454,14 @@ export default {
   padding: 20px;
   background: hsl(0 0% 100%);
   box-shadow: 0 2.5rem 2rem -2rem hsl(200 50% 20% / 40%);
+  display: flex;
 }
 
 .overview {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  width: 50%;
 }
 
 .count-wrap {
@@ -489,17 +488,19 @@ export default {
 .graph-wrap {
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .graph {
   position: relative;
+  width: 50%;
 }
 
 .chart {
   width: 60%;
 }
 
-.spinner-wrap {
+.graph-spinner-wrap {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -509,5 +510,59 @@ export default {
 .term {
   padding: 0 25px;
   color: #666666;
+}
+
+@media screen and (max-width: 992px) {
+  .tab-page {
+    flex-direction: column;
+    height: 1000px;
+  }
+
+  .overview {
+    width: 100%;
+    height: 35%;
+  }
+
+  .graph {
+    width: 100%;
+    height: 65%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .chart {
+    width: 80%;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .term {
+    font-size: 12px;
+    padding: 0 10px;
+  }
+  /* .chart {
+    width: 85%;
+  } */
+}
+
+@media screen and (max-width: 500px) {
+  .chart {
+    width: 85%;
+  }
+  .tab-page {
+    height: 800px;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .chart {
+    width: 100%;
+  }
+  .tab-page {
+    height: 700px;
+  }
+  .count-text {
+    font-size: 10px;
+  }
 }
 </style>

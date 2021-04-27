@@ -111,4 +111,16 @@ export default {
 .label {
   text-align: left;
 }
+
+@media screen and (max-width: 992px) {
+  .form-wrap {
+    width: 60%;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .form-wrap {
+    width: 80%;
+  }
+}
 </style>

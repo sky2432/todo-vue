@@ -9,8 +9,8 @@
           variant="info"
         ></b-spinner>
       </div>
-      <div v-if="loaded" class="row view-wrap">
-        <div class="overview col-6">
+      <div v-if="loaded" class="view-wrap">
+        <div class="overview">
           <div class="row count-wrap">
             <div class="col">
               <p class="count">{{ currentCount }}</p>
@@ -22,10 +22,15 @@
             </div>
           </div>
         </div>
-        <div class="check-calender col-6">
-          <v-calendar class="calender" :min-date="minDate" :max-date="new Date()">
+        <div class="check-calender">
+          <v-calendar
+            class="calender"
+            :min-date="minDate"
+            :max-date="new Date()"
+            is-expanded
+          >
             <template slot="day-content" slot-scope="props">
-              <div :style="dateClass(props.day.date)">
+              <div :style="{ color: dateClass(props.day.date) }">
                 {{ props.day.day }}
               </div>
               <div v-if="checkClass(props.day.date)" class="check">
@@ -63,13 +68,13 @@ export default {
       return function(date) {
         const day = this.$_convertDateToString(date);
         const judge = this.doneDateLists.indexOf(day);
-        if(date.getTime() === this.$_createToday().getTime()) {
-          return "color: red";
+        if (date.getTime() === this.$_createToday().getTime()) {
+          return "red";
         }
         if (judge !== -1) {
-          return "color: #16a2b8";
+          return "#16a2b8";
         }
-        return "color: black";
+        return "black";
       };
     },
 
@@ -86,8 +91,8 @@ export default {
 
     minDate() {
       const begin = new Date(this.loginUser.created_at);
-      return begin; 
-    }
+      return begin;
+    },
   },
 
   created() {
@@ -139,16 +144,21 @@ export default {
 
 .view-wrap {
   height: 100%;
+  display: flex;
+}
+
+.overview {
+  width: 50%;
 }
 
 .check-calender {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 50%;
 }
 
 .calender {
-  width: 80%;
   text-align: center;
 }
 
@@ -174,5 +184,31 @@ export default {
 
 .count-text {
   color: #666666;
+}
+
+@media screen and (max-width: 992px) {
+  .tab-page {
+    height: 550px;
+  }
+
+  .view-wrap {
+    flex-direction: column;
+  }
+
+  .overview {
+    width: 100%;
+    height: 30%;
+  }
+
+  .check-calender {
+    width: 100%;
+    height: 70%;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .count-text {
+    font-size: 10px;
+  }
 }
 </style>

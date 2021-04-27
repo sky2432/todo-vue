@@ -9,7 +9,12 @@
         variant="info"
       ></b-spinner>
       <div class="container" v-if="showTable" ref="test">
-        <v-calendar class="calender" :min-date="minDate" is-expanded>
+        <v-calendar
+          class="calender"
+          :min-date="minDate"
+          v-if="isFullSize"
+          is-expanded
+        >
           <template #day-content="props">
             <div
               class="cell"
@@ -32,6 +37,14 @@
             </div>
           </template>
         </v-calendar>
+
+        <div v-if="isPhoneSize">
+          <v-date-picker v-model="date" is-expanded />
+          {{date}}
+          <div class="display-todo">
+            
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -53,7 +66,17 @@ export default {
       todoLists: "",
       loading: true,
       showTable: false,
+      width: window.innerWidth,
+      isFullSize: true,
+      isPhoneSize: false,
+      date: new Date(),
     };
+  },
+
+  watch: {
+    width() {
+      this.selectCalendar();
+    },
   },
 
   computed: {
@@ -162,9 +185,28 @@ export default {
     this.showTodo();
   },
 
+  mounted() {
+    window.addEventListener("resize", this.handleResize);
+    this.selectCalendar();
+  },
+
+  beforeDestroy() {
+    window.removeEventListener("resize", this.handleResize);
+  },
+
   methods: {
     ...$_createToday,
     ...$_convertDateToString,
+
+    selectCalendar() {
+      if (this.width >= 993) {
+        this.isFullSize = true;
+        this.isPhoneSize = false;
+      } else {
+        this.isFullSize = false;
+        this.isPhoneSize = true;
+      }
+    },
 
     createTodoOfDay(date) {
       const day = this.$_convertDateToString(date);
@@ -192,6 +234,10 @@ export default {
       this.todoLists = resData.data.data;
       this.loading = false;
       this.showTable = true;
+    },
+
+    handleResize() {
+      this.width = window.innerWidth;
     },
   },
 };

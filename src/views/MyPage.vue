@@ -2,8 +2,8 @@
   <div id="app">
     <TheHomeHeader></TheHomeHeader>
     <div class="wrapper">
-      <div class="row justify-content-center container">
-        <b-list-group class="col-4">
+      <div class="container mypage-container">
+        <b-list-group class="col-12 col-md-4 list-group">
           <b-list-group-item button @click="currentComponent = 'MypageProfile'"
             >プロフィール</b-list-group-item
           >
@@ -24,7 +24,7 @@
           >
         </b-list-group>
 
-        <component class="col-8" :is="currentComponent"></component>
+        <component class="col-12 col-md-8 mypage-component" :is="currentComponent"></component>
       </div>
     </div>
   </div>
@@ -53,7 +53,30 @@ export default {
 </script>
 
 <style scoped>
-.container {
+.mypage-container {
   height: 440px;
+  display: flex;
+}
+
+@media screen and (max-width: 768px) {
+  .wrapper {
+    display: block;
+  }
+
+  .mypage-container {
+    height: auto;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 50px;
+  }
+
+  .list-group {
+    margin-bottom: 20px;
+    padding: 0px;
+  }
+
+  .mypage-component {
+    padding: 0px;
+  }
 }
 </style>

@@ -29,7 +29,9 @@
           <BaseCalender v-model="updatedTodoDeadline"></BaseCalender>
 
           <!-- エラーメッセージ -->
-          <p v-if="showDeadlineError" class="error">{{ deadlineError }}</p>
+          <p v-if="showDeadlineError" class="error">
+            今日以降の日付を選択してください
+          </p>
 
           <!-- リマインダー -->
           <b-form-select
@@ -87,7 +89,7 @@
 </template>
 
 <script>
-import $_validateDeadline from "../helpers/utile";
+import $_isBeforeToday from "../helpers/utile";
 import $_createSpecificDate from "../helpers/utile";
 import $_createTomorrow from "../helpers/utile";
 import BaseCalender from "../components/BaseCalender";
@@ -110,7 +112,6 @@ export default {
       updatedTodo: "",
       updatedTodoDeadline: "",
       showPopover: false,
-      deadlineError: "",
       showDeadlineError: false,
       remindTime: "",
       showRemindTime: false,
@@ -149,7 +150,7 @@ export default {
   },
 
   methods: {
-    ...$_validateDeadline,
+    ...$_isBeforeToday,
     ...$_createSpecificDate,
     ...$_createTomorrow,
 
@@ -204,7 +205,12 @@ export default {
 
     // 設定ボタン
     setUpdateDeadline() {
-      this.$_validateDeadline(this.updatedTodoDeadline);
+      const resulet = this.$_isBeforeToday(this.updatedTodoDeadline);
+      if (resulet) {
+        this.showPopover = false;
+      } else {
+        this.showDeadlineError = true;
+      }
     },
 
     //キャンセルボタン

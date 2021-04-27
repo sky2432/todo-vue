@@ -9,56 +9,62 @@
         variant="info"
       ></b-spinner>
       <div class="container" v-if="showTable">
-        <table class="table">
-          <tr>
-            <th>Todo</th>
-            <th>完了日</th>
-            <th></th>
-          </tr>
-          <tr
-            class="list"
+        <ul>
+          <li
             v-for="list in itemsForList"
             :key="list.id"
             id="my-table"
+            class="todo-line"
           >
-            <td class="done-todo" :id="`popover-target-${list.id}`">
-              <b-icon icon="check2-square"></b-icon>
-              {{ cutLength(list.todo_list) }}
-            </td>
-
-            <!-- Todo全文表示ポップオーバー -->
-            <b-popover
-              v-if="checkLength(list.todo_list)"
-              :target="`popover-target-${list.id}`"
-              triggers="hover"
-              placement="top"
-            >
-              {{ list.todo_list }}
-            </b-popover>
-
-            <td class="done-todo">
-              {{ convertDay(list.done_at) }}
-            </td>
-
-            <td class="btn-wrap">
-              <b-button
-                class="mr-5"
-                variant="outline-info"
-                size="sm"
+            <div class="check-wrap">
+              <b-icon
+                icon="check2-square"
+                class="done-check-icon"
                 @click="returnTodo(list.id)"
-                >戻す</b-button
-              >
-              <b-button
-                variant="outline-info"
-                size="sm"
-                @click="deleteTodo(list.id)"
-              >
-                <b-icon icon="trash"></b-icon>
-                削除</b-button
-              >
-            </td>
-          </tr>
-        </table>
+              ></b-icon>
+            </div>
+
+            <div class="todo-content-wrap">
+              <div class="todo-txt-wrap">
+                <span
+                  :id="`popover-target-${list.id}`"
+                  class="todo-txt done-todo"
+                  >{{ cutLength(list.todo_list) }}</span
+                >
+                <b-popover
+                  v-if="checkLength(list.todo_list)"
+                  :target="`popover-target-${list.id}`"
+                  triggers="hover"
+                  placement="top"
+                >
+                  {{ list.todo_list }}
+                </b-popover>
+              </div>
+
+              <div class="todo-icon-date-wrap">
+                <div class="todo-icon-wrap">
+                  <b-icon
+                    :id="`todo-icon-target-${list.id}`"
+                    class="mr-3 todo-icon"
+                    icon="trash"
+                    @click="deleteTodo(list.id)"
+                  ></b-icon>
+                </div>
+                <b-popover
+                  :target="`todo-icon-target-${list.id}`"
+                  triggers="hover"
+                  placement="top"
+                >
+                  削除
+                </b-popover>
+
+                <p class="todo-date mr-3 done-todo">
+                  {{ convertDay(list.done_at) }}
+                </p>
+              </div>
+            </div>
+          </li>
+        </ul>
 
         <b-pagination
           v-model="currentPage"
@@ -83,9 +89,11 @@
 </template>
 
 <script>
-import todoListsDoneRepository from "../repositories/todoListsDoneRepository";
 import TheHomeHeader from "../components/TheHomeHeader";
+import todoListsDoneRepository from "../repositories/todoListsDoneRepository";
 import { mapState } from "vuex";
+import $_isLongLength from "../helpers/utile";
+import $_cutLength from "../helpers/utile";
 export default {
   components: {
     TheHomeHeader,
@@ -98,6 +106,7 @@ export default {
       showTable: false,
       perPage: 5,
       currentPage: 1,
+      width: window.innerWidth,
     };
   },
 
@@ -107,30 +116,20 @@ export default {
     convertDay() {
       return function(done_at) {
         const day = new Date(done_at);
-        const doneDay = `${day.getFullYear()} 
-          /
-          ${day.getMonth() + 1} 
-          /
-          ${day.getDate()}`;
+        const doneDay = `${day.getMonth() + 1} / ${day.getDate()}`;
         return doneDay;
       };
     },
 
     checkLength() {
       return function(todo_list) {
-        if (todo_list.length > 10) {
-          return true;
-        }
-        return false;
+        return this.$_isLongLength(todo_list, this.width);
       };
     },
 
     cutLength() {
       return function(todo_list) {
-        if (todo_list.length > 10) {
-          return todo_list.substr(0, 10) + "...";
-        }
-        return todo_list;
+        return this.$_cutLength(todo_list, this.width);
       };
     },
 
@@ -150,7 +149,18 @@ export default {
     this.showTodoDone();
   },
 
+  mounted() {
+    window.addEventListener("resize", this.handleResize);
+  },
+
+  beforeDestroy() {
+    window.removeEventListener("resize", this.handleResize);
+  },
+
   methods: {
+    ...$_isLongLength,
+    ...$_cutLength,
+
     async showTodoDone() {
       const resData = await todoListsDoneRepository.getTodo(this.loginUser.id);
       this.todoLists = resData.data.data;
@@ -167,6 +177,10 @@ export default {
       await todoListsDoneRepository.deleteTodo(id);
       this.showTodoDone();
     },
+
+    handleResize() {
+      this.width = window.innerWidth;
+    },
   },
 };
 </script>
@@ -176,11 +190,13 @@ export default {
   color: grey;
 }
 
-.btn-wrap {
-  text-align: right;
+.done-check-icon {
+  cursor: pointer;
+  margin-right: 5px;
+  color: grey;
 }
 
-.line {
-  border-color: #16a2b8;
+.done-check-icon:hover {
+  color: black;
 }
 </style>

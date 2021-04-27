@@ -82,4 +82,9 @@ export default {
   object-fit: cover;
   border-radius: 50%;
 }
+
+@media screen and (max-width: 768px) {
+  
+}
+
 </style>

@@ -29,7 +29,7 @@ export default {
     return tomorrow;
   },
 
-  $_validateDeadline(value) {
+  $_isBeforeToday(value) {
     const select = new Date(value);
     const selectDay = new Date(
       select.getFullYear(),
@@ -39,10 +39,9 @@ export default {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     if (today > selectDay) {
-      this.showDeadlineError = true;
-      this.deadlineError = "今日以降の日付を選択してください";
+      return false;
     } else {
-      this.showPopover = false;
+      return true;
     }
   },
 
@@ -52,5 +51,59 @@ export default {
       -2
     )}-${("0" + date.getDate()).slice(-2)}`;
     return day;
+  },
+
+  $_isLongLength(value, width) {
+    if (width >= 960) {
+      if (value.length > 30) {
+        return true;
+      }
+      return false;
+    }
+    if (width >= 768) {
+      if (value.length > 20) {
+        return true;
+      }
+      return false;
+    }
+    if (width >= 376) {
+      if (value.length > 10) {
+        return true;
+      }
+      return false;
+    }
+    if (width < 376) {
+      if (value.length > 5) {
+        return true;
+      }
+      return false;
+    }
+  },
+
+  $_cutLength(value, width) {
+    if (width >= 960) {
+      if (value.length > 30) {
+        return value.substr(0, 30) + "...";
+      }
+      return value;
+    }
+    if (width >= 768) {
+      if (value.length > 20) {
+        return value.substr(0, 20) + "...";
+      }
+      return value;
+    }
+    if (width >= 376) {
+      if (value.length > 10) {
+        return value.substr(0, 10) + "...";
+      }
+      return value;
+    }
+    if (width < 376) {
+      if (value.length > 5) {
+        return value.substr(0, 5) + "...";
+      }
+      return value;
+    }
   },
 };
