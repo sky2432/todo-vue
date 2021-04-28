@@ -5,14 +5,6 @@
 </template>
 
 <style>
-/*
-html5doctor.com Reset Stylesheet
-v1.6.1
-Last Updated: 2010-09-17
-Author: Richard Clark - http://richclarkdesign.com
-Twitter: @rich_clark
-*/
-
 html,
 body,
 div,
@@ -216,6 +208,7 @@ li {
   box-shadow: 0 2.5rem 2rem -2rem hsl(200 50% 20% / 40%);
 }
 
+/* ヘッダー */
 .header {
   height: 70px;
   background-color: #16a2b8;
@@ -229,6 +222,8 @@ li {
   cursor: pointer;
 }
 
+
+/* マイページ */
 .mypage-content {
   border: 1px solid black;
   border-radius: 5px;
@@ -303,4 +298,52 @@ li {
   width: 50px;
   margin-bottom: 0px;
 }
+
+/* todo登録・編集モーダルウィンドウ */
+.input-btn-wrap {
+  display: flex;
+  justify-content: space-between;
+}
+
+.calendar-btn-wrap {
+  width: 28%;
+}
+
+.calendar-btn {
+  width: 100%;
+}
+
+@media screen and (max-width: 576px) {
+  .input-btn-wrap {
+    flex-direction: column;
+  }
+
+  .calendar-btn-wrap {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .calendar-btn {
+    width: 50%;
+  }
+}
+
+
+/* その他 */
+.spinner-wrap {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-image {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+
 </style>

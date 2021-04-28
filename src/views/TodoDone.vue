@@ -4,11 +4,10 @@
     <div class="wrapper">
       <b-spinner
         v-if="loading"
-        label="Loading..."
-        class="loading"
         variant="info"
+        label="Loading..."
       ></b-spinner>
-      
+
       <div class="container" v-if="showTable">
         <ul>
           <li

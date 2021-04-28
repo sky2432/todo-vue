@@ -4,16 +4,15 @@
     <div class="wrapper">
       <div class="spinner-wrap" v-if="loading">
         <b-spinner
-          label="Loading..."
-          class="loading"
           variant="info"
+          label="Loading..."
         ></b-spinner>
       </div>
-      <div class="container" v-if="showTable" ref="test">
+      <div class="container" v-if="showTable">
         <v-calendar
+          v-if="isFullSize"
           class="calender"
           :min-date="minDate"
-          v-if="isFullSize"
         >
           <template #day-content="props">
             <div
@@ -262,13 +261,6 @@ export default {
 <style scoped>
 .container {
   height: 570px;
-}
-
-.spinner-wrap {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .calender {

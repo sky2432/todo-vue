@@ -1,60 +1,48 @@
 <template>
   <div id="app">
     <!-- 登録モーダル -->
-    <b-modal id="add-modal" centered title="新しいTodoを入力">
+    <b-modal id="add-modal" title="新しいTodoを入力" centered no-stacking>
       <template #default>
-        <div style="display: flex">
+        <div class="input-btn-wrap">
           <!-- Todo入力インプット -->
-          <b-form-input v-model="newTodo" class="col-8"></b-form-input>
+          <b-form-input v-model="newTodo" class="modal-input"></b-form-input>
           <!-- 期限設定ボタン -->
-          <div class="ml-1 col-4">
+          <div class="calendar-btn-wrap">
             <b-button
-              id="add-popover"
+              id="calendar-popover"
+              class="calendar-btn"
               variant="outline-info"
-              @click="resetDeadlineError"
+              v-b-modal.calendar-modal
             >
               <b-icon icon="calendar2-check"></b-icon>
-              {{ convertDeadline(todoDeadline) }}
+              <span v-if="showDeadlineBtnText" class="ml-2">{{
+                convertDeadline(todoDeadline)
+              }}</span>
             </b-button>
           </div>
         </div>
 
         <!-- カレンダーポップオーバー -->
         <b-popover
-          target="add-popover"
-          triggers="click"
+          v-if="showCalendarPopover"
           :show.sync="showPopover"
-          placement="right"
+          target="calendar-popover"
+          triggers="click"
         >
           <BaseCalender v-model="todoDeadline"></BaseCalender>
 
-          <!-- エラーメッセージ -->
-          <p v-if="showDeadlineError" class="error">
-            今日以降の日付を選択してください
-          </p>
-
           <!-- リマインダー -->
-          <b-form-select
+          <BaseRemindDaySelector
             :value="remindDay"
             @input="setRemindDay"
-            :options="options"
-            size="sm"
             class="mt-2"
-          ></b-form-select>
+          ></BaseRemindDaySelector>
 
-          <b-form-timepicker
+          <BaseTimepicker
             v-if="showRemindTime"
             class="mt-2"
             v-model="remindTime"
-            :placeholder="remindTime"
-            size="sm"
-            locale="ja"
-            label-close-button="閉じる"
-            close-button-variant="info"
-            minutes-step="10"
-            hide-header
-          >
-          </b-form-timepicker>
+          ></BaseTimepicker>
 
           <!-- ボタン -->
           <div class="my-3" style="text-align: right">
@@ -85,59 +73,122 @@
         </b-button>
       </template>
     </b-modal>
+
+    <!-- カレンダーモーダル -->
+    <b-modal
+      v-if="showCalendarModal"
+      id="calendar-modal"
+      title="期限・リマインドの設定"
+      body-class="calendar-modal-content"
+      centered
+      no-stacking
+    >
+      <template #default>
+        <BaseCalender
+          v-model="todoDeadline"
+          style="text-align: center;"
+        ></BaseCalender>
+
+        <!-- リマインダー -->
+        <div class="remind-wrap">
+          <BaseRemindDaySelector
+            :value="remindDay"
+            @input="setRemindDay"
+            class="mt-2 remind-day-selecter"
+          ></BaseRemindDaySelector>
+
+          <div class="remind-timepicker-wrap" v-if="showRemindTime">
+            <BaseTimepicker
+              class="mt-2 remind-timepicker"
+              v-model="remindTime"
+            ></BaseTimepicker>
+          </div>
+        </div>
+      </template>
+      <template #modal-footer>
+        <div>
+          <b-button
+            @click="calendarModalClearDeadline"
+            size="md"
+            variant="outline-danger"
+            class="mr-2"
+            >期限なし</b-button
+          >
+          <b-button
+            @click="closeCalendarModal"
+            size="md"
+            variant="outline-info"
+            class="mr-2"
+            >設定</b-button
+          >
+        </div>
+      </template>
+    </b-modal>
   </div>
 </template>
 
 <script>
 import BaseCalender from "../components/BaseCalender";
+import BaseRemindDaySelector from "../components/BaseRemindDaySelector";
+import BaseTimepicker from "../components/BaseTimepicker";
 import todoListsRepository from "../repositories/todoListsRepository.js";
+import windowWidthMixin from "../mixins/windowWidthMixin";
 
 export default {
   components: {
     BaseCalender,
+    BaseRemindDaySelector,
+    BaseTimepicker,
   },
+
   data() {
     return {
       newTodo: "",
       todoDeadline: "",
       showPopover: false,
-      showDeadlineError: false,
+      remindDay: null,
       remindTime: "",
       showRemindTime: false,
-      remindDay: null,
-      options: [
-        { value: null, text: "リマインドを設定" },
-        { value: 0, text: "当日" },
-        { value: 1, text: "1日前" },
-        { value: 2, text: "2日前" },
-      ],
+      showCalendarModal: false,
+      showCalendarPopover: true,
     };
   },
 
+  mixins: [windowWidthMixin],
+
   computed: {
+    showDeadlineBtnText() {
+      return this.$helpers.$_isNotEmpty(this.todoDeadline);
+    },
+
     convertDeadline() {
       return function(deadline) {
-        if (deadline === null) {
-          return deadline;
-        }
-        if (deadline !== null) {
-          const today = this.$helpers.$_createToday();
-          const todoDay = this.$helpers.$_createSpecificDate(deadline);
-          const tommorrow = this.$helpers.$_createTomorrow();
-          if (today.getTime() === todoDay.getTime()) {
-            return "今日";
-          }
-          if (tommorrow.getTime() === todoDay.getTime()) {
-            return "明日";
-          }
-          const convertDay = `${todoDay.getMonth() + 1} / ${todoDay.getDate()}`;
-          return convertDay;
-        }
+        return this.$helpers.$_convertDeadline(deadline);
       };
     },
   },
 
+  watch: {
+    width() {
+      this.changeSettingDeadlineDisplayType();
+    },
+  },
+
+  mounted() {
+    this.changeSettingDeadlineDisplayType();
+  },
+
   methods: {
+    changeSettingDeadlineDisplayType() {
+      if (this.width >= 567) {
+        this.showCalendarPopover = true;
+        this.showCalendarModal = false;
+      } else if (this.width < 567) {
+        this.showCalendarPopover = false;
+        this.showCalendarModal = true;
+      }
+    },
+
     setRemindDay(event) {
       this.remindDay = event;
       this.chaneShowRemindTime(event);
@@ -152,29 +203,13 @@ export default {
       }
     },
 
-    createDate(now) {
-      const date =
-        now.getFullYear() +
-        "-" +
-        ("0" + (now.getMonth() + 1)).slice(-2) +
-        "-" +
-        ("0" + now.getDate()).slice(-2);
-      return date;
-    },
-
     setToday() {
       // 期限の初期値(今日)設定
-      const now = new Date();
-      this.todoDeadline = this.createDate(now);
+      this.todoDeadline = this.$helpers.$_convertDateToString(new Date());
 
       this.remindDay = null;
       this.showRemindTime = false;
       this.remindTime = "09:00:00";
-    },
-
-    //期限ボタン・期限エラーのリセット
-    resetDeadlineError() {
-      this.showDeadlineError = false;
     },
 
     //期限なしボタン
@@ -187,12 +222,18 @@ export default {
 
     //設定ボタン
     setAddDeadline() {
-      const result = this.$helpers.$_isBeforeToday(this.todoDeadline);
-      if (result) {
-        this.showPopover = false;
-      } else {
-        this.showDeadlineError = true;
-      }
+      this.showPopover = false;
+    },
+
+    closeCalendarModal() {
+      this.$bvModal.show("add-modal");
+    },
+
+    calendarModalClearDeadline() {
+      this.todoDeadline = "";
+      this.remindDay = null;
+      this.showRemindTime = false;
+      this.$bvModal.show("add-modal");
     },
 
     // キャンセルボタン
@@ -220,11 +261,44 @@ export default {
         remind_time: this.remindTime,
       };
       await todoListsRepository.createTodo(sendData);
+      this.resetTodoData();
+      this.$emit("reload-todo");
+    },
+
+    resetTodoData() {
       this.newTodo = "";
       this.todoDeadline = "";
-      this.remind = "";
-      this.$emit("reload-todo");
     },
   },
 };
 </script>
+
+<style scoped>
+.modal-input {
+  width: 70%;
+}
+
+::v-deep .calendar-modal-content {
+  padding: 16px 0;
+}
+
+.remind-wrap {
+  text-align: center;
+}
+
+.remind-day-selecter,
+.remind-timepicker {
+  width: 250px;
+}
+
+.remind-timepicker-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+@media screen and (max-width: 576px) {
+  .modal-input {
+    width: 100%;
+  }
+}
+</style>

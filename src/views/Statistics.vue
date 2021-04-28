@@ -3,11 +3,7 @@
     <TheHomeHeader></TheHomeHeader>
     <div class="wrapper">
       <div class="spinner-wrap" v-if="loading">
-        <b-spinner
-          class="loading"
-          label="Loading..."
-          variant="info"
-        ></b-spinner>
+        <b-spinner variant="info" label="Loading..."></b-spinner>
       </div>
       <div class="container" v-show="loaded">
         <b-tabs>
@@ -24,7 +20,6 @@
     </div>
   </div>
 </template>
-
 
 <script>
 import TheHomeHeader from "../components/TheHomeHeader";
@@ -67,13 +62,6 @@ export default {
 
   .container {
     margin-top: 50px;
-  }
-
-  .spinner-wrap {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 }
 </style>

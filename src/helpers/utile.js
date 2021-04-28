@@ -29,21 +29,21 @@ export default {
     return tomorrow;
   },
 
-  $_isBeforeToday(value) {
-    const select = new Date(value);
-    const selectDay = new Date(
-      select.getFullYear(),
-      select.getMonth(),
-      select.getDate()
-    );
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    if (today > selectDay) {
-      return false;
-    } else {
-      return true;
-    }
-  },
+  // $_isBeforeToday(value) {
+  //   const select = new Date(value);
+  //   const selectDay = new Date(
+  //     select.getFullYear(),
+  //     select.getMonth(),
+  //     select.getDate()
+  //   );
+  //   const now = new Date();
+  //   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  //   if (today > selectDay) {
+  //     return false;
+  //   } else {
+  //     return true;
+  //   }
+  // },
 
   //0埋めY-m-dフォーマットの作成
   $_convertDateToString(date) {
@@ -129,4 +129,28 @@ export default {
       return value.slice(0, 5);
     }
   },
+
+  $_convertDeadline(value) {
+    if (value !== null) {
+      const today = this.$_createToday();
+      const todoDay = this.$_createSpecificDate(value);
+      const tommorrow = this.$_createTomorrow();
+      if (today.getTime() === todoDay.getTime()) {
+        return "今日";
+      }
+      if (tommorrow.getTime() === todoDay.getTime()) {
+        return "明日";
+      }
+      const convertedDay = `${todoDay.getMonth() + 1} / ${todoDay.getDate()}`;
+      return convertedDay;
+    }
+  },
+
+  $_isNotEmpty(value) {
+    if (value !== "") {
+      return true;
+    }
+    return false;
+  },
+
 };

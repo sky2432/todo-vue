@@ -4,17 +4,16 @@
     <div class="wrapper">
       <div class="spinner-wrap" v-if="loading">
         <b-spinner
-          label="Loading..."
-          class="loading"
           variant="info"
+          label="Loading..."
         ></b-spinner>
       </div>
 
-      <div class="container" v-if="showTable">
+      <div class="container" v-if="loaded">
         <div class="content">
           <div>
             <p>
-              <img class="userImage" :src="createFileURL" />
+              <img class="user-image" :src="createFileURL" />
             </p>
             <p>{{ user.name }}</p>
             <p>{{ user.email }}</p>
@@ -87,7 +86,7 @@ export default {
       todoLists: [],
       ListsForPaginate: [],
       loading: true,
-      showTable: false,
+      loaded: false,
     };
   },
 
@@ -135,7 +134,7 @@ export default {
       const resData = await todoListsRepository.getUserTodo(this.id);
       this.todoLists = resData.data.data;
       this.loading = false;
-      this.showTable = true;
+      this.loaded = true;
     },
   },
 };
@@ -146,13 +145,6 @@ export default {
   display: flex;
 }
 
-.spinner-wrap {
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .content {
   width: 50%;
   display: flex;
@@ -161,13 +153,6 @@ export default {
   text-align: center;
   padding: 20px;
   height: 400px;
-}
-
-.userImage {
-  width: 200px;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 50%;
 }
 
 .todo {

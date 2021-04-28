@@ -2,15 +2,13 @@
   <div id="app">
     <TheHomeHeader></TheHomeHeader>
     <div class="wrapper">
-      <!-- ローディング -->
       <b-spinner
-        class="loading"
         v-if="loading"
-        label="Loading..."
         variant="info"
+        label="Loading..."
       ></b-spinner>
 
-      <div class="container" v-if="showTable">
+      <div class="container" v-if="loaded">
         <p class="display-today">
           {{ showToday }}
         </p>
@@ -84,7 +82,6 @@
 
         <!-- ページネーション -->
         <BasePagination
-          ref="basePagination"
           :lists="todoLists"
           @paginate="ListsForPaginate = $event"
         ></BasePagination>
@@ -136,7 +133,7 @@ export default {
       todoLists: [],
       ListsForPaginate: [],
       loading: true,
-      showTable: false,
+      loaded: false,
     };
   },
 
@@ -180,19 +177,7 @@ export default {
     // 期限日の表示を変える
     convertDeadline() {
       return function(deadline) {
-        if (deadline !== null) {
-          const today = this.$helpers.$_createToday();
-          const todoDay = this.$helpers.$_createSpecificDate(deadline);
-          const tommorrow = this.$helpers.$_createTomorrow();
-          if (today.getTime() === todoDay.getTime()) {
-            return "今日";
-          }
-          if (tommorrow.getTime() === todoDay.getTime()) {
-            return "明日";
-          }
-          const convertDay = `${todoDay.getMonth() + 1} / ${todoDay.getDate()}`;
-          return convertDay;
-        }
+        return this.$helpers.$_convertDeadline(deadline);
       };
     },
 
@@ -219,8 +204,7 @@ export default {
       const resData = await todoListsRepository.getTodo(this.loginUser.id);
       this.todoLists = resData.data.data;
       this.loading = false;
-      this.showTable = true;
-      // this.$refs.basePagination.itemsForList();
+      this.loaded = true;
     },
 
     // 新規登録ボタン

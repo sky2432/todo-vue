@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <!-- ユーザーヘッダー -->
     <b-navbar
       toggleable="md"
       class="navbar"
@@ -106,6 +107,7 @@
       </nav>
     </b-sidebar>
 
+    <!-- 管理者ヘッダー -->
     <b-navbar
       toggleable="md"
       class="navbar"

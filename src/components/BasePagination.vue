@@ -46,7 +46,6 @@ export default {
 
   watch: {
     lists() {
-      console.log('hi');
       this.itemsForList();
     }
   },

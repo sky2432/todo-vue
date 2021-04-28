@@ -1,18 +1,27 @@
 <template>
-  <div id="app">
+  <div>
       <b-calendar
-        width="200px"
+        width="250px"
         label-help=""
         nav-button-variant="info"
         locale="ja"
         :value="value"
         @input="$emit('input', $event)"
+        hide-header
+        :min="new Date()"
+        class="calendar"
       ></b-calendar>
   </div>
 </template>
 
 <script>
 export default {
-  props: ["value"],
+  props: {
+    value: {
+      type: String,
+    }
+  },
 };
 </script>
+
+
