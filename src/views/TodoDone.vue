@@ -2,11 +2,7 @@
   <div id="app">
     <TheHomeHeader></TheHomeHeader>
     <div class="wrapper">
-      <b-spinner
-        v-if="loading"
-        variant="info"
-        label="Loading..."
-      ></b-spinner>
+      <b-spinner v-if="loading" variant="info" label="Loading..."></b-spinner>
 
       <div class="container" v-if="showTable">
         <ul>
@@ -20,8 +16,16 @@
               <b-icon
                 icon="check2-square"
                 class="done-check-icon"
+                :id="`check-icon-target-${list.id}`"
                 @click="returnTodo(list.id)"
               ></b-icon>
+              <b-popover
+                :target="`check-icon-target-${list.id}`"
+                triggers="hover"
+                placement="top"
+              >
+                戻す
+              </b-popover>
             </div>
 
             <div class="todo-content-wrap">
@@ -146,7 +150,6 @@ export default {
       await todoListsDoneRepository.deleteTodo(id);
       this.showTodoDone();
     },
-
   },
 };
 </script>

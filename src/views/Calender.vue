@@ -99,6 +99,7 @@ export default {
       if (this.$_createToday() > this.date) {
         return "rgb(255, 91, 91)";
       }
+      return "black";
     },
 
     returnTodoOfDay() {

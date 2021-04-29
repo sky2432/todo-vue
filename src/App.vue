@@ -329,7 +329,6 @@ li {
   }
 }
 
-
 /* その他 */
 .spinner-wrap {
   height: 100%;

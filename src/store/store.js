@@ -12,6 +12,7 @@ export default new Vuex.Store({
   state: {
     auth: "", //ログイン認証情報
     loginUser: "", //ログインユーザーの情報
+    token: "",
     formName: "",
     formEmail: "",
     formPassword: "",
@@ -24,6 +25,9 @@ export default new Vuex.Store({
     },
     user(state, payload) {
       state.loginUser = payload;
+    },
+    token(state, payload) {
+      state.token = payload;
     },
     updateUser(state, payload) {
       state.loginUser = payload;
@@ -60,21 +64,23 @@ export default new Vuex.Store({
         password: password,
       };
       const resData = await utilRepository.login(sendLoginData);
-
-      commit("auth", resData.data.auth);
-      commit("user", resData.data.data);
+      const token = resData.data.data.api_token;
 
       if (resData.data.auth === true) {
+        commit("auth", resData.data.auth);
+        commit("user", resData.data.data);
+        commit("token", token);
+
         // ログインメール送信
         const sendMailData = {
           email: email,
         };
         utilRepository.sendLoginMail(sendMailData);
 
-        if (resData.data.data.role === 'user') {
+        if (resData.data.data.role === "user") {
           router.replace("/home");
         }
-        if (resData.data.data.role === 'admin') {
+        if (resData.data.data.role === "admin") {
           router.replace("/admin/home");
         }
       }

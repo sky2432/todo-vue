@@ -134,11 +134,11 @@ export default {
     if (value !== null) {
       const today = this.$_createToday();
       const todoDay = this.$_createSpecificDate(value);
-      const tommorrow = this.$_createTomorrow();
+      const tomorrow = this.$_createTomorrow();
       if (today.getTime() === todoDay.getTime()) {
         return "今日";
       }
-      if (tommorrow.getTime() === todoDay.getTime()) {
+      if (tomorrow.getTime() === todoDay.getTime()) {
         return "明日";
       }
       const convertedDay = `${todoDay.getMonth() + 1} / ${todoDay.getDate()}`;

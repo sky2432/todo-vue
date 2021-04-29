@@ -1,7 +1,13 @@
 <template>
   <div id="app">
     <!-- 編集モーダル -->
-    <b-modal id="edit-modal" centered title="Todoを編集" no-stacking>
+    <b-modal
+      id="edit-modal"
+      footer-class="edit-modal-footer"
+      title="Todoを編集"
+      centered
+      no-stacking
+    >
       <template #default>
         <div class="input-btn-wrap">
           <!-- Todo入力インプット -->
@@ -67,12 +73,26 @@
       </template>
 
       <template #modal-footer>
-        <b-button size="lg" variant="outline-danger" @click="editCancel">
-          キャンセル
+        <b-button :size="changeTrashBtnSize" variant="outline-danger" @click="deleteTodo(updateTodoData.id)">
+          <b-icon icon="trash"></b-icon>
         </b-button>
-        <b-button size="lg" variant="outline-info" @click="updateTodo">
-          更新
-        </b-button>
+        <div>
+          <b-button
+            class="mr-2"
+            :size="changeBtnSize"
+            variant="outline-danger"
+            @click="editCancel"
+          >
+            キャンセル
+          </b-button>
+          <b-button
+            :size="changeBtnSize"
+            variant="outline-info"
+            @click="updateTodo"
+          >
+            更新
+          </b-button>
+        </div>
       </template>
     </b-modal>
 
@@ -103,7 +123,6 @@
               class="mt-2 remind-timepicker"
               v-model="remindTime"
             ></BaseTimepicker>
-
           </div>
         </div>
       </template>
@@ -133,8 +152,8 @@
 import BaseCalender from "../components/BaseCalender";
 import BaseRemindDaySelector from "../components/BaseRemindDaySelector";
 import BaseTimepicker from "../components/BaseTimepicker";
-
 import todoListsRepository from "../repositories/todoListsRepository.js";
+import todoListsDoneRepository from "../repositories/todoListsDoneRepository";
 import windowWidthMixin from "../mixins/windowWidthMixin";
 
 export default {
@@ -175,6 +194,22 @@ export default {
       return function(deadline) {
         return this.$helpers.$_convertDeadline(deadline);
       };
+    },
+
+    changeBtnSize() {
+      if (this.width >= 567) {
+        return "lg";
+      } else if (this.width < 567) {
+        return "md";
+      }
+    },
+
+    changeTrashBtnSize() {
+      if (this.width >= 567) {
+        return "md";
+      } else if (this.width < 567) {
+        return "sm";
+      }
     },
   },
 
@@ -282,6 +317,12 @@ export default {
       await todoListsRepository.updateTodo(todoId, sendData);
       this.$emit("reload-todo");
     },
+
+    async deleteTodo(id) {
+      this.$bvModal.hide("edit-modal");
+      await todoListsDoneRepository.deleteTodo(id);
+      this.$emit("reload-todo");
+    },
   },
 };
 </script>
@@ -307,6 +348,10 @@ export default {
 .remind-timepicker-wrap {
   display: flex;
   justify-content: center;
+}
+
+::v-deep .edit-modal-footer {
+  justify-content: space-between;
 }
 
 @media screen and (max-width: 576px) {
