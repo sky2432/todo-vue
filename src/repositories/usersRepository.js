@@ -17,9 +17,9 @@ export default {
   updateUser(id, payload) {
     return Repository.put(`${resource}/${id}`, payload);
   },
-  
-  deleteUser(id) {
-    return Repository.delete(`${resource}/${id}`);
+
+  deleteUser(payload) {
+    return Repository.post(`${resource}/delete`, payload);
   },
 
   updatePassword(payload) {
@@ -29,5 +29,5 @@ export default {
   registerConfirm(payload) {
     return Repository.post(`${resource}/confirm`, payload);
   },
-  
+
 };

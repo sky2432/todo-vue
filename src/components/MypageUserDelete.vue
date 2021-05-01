@@ -40,12 +40,17 @@ export default {
 
   methods: {
     async deleteUser() {
-      await usersRepository.deleteUser(this.loginUser.id);
+      const sendData = {
+        id: this.loginUser.id,
+      }
+      await usersRepository.deleteUser(sendData);
       this.logout();
     },
+
     logout() {
       this.$store.dispatch("logout");
     },
+
     deleteCancel() {
       this.$bvModal.hide("delete-confirm-modal");
     },

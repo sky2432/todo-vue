@@ -13,9 +13,9 @@ export default {
   updateTodo(id, payload) {
     return Repository.put(`${resource}/${id}`, payload);
   },
-  
-  checkTodo(id) {
-    return Repository.delete(`${resource}/${id}`);
+
+  checkTodo(id, payload) {
+    return Repository.put(`${resource}/done/${id}`, payload);
   },
 
   getTodayTodo(id) {
@@ -29,5 +29,5 @@ export default {
   getTodoForCalender(userId) {
     return Repository.get(`${resource}/calender/${userId}`);
   },
-  
+
 };

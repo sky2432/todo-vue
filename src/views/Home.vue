@@ -2,11 +2,7 @@
   <div id="app">
     <TheHomeHeader></TheHomeHeader>
     <div class="wrapper">
-      <b-spinner
-        v-if="loading"
-        variant="info"
-        label="Loading..."
-      ></b-spinner>
+      <b-spinner v-if="loading" variant="info" label="Loading..."></b-spinner>
 
       <div class="container" v-if="loaded">
         <p class="display-today">
@@ -202,7 +198,7 @@ export default {
     //Todoリストの表示
     async showTodo() {
       const resData = await todoListsRepository.getTodo(this.loginUser.id);
-      console.log(resData);
+      // console.log(resData);
       this.todoLists = resData.data.data;
       this.loading = false;
       this.loaded = true;
@@ -220,7 +216,10 @@ export default {
 
     //Todoの完了
     async checkTodo(id) {
-      await todoListsRepository.checkTodo(id);
+      const sendData = {
+        id: this.loginUser.id,
+      };
+      await todoListsRepository.checkTodo(id, sendData);
       this.showTodo();
     },
   },
