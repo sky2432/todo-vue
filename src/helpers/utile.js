@@ -29,22 +29,6 @@ export default {
     return tomorrow;
   },
 
-  // $_isBeforeToday(value) {
-  //   const select = new Date(value);
-  //   const selectDay = new Date(
-  //     select.getFullYear(),
-  //     select.getMonth(),
-  //     select.getDate()
-  //   );
-  //   const now = new Date();
-  //   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  //   if (today > selectDay) {
-  //     return false;
-  //   } else {
-  //     return true;
-  //   }
-  // },
-
   //0埋めY-m-dフォーマットの作成
   $_convertDateToString(date) {
     const day = `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(

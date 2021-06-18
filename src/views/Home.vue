@@ -18,7 +18,7 @@
           >
             <div class="check-wrap">
               <b-form-checkbox
-                @change="checkTodo(list.id)"
+                @change="doneTodo(list.id)"
                 class="check-box"
               ></b-form-checkbox>
             </div>
@@ -215,11 +215,8 @@ export default {
     },
 
     //Todoの完了
-    async checkTodo(id) {
-      const sendData = {
-        id: this.loginUser.id,
-      };
-      await todoListsRepository.checkTodo(id, sendData);
+    async doneTodo(id) {
+      await todoListsRepository.doneTodo(id);
       this.showTodo();
     },
   },

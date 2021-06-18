@@ -65,10 +65,18 @@
       </template>
 
       <template #modal-footer>
-        <b-button :size="changeBtnSize" variant="outline-danger" @click="addCancel">
+        <b-button
+          :size="changeBtnSize"
+          variant="outline-danger"
+          @click="addCancel"
+        >
           キャンセル
         </b-button>
-        <b-button :size="changeBtnSize" variant="outline-info" @click="createTodo">
+        <b-button
+          :size="changeBtnSize"
+          variant="outline-info"
+          @click="createTodo"
+        >
           登録
         </b-button>
       </template>
@@ -134,7 +142,6 @@ import BaseTimepicker from "../components/BaseTimepicker";
 import todoListsRepository from "../repositories/todoListsRepository.js";
 import windowWidthMixin from "../mixins/windowWidthMixin";
 
-
 export default {
   components: {
     BaseCalender,
@@ -171,12 +178,10 @@ export default {
     changeBtnSize() {
       if (this.width >= 567) {
         return "lg";
-      } else if (this.width < 567) {
-        return "md";
       }
+      return "md";
     },
   },
-
 
   watch: {
     width() {
