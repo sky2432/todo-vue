@@ -43,7 +43,7 @@
 
         <b-navbar-nav class="ml-auto">
           <b-nav-item
-            ><b-img fluid :src="userImage" class="header-img"></b-img
+            ><b-img :src="userImage" class="header-img" fluid v-if="userImage"></b-img
           ></b-nav-item>
           <b-nav-item-dropdown right class="mr-3" :text="loginUser.name">
             <b-dropdown-item @click="$router.push('/statistics')">
@@ -72,7 +72,7 @@
       <nav class="px-3 py-2">
         <b-nav vertical>
           <p class="profile">
-            <b-img fluid :src="userImage" class="header-img"></b-img
+            <b-img fluid :src="userImage" class="header-img" v-if="userImage"></b-img
             ><span class="ml-2">{{ loginUser.name }}</span>
           </p>
           <b-nav-item @click="$router.push('/home')">
@@ -143,7 +143,7 @@
 
         <b-navbar-nav class="ml-auto">
           <b-nav-item
-            ><b-img fluid :src="userImage" class="header-img"></b-img
+            ><b-img fluid :src="userImage" class="header-img" v-if="userImage"></b-img
           ></b-nav-item>
           <b-nav-item-dropdown right class="mr-3" :text="loginUser.name">
             <b-dropdown-item @click="$router.push('/mypage')">
@@ -168,7 +168,7 @@
       <nav class="px-3 py-2">
         <b-nav vertical>
           <p class="profile">
-            <b-img fluid :src="userImage" class="header-img"></b-img
+            <b-img fluid :src="userImage" class="header-img" v-if="userImage"></b-img
             ><span class="ml-2">{{ loginUser.name }}</span>
           </p>
           <b-nav-item @click="$router.push('/admin/home')">

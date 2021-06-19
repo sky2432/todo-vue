@@ -109,7 +109,7 @@ export default {
       };
       usersRepository
         .updatePassword(sendData)
-        .then((response) => {
+        .then(() => {
           this.resetData();
           this.showMsgBox();
         })
