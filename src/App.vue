@@ -4,6 +4,42 @@
   </div>
 </template>
 
+<script>
+export default {
+  watch: {
+    $route(routeInstance) {
+      this.createTitleDesc(routeInstance);
+    },
+  },
+
+  mounted() {
+    var routeInstance = this.$route;
+    this.createTitleDesc(routeInstance);
+  },
+
+  methods: {
+    createTitleDesc: function(routeInstance) {
+      if (routeInstance.meta.title) {
+        var setTitle = routeInstance.meta.title + " | TodoList";
+        document.title = setTitle;
+      } else {
+        document.title = "TodoList";
+      }
+      if (routeInstance.meta.desc) {
+        var setDesc = routeInstance.meta.desc + " | TodoList";
+        document
+          .querySelector("meta[name='description']")
+          .setAttribute("content", setDesc);
+      } else {
+        document
+          .querySelector("meta[name='description']")
+          .setAttribute("content", "description is not set");
+      }
+    },
+  },
+};
+</script>
+
 <style>
 html,
 body,
@@ -212,7 +248,7 @@ li {
 .header {
   height: 70px;
   background-color: #16a2b8;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 }
 
 .header-title {
@@ -221,7 +257,6 @@ li {
   color: white;
   cursor: pointer;
 }
-
 
 /* マイページ */
 .mypage-content {

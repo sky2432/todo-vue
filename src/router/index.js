@@ -33,23 +33,40 @@ const routes = [
     path: "/",
     name: "TopPage",
     component: TopPage,
+    meta: {
+      title: "トップページ",
+      desc: "トップページです。",
+    },
+    beforeEnter: multiguard([loginedUser]),
   },
   {
     path: "/registerForm",
     name: "RegisterForm",
     component: RegisterForm,
+    meta: {
+      title: "会員登録",
+      desc: "会員登録ページです。",
+    },
     beforeEnter: multiguard([loginedUser]),
   },
   {
     path: "/registerConfirm",
     name: "RegisterConfirm",
     component: RegisterConfirm,
+    meta: {
+      title: "会員登録確認",
+      desc: "会員登録確認ページです。",
+    },
     beforeEnter: multiguard([loginedUser]),
   },
   {
     path: "/login",
     name: "Login",
     component: Login,
+    meta: {
+      title: "ログイン",
+      desc: "ログインページです。",
+    },
     beforeEnter: multiguard([loginedUser]),
   },
   {
@@ -64,6 +81,8 @@ const routes = [
     component: Home,
     meta: {
       requiresAuth: true,
+      title: "ホーム",
+      desc: "ホームページです",
     },
   },
   {
@@ -72,6 +91,8 @@ const routes = [
     component: TodoToday,
     meta: {
       requiresAuth: true,
+      title: "今日",
+      desc: "今日のTodoページです",
     },
   },
   {
@@ -79,6 +100,8 @@ const routes = [
     name: "TodoDone",
     component: TodoDone,
     meta: {
+      title: "完了",
+      desc: "完了Todoページです",
       requiresAuth: true,
     },
   },
@@ -87,6 +110,8 @@ const routes = [
     name: "Calender",
     component: Calender,
     meta: {
+      title: "カレンダー",
+      desc: "カレンダーページです",
       requiresAuth: true,
     },
   },
@@ -95,6 +120,8 @@ const routes = [
     name: "MyPage",
     component: MyPage,
     meta: {
+      title: "設定",
+      desc: "設定ページです",
       requiresAuth: true,
     },
   },
@@ -103,6 +130,8 @@ const routes = [
     name: "Statistics",
     component: Statistics,
     meta: {
+      title: "統計",
+      desc: "統計ページです",
       requiresAuth: true,
     },
   },
@@ -111,6 +140,8 @@ const routes = [
     name: "AdminHome",
     component: AdminHome,
     meta: {
+      title: "管理者",
+      desc: "管理者ページです",
       requiresAuth: true,
     },
   },
@@ -119,6 +150,8 @@ const routes = [
     name: "AdminUsers",
     component: AdminUsers,
     meta: {
+      title: "ユーザー詳細",
+      desc: "ユーザー詳細ページです",
       requiresAuth: true,
     },
     props: true,

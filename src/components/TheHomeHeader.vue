@@ -134,10 +134,7 @@
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="mr-auto">
           <b-nav-item @click="$router.push('/admin/home')">
-            ユーザー管理<span class="vertical-bar">|</span>
-          </b-nav-item>
-          <b-nav-item @click="$router.push('/')">
-            トップページ
+            ユーザー管理
           </b-nav-item>
         </b-navbar-nav>
 
@@ -174,10 +171,6 @@
           <b-nav-item @click="$router.push('/admin/home')">
             <b-icon icon="person-fill"></b-icon>
             <span class="nav-txt">ユーザー管理</span>
-          </b-nav-item>
-          <b-nav-item @click="$router.push('/statistics')">
-            <b-icon icon="reception4"></b-icon>
-            <span class="nav-txt">統計</span>
           </b-nav-item>
           <b-nav-item @click="$router.push('/mypage')">
             <b-icon icon="gear-fill"></b-icon>
