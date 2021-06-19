@@ -9,7 +9,10 @@
               アカウントを削除すると、これまでのデータはすべて削除されます。
             </p>
           </b-alert>
-          <b-button v-b-modal.delete-confirm-modal variant="outline-danger"
+          <b-button
+            v-b-modal.delete-confirm-modal
+            variant="outline-danger"
+            :disabled="loginUser.role === 'guest'"
             >アカウントを削除</b-button
           >
         </div>

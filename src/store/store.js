@@ -79,7 +79,7 @@ export default new Vuex.Store({
         };
         utilRepository.sendLoginMail(sendMailData);
 
-        if (resData.data.data.role === "user") {
+        if (resData.data.data.role === "user" || resData.data.data.role === "guest") {
           router.replace("/home");
         }
         if (resData.data.data.role === "admin") {

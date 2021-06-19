@@ -6,7 +6,7 @@
       class="navbar"
       type="dark"
       variant="info"
-      v-if="loginUser.role === 'user'"
+      v-if="loginUser.role === 'user' || loginUser.role === 'guest'"
     >
       <b-navbar-brand class="ml-3" href="#" @click="$router.push('/Home')">
         <b-icon icon="card-checklist"></b-icon>
@@ -67,7 +67,7 @@
       id="user-sidebar"
       width="250px"
       shadow
-      v-if="loginUser.role === 'user'"
+      v-if="loginUser.role === 'user' || loginUser.role === 'guest'"
     >
       <nav class="px-3 py-2">
         <b-nav vertical>

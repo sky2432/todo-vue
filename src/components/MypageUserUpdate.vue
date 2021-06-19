@@ -25,8 +25,9 @@
             </div>
           </b-form-group>
           <div class="btn-wrap">
-            <b-button variant="outline-info" type="submit">変更</b-button>
+            <b-button variant="outline-info" type="submit" :disabled="loginUser.role === 'guest'">変更</b-button>
           </div>
+
         </b-form>
       </div>
     </div>

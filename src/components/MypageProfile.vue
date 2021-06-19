@@ -12,7 +12,11 @@
           v-if="showInput"
         ></b-form-file>
         <p class="error" v-if="showError">{{ errorFileMessage }}</p>
-        <b-button variant="outline-info" class="mt-3" @click="fileUpload"
+        <b-button
+          class="mt-3"
+          variant="outline-info"
+          :disabled="loginUser.role === 'guest'"
+          @click="fileUpload"
           >設定</b-button
         >
       </div>

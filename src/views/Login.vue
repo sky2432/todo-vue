@@ -42,6 +42,9 @@
           </b-form-group>
           <div class="btn-wrap">
             <b-button type="submit" variant="outline-info">ログイン</b-button>
+            <b-button class="ml-4" variant="outline-info" @click="guestLogin"
+              >ゲストログイン</b-button
+            >
           </div>
         </b-form>
       </div>
@@ -77,6 +80,14 @@ export default {
           this.errorsEmail = e.response.data.errors.email;
           this.errorsPassword = e.response.data.errors.password;
         });
+    },
+
+    guestLogin() {
+      const sendData = {
+        email: "guest@guest.com",
+        password: 1234,
+      };
+      this.$store.dispatch("login", sendData);
     },
   },
 };
