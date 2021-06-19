@@ -8,6 +8,12 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 import Vuelidate from "vuelidate";
 import VCalendar from "v-calendar";
 import helpers from "./helpers/utile";
+import Repository from "./repositories/Repository";
+
+const token = store.state.token;
+if (token) {
+  Repository.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+}
 
 const plugin = {
   install() {
@@ -16,9 +22,7 @@ const plugin = {
 };
 
 Vue.use(plugin);
-// import PrettyCheckbox from "pretty-checkbox-vue";
 
-// Vue.use(PrettyCheckbox);
 Vue.use(VCalendar);
 Vue.use(Vuelidate);
 Vue.use(BootstrapVue);

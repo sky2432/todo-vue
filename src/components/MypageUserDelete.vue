@@ -40,10 +40,7 @@ export default {
 
   methods: {
     async deleteUser() {
-      const sendData = {
-        id: this.loginUser.id,
-      }
-      await usersRepository.deleteUser(sendData);
+      await usersRepository.deleteUser(this.loginUser.id);
       this.logout();
     },
 

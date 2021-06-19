@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import createPersistedState from "vuex-persistedstate";
 import router from "../router/index";
 import utilRepository from "../repositories/utilRepository";
+import Repository from "../repositories/Repository";
 
 Vue.use(Vuex);
 
@@ -13,10 +14,10 @@ export default new Vuex.Store({
     auth: "", //ログイン認証情報
     loginUser: "", //ログインユーザーの情報
     token: "",
+    userImage: "",
     formName: "",
     formEmail: "",
     formPassword: "",
-    userImage: "",
   },
 
   mutations: {
@@ -35,6 +36,7 @@ export default new Vuex.Store({
     logout(state, payload) {
       state.auth = payload;
       state.loginUser = "";
+      state.token = "";
       state.userImage = "";
     },
     storeFormName(state, payload) {
@@ -58,22 +60,22 @@ export default new Vuex.Store({
 
   actions: {
     //ログイン処理
-    async login({ commit }, { email, password }) {
-      const sendLoginData = {
-        email: email,
-        password: password,
-      };
-      const resData = await utilRepository.login(sendLoginData);
-      const token = resData.data.data.api_token;
+    async login({ commit }, sendData) {
+      const resData = await utilRepository.login(sendData);
 
       if (resData.data.auth === true) {
+        const token = resData.data.token;
+        Repository.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${token}`;
+
         commit("auth", resData.data.auth);
         commit("user", resData.data.data);
         commit("token", token);
 
         // ログインメール送信
         const sendMailData = {
-          email: email,
+          email: resData.data.data.email,
         };
         utilRepository.sendLoginMail(sendMailData);
 
@@ -85,8 +87,11 @@ export default new Vuex.Store({
         }
       }
     },
+
     // ログアウト処理
     async logout({ commit }) {
+      delete Repository.defaults.headers.common["Authorization"];
+
       const resData = await utilRepository.logout();
 
       commit("logout", resData.data.auth);

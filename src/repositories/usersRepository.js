@@ -18,8 +18,8 @@ export default {
     return Repository.put(`${resource}/${id}`, payload);
   },
 
-  deleteUser(payload) {
-    return Repository.post(`${resource}/delete`, payload);
+  deleteUser(id) {
+    return Repository.delete(`${resource}/${id}`);
   },
 
   updatePassword(payload) {

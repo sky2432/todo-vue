@@ -22,10 +22,7 @@
               </p>
             </div>
           </b-form-group>
-          <b-form-group
-            label="パスワード"
-            label-for="password"
-          >
+          <b-form-group label="パスワード" label-for="password">
             <b-form-input
               id="password"
               v-model="password"
@@ -73,13 +70,14 @@ export default {
       };
       utilRepository
         .loginConfirm(sendData)
-        .then(this.$store.dispatch("login", sendData))
+        .then(() => {
+          this.$store.dispatch("login", sendData);
+        })
         .catch((e) => {
           this.errorsEmail = e.response.data.errors.email;
           this.errorsPassword = e.response.data.errors.password;
         });
     },
-
   },
 };
 </script>

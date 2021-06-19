@@ -20,8 +20,4 @@ export default {
   sendRegisterMail(payload) {
     return Repository.post("/sendMail/register", payload);
   },
-
-  // sendPasswordResetMail(payload) {
-  //   return Repository.post("/forgot-password", payload);
-  // },
 };
