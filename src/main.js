@@ -28,7 +28,6 @@ Vue.use(Vuelidate);
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 
-// Vue.config.devtools = true;
 Vue.config.productionTip = false;
 
 new Vue({

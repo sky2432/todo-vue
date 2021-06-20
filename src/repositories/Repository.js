@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseDomain = "http://127.0.0.1:8000";
+const baseDomain = process.env.VUE_APP_API_BASE_URL;
 
 const baseURL = `${baseDomain}/api`;
 
