@@ -5,7 +5,6 @@ import store from "./store/store";
 import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
-import Vuelidate from "vuelidate";
 import VCalendar from "v-calendar";
 import helpers from "./helpers/utile";
 import Repository from "./repositories/Repository";
@@ -24,7 +23,6 @@ const plugin = {
 Vue.use(plugin);
 
 Vue.use(VCalendar);
-Vue.use(Vuelidate);
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 
