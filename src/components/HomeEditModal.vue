@@ -73,7 +73,11 @@
       </template>
 
       <template #modal-footer>
-        <b-button :size="changeTrashBtnSize" variant="outline-danger" @click="deleteTodo(updateTodoData.id)">
+        <b-button
+          :size="changeTrashBtnSize"
+          variant="outline-danger"
+          @click="deleteTodo(updateTodoData.id)"
+        >
           <b-icon icon="trash"></b-icon>
         </b-button>
         <div>
@@ -199,17 +203,15 @@ export default {
     changeBtnSize() {
       if (this.width >= 567) {
         return "lg";
-      } else if (this.width < 567) {
-        return "md";
       }
+      return "md";
     },
 
     changeTrashBtnSize() {
       if (this.width >= 567) {
         return "md";
-      } else if (this.width < 567) {
-        return "sm";
       }
+      return "sm";
     },
   },
 

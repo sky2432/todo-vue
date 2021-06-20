@@ -108,7 +108,7 @@ export default {
       };
       usersRepository
         .registerConfirm(sendData)
-        .then((response) => this.$router.push("/registerConfirm"))
+        .then(() => this.$router.push("/registerConfirm"))
         .catch((e) => {
           this.errorsName = e.response.data.errors.name;
           this.errorsEmail = e.response.data.errors.email;

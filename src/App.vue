@@ -25,16 +25,6 @@ export default {
       } else {
         document.title = "TodoList";
       }
-      if (routeInstance.meta.desc) {
-        var setDesc = routeInstance.meta.desc + " | TodoList";
-        document
-          .querySelector("meta[name='description']")
-          .setAttribute("content", setDesc);
-      } else {
-        document
-          .querySelector("meta[name='description']")
-          .setAttribute("content", "description is not set");
-      }
     },
   },
 };
