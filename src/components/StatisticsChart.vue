@@ -1,5 +1,6 @@
 <script>
 import { Bar, mixins } from "vue-chartjs";
+import Chart from "chart.js";
 const { reactiveProp } = mixins;
 
 export default {
