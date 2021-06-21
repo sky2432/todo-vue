@@ -1,6 +1,5 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import RequestPasswordReset from "../views/RequestPasswordReset.vue";
 import multiguard from "vue-router-multiguard";
 import TopPage from "../views/TopPage.vue";
 import RegisterForm from "../views/RegisterFome.vue";
@@ -67,12 +66,6 @@ const routes = [
       title: "ログイン",
       desc: "ログインページです。",
     },
-    beforeEnter: multiguard([loginedUser]),
-  },
-  {
-    path: "/requestPasswordReset",
-    name: "RequestPasswordReset",
-    component: RequestPasswordReset,
     beforeEnter: multiguard([loginedUser]),
   },
   {

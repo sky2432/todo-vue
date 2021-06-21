@@ -35,11 +35,6 @@
               </p>
             </div>
           </b-form-group>
-          <b-form-group>
-            <router-link to="/requestPasswordReset">
-              パスワードをお忘れですか？
-            </router-link>
-          </b-form-group>
           <div class="btn-wrap">
             <b-button type="submit" variant="outline-info">ログイン</b-button>
             <b-button class="ml-4" variant="outline-info" @click="guestLogin"
