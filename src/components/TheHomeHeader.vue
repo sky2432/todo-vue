@@ -205,10 +205,9 @@ export default {
     async getUserImage() {
       const resData = await fileRepository.getImage(this.loginUser.id);
       if (resData.data.data.file_path) {
-        const userImage =
-          "http://127.0.0.1:8000/storage/image/" + resData.data.data.file_path;
-        this.$store.commit("storeUserImage", userImage);
+        this.$store.commit("storeUserImage", resData.data.data.file_path);
       }
+
     },
 
     logout() {

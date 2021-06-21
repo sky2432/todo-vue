@@ -60,16 +60,14 @@ export default {
 
     async fileUpload() {
       const formData = new FormData();
-      formData.append("file", this.fileInfo);
+      formData.append("image", this.fileInfo);
       const resData = await fileRepository.uploadImage(
         this.loginUser.id,
         formData
       );
 
       if (resData.data.data.file_path) {
-        const userImage =
-          "http://127.0.0.1:8000/storage/image/" + resData.data.data.file_path;
-        this.$store.commit("storeUserImage", userImage);
+        this.$store.commit("storeUserImage", resData.data.data.file_path);
 
         this.showInput = false;
         this.$nextTick(function() {
