@@ -24,7 +24,10 @@
           >
         </b-list-group>
 
-        <component class="col-12 col-md-8 mypage-component" :is="currentComponent"></component>
+        <component
+          class="col-12 col-md-8 mypage-component"
+          :is="currentComponent"
+        ></component>
       </div>
     </div>
   </div>
@@ -45,6 +48,7 @@ export default {
     MypageUserPassword,
     MypageUserDelete,
   },
+
   data() {
     return {
       currentComponent: "MypageProfile",

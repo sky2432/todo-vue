@@ -36,10 +36,15 @@
             </div>
           </b-form-group>
           <div class="btn-wrap">
-            <b-button type="submit" variant="outline-info">ログイン</b-button>
-            <b-button class="ml-4" variant="outline-info" @click="guestLogin"
+            <b-button class="mr-4" variant="outline-info" @click="guestLogin"
               >ゲストログイン</b-button
             >
+            <b-button type="submit" variant="outline-info">ログイン</b-button>
+          </div>
+          <div class="text-center mt-4" style="color: #666">
+            <p class="mb-0">
+              ※ゲストログインでは一部機能が制限されています
+            </p>
           </div>
         </b-form>
       </div>
