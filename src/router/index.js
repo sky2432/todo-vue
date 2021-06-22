@@ -18,10 +18,14 @@ import store from "../store/store";
 Vue.use(VueRouter);
 
 const loginedUser = function(to, from, next) {
-  if (store.state.auth && store.state.loginUser.role === "user") {
+  const role = store.state.loginUser.role;
+  if (
+    (store.state.auth && role === "user") ||
+    (store.state.auth && role === "guest")
+  ) {
     next("/home");
   }
-  if (store.state.auth && store.state.loginUser.role === "admin") {
+  if (store.state.auth && role === "admin") {
     next("/admin/home");
   }
   next();
@@ -162,6 +166,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  const role = store.state.loginUser.role;
   if (
     to.matched.some((record) => record.meta.requiresAuth) &&
     !store.state.auth
@@ -173,12 +178,12 @@ router.beforeEach((to, from, next) => {
       },
     });
   }
-  if (store.state.loginUser.role === "user") {
+  if (role === "user" || role === "guest") {
     if (to.name === "AdminHome" || to.name === "AdminUsers") {
       next("/");
     }
   }
-  if (store.state.loginUser.role === "admin") {
+  if (role === "admin") {
     if (
       to.name === "Home" ||
       to.name === "TodoToday" ||
