@@ -65,9 +65,9 @@ export default {
         this.loginUser.id,
         formData
       );
-
-      if (resData.data.data.file_path) {
-        this.$store.commit("storeUserImage", resData.data.data.file_path);
+      const fileUrl = resData.data.data.file_path
+      if (fileUrl) {
+        this.$store.commit("storeUserImage", fileUrl);
 
         this.showInput = false;
         this.$nextTick(function() {
