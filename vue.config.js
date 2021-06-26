@@ -5,4 +5,10 @@ module.exports = {
       title: "TodoList",
     },
   },
+  devServer: {
+    watchOptions: {
+      poll: true,
+    },
+    host: "localhost",
+  },
 };

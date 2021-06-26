@@ -37,9 +37,14 @@
           </b-form-group>
           <div class="btn-wrap">
             <b-button class="mr-4" variant="outline-info" @click="guestLogin"
-              >ゲストログイン</b-button
-            >
-            <b-button type="submit" variant="outline-info">ログイン</b-button>
+              ><span v-if="!loading1">ゲストログイン</span
+              ><b-spinner variant="primary" small v-if="loading1"></b-spinner
+            ></b-button>
+
+            <b-button type="submit" variant="outline-info"
+              ><span v-if="!loading2">ログイン</span>
+              <b-spinner variant="primary" small v-if="loading2"></b-spinner>
+            </b-button>
           </div>
           <div class="text-center mt-4" style="color: #666">
             <p class="mb-0">
@@ -62,11 +67,23 @@ export default {
       password: "",
       errorsEmail: [],
       errorsPassword: [],
+      loading1: false,
+      loading2: false,
     };
   },
 
   methods: {
+    async guestLogin() {
+      this.loading1 = true;
+      const sendData = {
+        email: "guest@user.com",
+        password: 1234,
+      };
+      await this.$store.dispatch("login", sendData);
+    },
+
     login() {
+      this.loading2 = true;
       const sendData = {
         email: this.email,
         password: this.password,
@@ -75,19 +92,13 @@ export default {
         .loginConfirm(sendData)
         .then(() => {
           this.$store.dispatch("login", sendData);
+          this.loading2 = false;
         })
         .catch((e) => {
           this.errorsEmail = e.response.data.errors.email;
           this.errorsPassword = e.response.data.errors.password;
+          this.loading2 = false;
         });
-    },
-
-    guestLogin() {
-      const sendData = {
-        email: "guest@user.com",
-        password: 1234,
-      };
-      this.$store.dispatch("login", sendData);
     },
   },
 };
