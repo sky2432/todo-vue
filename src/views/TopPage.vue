@@ -24,7 +24,7 @@
 
 <style scoped>
 .wrapper {
-  height: 100vh;
+  height: calc(var(--vh) * 100);
 }
 
 .wrap {

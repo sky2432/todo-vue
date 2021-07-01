@@ -5,11 +5,24 @@
 </template>
 
 <script>
+import windowWidthMixin from "./mixins/windowWidthMixin.js";
+
 export default {
+  mixins: [windowWidthMixin],
+
   watch: {
     $route(routeInstance) {
       this.createTitleDesc(routeInstance);
     },
+
+    //windowWidthMixinの変数
+    width() {
+      this.setProperty();
+    },
+  },
+
+  created() {
+    this.setProperty();
   },
 
   mounted() {
@@ -18,6 +31,11 @@ export default {
   },
 
   methods: {
+    setProperty() {
+      let height = window.innerHeight;
+      document.documentElement.style.setProperty("--vh", height / 100 + "px");
+    },
+
     createTitleDesc: function(routeInstance) {
       if (routeInstance.meta.title) {
         var setTitle = routeInstance.meta.title + " | TodoList";
@@ -53,14 +71,16 @@ ul {
   margin-bottom: 0px;
 }
 
+html, body {
+  background-color: #f5f9fc;
+}
+
 #full-page {
-  height: 100vh;
-  width: 100vw;
   background-color: #f5f9fc;
 }
 
 .wrapper {
-  height: calc(100vh - 70px);
+  height: calc(var(--vh) * 100 - 70px);
   display: flex;
   align-items: center;
   justify-content: center;

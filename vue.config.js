@@ -10,5 +10,6 @@ module.exports = {
       poll: true,
     },
     host: "localhost",
+    disableHostCheck: true,
   },
 };

@@ -72,7 +72,7 @@ export default {
     height: auto;
     flex-direction: column;
     justify-content: center;
-    margin-top: 50px;
+    margin-top: 8px;
   }
 
   .list-group {

@@ -110,7 +110,7 @@ export default {
 
     convertDay() {
       return function(done_at) {
-        const day = new Date(done_at);
+        const day = new Date(done_at.replace(/-/g,"/"));
         const doneDay = `${day.getMonth() + 1} / ${day.getDate()}`;
         return doneDay;
       };
