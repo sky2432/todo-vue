@@ -33,7 +33,10 @@ Todoには期限とリマインド日時を設定することもできます。
 期限を設定したTodoをカレンダー上で確認することができます。期限が過ぎているTodoは赤色で表示されます。Todoが1日に3件以上登録されている場合やTodoの文字数が多い場合はカーソルを載せることでポップオーバーが表示され全てのTodoを確認することができます。
 
 ### グラフ画面
-<img width="1280" alt="スクリーンショット 2021-07-17 16 52 35" src="https://user-images.githubusercontent.com/55875685/126030296-159b1f37-c3aa-4e93-9911-07430bdc0a0a.png">
+<img width="1280" alt="スクリーンショット 2021-07-18 14 11 11" src="https://user-images.githubusercontent.com/55875685/126056578-5955227c-4214-4490-8e40-a77cb51aebd3.png">
+
+![Animated GIF-downsized (2)](https://user-images.githubusercontent.com/55875685/126056609-f634a801-e58b-4272-afae-357d09cac7eb.gif)
+
 完了したTodoに関係する統計情報とTodo完了数の推移グラフが表示されています。グラフは日別・週別・月別で確認できます。また表示期間を変更することで利用開始日から現在までのグラフを全て見ることができます。
 
 ### 継続記録画面
