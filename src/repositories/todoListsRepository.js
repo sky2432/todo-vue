@@ -15,7 +15,7 @@ export default {
   },
 
   doneTodo(id) {
-    return Repository.delete(`${resource}/done/${id}`);
+    return Repository.delete(`${resource}/${id}`);
   },
 
   getTodayTodo(id) {
