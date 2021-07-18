@@ -8,14 +8,21 @@ https://github.com/sky2432/todo-laravel
 ## アプリケーションURL
 https://rese-vue.netlify.app
 
-ログイン画面の「ゲストログイン」ボタンからアプリを体験してみてください。
+ログイン画面の「ゲストログイン」ボタンからアプリを体験してみてください。ゲストログインではアカウント情報の変更とアカウントの削除が無効になっております。
+
+## アカウントの種類
+- ユーザー: Todoの管理ができます。
+- 管理者: ユーザーアカウント一覧とユーザーのTodo一覧を確認できます。
+- ゲストユーザー: 会員登録することなくユーザーアカウントとしてアプリを体験することができます。
 
 ## 使い方
+レスポンシブに対応していますが、ここではPC画面での説明になります。
+
 ### ホーム画面
 <img width="1280" alt="スクリーンショット 2021-07-17 16 51 10" src="https://user-images.githubusercontent.com/55875685/126030257-96b35d4b-c12f-42a9-a853-eb03835ddb79.png">
-まず登録したTodo一覧の確認とTodoの登録・変更が可能。またそれぞれのTodoの横にあるチェックボックスを押すことでTodoを完了済みにすることができます。期限が過ぎているTodoは赤色で表示されます。
+まず登録したTodo一覧の確認とTodoの登録・変更が可能です。またそれぞれのTodoの横にあるチェックボックスを押すことでTodoを完了済みにすることができます。期限が過ぎているTodoは赤色で表示されます。
 <img width="1280" alt="スクリーンショット 2021-07-17 16 51 33" src="https://user-images.githubusercontent.com/55875685/126030264-868a5a0b-2e57-4c1d-ab5b-80eea55ed9b5.png">
-Todoには期限とリマインド日時を設定することも可能です。
+Todoには期限とリマインド日時を設定することもできます。
 
 ### 完了済みTodo一覧画面
 <img width="1280" alt="スクリーンショット 2021-07-17 16 51 48" src="https://user-images.githubusercontent.com/55875685/126030275-7ca21c41-fa26-477f-95d4-cb8d9d468cf0.png">
@@ -72,6 +79,8 @@ Todoには期限とリマインド日時を設定することも可能です。
 - Laravel 8.12
 - AWS S3
 - Heroku
+- Mysql 8.0.23
+- ClearDB MySQL(Heroku)
 
 ## ER図
 ![Todo-list-ER](https://user-images.githubusercontent.com/55875685/126053239-f651fbcf-4282-4c66-a28b-3877bf4a8212.png)
