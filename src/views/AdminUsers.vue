@@ -13,7 +13,7 @@
         <div class="content">
           <div>
             <p>
-              <img class="user-image" :src="createFileURL" />
+              <img class="user-image" :src="user.file_path" />
             </p>
             <p>{{ user.name }}</p>
             <p>{{ user.email }}</p>
@@ -91,10 +91,6 @@ export default {
   },
 
   computed: {
-    createFileURL() {
-      return "http://127.0.0.1:8000/storage/image/" + this.user.file_path;
-    },
-
     chengeColor() {
       return function(list) {
         if (list.status === 1) {

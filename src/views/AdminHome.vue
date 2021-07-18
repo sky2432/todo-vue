@@ -25,7 +25,7 @@
               @click="moveUserDeatail(user.id)"
             >
               <div class="user-name">
-                <img class="user-image" :src="createFileURL(user.file_path)" />
+                <img class="user-image" :src="user.file_path" />
                 {{ user.name }}
               </div>
 
@@ -81,14 +81,6 @@ export default {
       loading: true,
       showTable: false,
     };
-  },
-
-  computed: {
-    createFileURL() {
-      return function(file_path) {
-        return "http://127.0.0.1:8000/storage/image/" + file_path;
-      };
-    },
   },
 
   created() {
