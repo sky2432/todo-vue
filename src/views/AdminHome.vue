@@ -2,11 +2,7 @@
   <div id="app">
     <TheHomeHeader></TheHomeHeader>
     <div class="wrapper">
-      <b-spinner
-        v-if="loading"
-        variant="info"
-        label="Loading..."
-      ></b-spinner>
+      <b-spinner v-if="loading" variant="info" label="Loading..."></b-spinner>
 
       <div class="container" v-if="showTable">
         <ul>
@@ -63,8 +59,7 @@
 import TheHomeHeader from "../components/TheHomeHeader";
 import BasePagination from "../components/BasePagination";
 import usersRepository from "../repositories/usersRepository";
-import windowWidthMixin from "../mixins/windowWidthMixin";
-
+import windowWidthHeightMixin from "../mixins/windowWidthHeightMixin";
 
 export default {
   components: {
@@ -72,7 +67,7 @@ export default {
     BasePagination,
   },
 
-  mixins: [windowWidthMixin],
+  mixins: [windowWidthHeightMixin],
 
   data() {
     return {

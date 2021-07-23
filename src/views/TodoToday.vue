@@ -2,11 +2,7 @@
   <div id="app">
     <TheHomeHeader></TheHomeHeader>
     <div class="wrapper">
-      <b-spinner
-        v-if="loading"
-        variant="info"
-        label="Loading..."
-      ></b-spinner>
+      <b-spinner v-if="loading" variant="info" label="Loading..."></b-spinner>
 
       <div class="container" v-if="showTable">
         <p class="display-today">
@@ -111,7 +107,7 @@ import HomeEditModal from "../components/HomeEditModal";
 import BasePagination from "../components/BasePagination";
 import todoListsRepository from "../repositories/todoListsRepository.js";
 import { mapState } from "vuex";
-import windowWidthMixin from "../mixins/windowWidthMixin";
+import windowWidthHeightMixin from "../mixins/windowWidthHeightMixin";
 
 export default {
   components: {
@@ -121,7 +117,7 @@ export default {
     BasePagination,
   },
 
-  mixins: [windowWidthMixin],
+  mixins: [windowWidthHeightMixin],
 
   data() {
     return {
@@ -173,7 +169,7 @@ export default {
 
     convertRemindTime() {
       return function(remind_time) {
-        return this.$helpers.$_convertRemindTime(remind_time)
+        return this.$helpers.$_convertRemindTime(remind_time);
       };
     },
   },

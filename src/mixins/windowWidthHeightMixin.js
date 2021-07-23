@@ -2,6 +2,7 @@ export default {
   data() {
     return {
       width: window.innerWidth,
+      height: window.innerHeight,
     };
   },
 
@@ -16,6 +17,7 @@ export default {
   methods: {
     handleResize() {
       this.width = window.innerWidth;
+      this.height = window.innerHeight;
     },
   },
 };

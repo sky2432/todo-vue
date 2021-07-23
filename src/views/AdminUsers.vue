@@ -3,10 +3,7 @@
     <TheHomeHeader></TheHomeHeader>
     <div class="wrapper">
       <div class="spinner-wrap" v-if="loading">
-        <b-spinner
-          variant="info"
-          label="Loading..."
-        ></b-spinner>
+        <b-spinner variant="info" label="Loading..."></b-spinner>
       </div>
 
       <div class="container" v-if="loaded">
@@ -69,7 +66,7 @@ import TheHomeHeader from "../components/TheHomeHeader";
 import BasePagination from "../components/BasePagination";
 import usersRepository from "../repositories/usersRepository";
 import todoListsRepository from "../repositories/todoListsRepository.js";
-import windowWidthMixin from "../mixins/windowWidthMixin";
+import windowWidthHeightMixin from "../mixins/windowWidthHeightMixin";
 
 export default {
   components: {
@@ -78,7 +75,7 @@ export default {
   },
 
   props: ["id"],
-  mixins: [windowWidthMixin],
+  mixins: [windowWidthHeightMixin],
 
   data() {
     return {

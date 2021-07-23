@@ -86,7 +86,7 @@ import TheHomeHeader from "../components/TheHomeHeader";
 import BasePagination from "../components/BasePagination";
 import todoListsDoneRepository from "../repositories/todoListsDoneRepository";
 import { mapState } from "vuex";
-import windowWidthMixin from "../mixins/windowWidthMixin";
+import windowWidthHeightMixin from "../mixins/windowWidthHeightMixin";
 
 export default {
   components: {
@@ -94,7 +94,7 @@ export default {
     BasePagination,
   },
 
-  mixins: [windowWidthMixin],
+  mixins: [windowWidthHeightMixin],
 
   data() {
     return {
@@ -110,7 +110,7 @@ export default {
 
     convertDay() {
       return function(done_at) {
-        const day = new Date(done_at.replace(/-/g,"/"));
+        const day = new Date(done_at.replace(/-/g, "/"));
         const doneDay = `${day.getMonth() + 1} / ${day.getDate()}`;
         return doneDay;
       };

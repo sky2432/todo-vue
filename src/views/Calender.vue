@@ -3,17 +3,10 @@
     <TheHomeHeader></TheHomeHeader>
     <div class="wrapper">
       <div class="spinner-wrap" v-if="loading">
-        <b-spinner
-          variant="info"
-          label="Loading..."
-        ></b-spinner>
+        <b-spinner variant="info" label="Loading..."></b-spinner>
       </div>
       <div class="container" v-if="showTable">
-        <v-calendar
-          v-if="isFullSize"
-          class="calender"
-          :min-date="minDate"
-        >
+        <v-calendar v-if="isFullSize" class="calender" :min-date="minDate">
           <template #day-content="props">
             <div
               class="cell"
@@ -59,14 +52,14 @@ import todoListsRepository from "../repositories/todoListsRepository";
 import $_convertDateToString from "../helpers/utile";
 import $_createToday from "../helpers/utile";
 import { mapState } from "vuex";
-import windowWidthMixin from "../mixins/windowWidthMixin";
+import windowWidthHeightMixin from "../mixins/windowWidthHeightMixin";
 
 export default {
   components: {
     TheHomeHeader,
   },
 
-  mixins: [windowWidthMixin],
+  mixins: [windowWidthHeightMixin],
 
   data() {
     return {
@@ -254,7 +247,6 @@ export default {
       this.loading = false;
       this.showTable = true;
     },
-
   },
 };
 </script>

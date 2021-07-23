@@ -158,7 +158,7 @@ import BaseRemindDaySelector from "../components/BaseRemindDaySelector";
 import BaseTimepicker from "../components/BaseTimepicker";
 import todoListsRepository from "../repositories/todoListsRepository.js";
 import todoListsDoneRepository from "../repositories/todoListsDoneRepository";
-import windowWidthMixin from "../mixins/windowWidthMixin";
+import windowWidthHeightMixin from "../mixins/windowWidthHeightMixin";
 
 export default {
   components: {
@@ -173,7 +173,7 @@ export default {
     },
   },
 
-  mixins: [windowWidthMixin],
+  mixins: [windowWidthHeightMixin],
 
   data() {
     return {

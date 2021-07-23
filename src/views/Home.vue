@@ -1,4 +1,3 @@
-
 <template>
   <div id="app">
     <TheHomeHeader></TheHomeHeader>
@@ -113,7 +112,7 @@ import HomeEditModal from "../components/HomeEditModal";
 import BasePagination from "../components/BasePagination";
 import todoListsRepository from "../repositories/todoListsRepository.js";
 import { mapState } from "vuex";
-import windowWidthMixin from "../mixins/windowWidthMixin";
+import windowWidthHeightMixin from "../mixins/windowWidthHeightMixin";
 
 export default {
   components: {
@@ -123,7 +122,7 @@ export default {
     BasePagination,
   },
 
-  mixins: [windowWidthMixin],
+  mixins: [windowWidthHeightMixin],
 
   data() {
     return {

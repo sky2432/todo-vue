@@ -140,7 +140,7 @@ import BaseCalender from "../components/BaseCalender";
 import BaseRemindDaySelector from "../components/BaseRemindDaySelector";
 import BaseTimepicker from "../components/BaseTimepicker";
 import todoListsRepository from "../repositories/todoListsRepository.js";
-import windowWidthMixin from "../mixins/windowWidthMixin";
+import windowWidthHeightMixin from "../mixins/windowWidthHeightMixin";
 
 export default {
   components: {
@@ -162,7 +162,7 @@ export default {
     };
   },
 
-  mixins: [windowWidthMixin],
+  mixins: [windowWidthHeightMixin],
 
   computed: {
     showDeadlineBtnText() {

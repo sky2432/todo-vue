@@ -5,18 +5,22 @@
 </template>
 
 <script>
-import windowWidthMixin from "./mixins/windowWidthMixin.js";
+import windowWidthHeightMixin from "./mixins/windowWidthHeightMixin.js";
 
 export default {
-  mixins: [windowWidthMixin],
+  mixins: [windowWidthHeightMixin],
 
   watch: {
     $route(routeInstance) {
       this.createTitleDesc(routeInstance);
     },
 
-    //windowWidthMixinの変数
+    //windowWidthHeightMixinの変数
     width() {
+      this.setProperty();
+    },
+    //windowWidthHeightMixinの変数
+    height() {
       this.setProperty();
     },
   },
@@ -71,7 +75,8 @@ ul {
   margin-bottom: 0px;
 }
 
-html, body {
+html,
+body {
   background-color: #f5f9fc;
 }
 
