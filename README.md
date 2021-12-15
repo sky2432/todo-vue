@@ -7,7 +7,7 @@ Todoリストアプリケーションです。Todoの登録と完了ができま
 継続的にTodo管理ができるようにアプリとして作成しました。
 
 ## アプリケーションURL
-https://my-simple-todolist.netlify.app/
+https://my-simple-todolist.netlify.app/login
 
 ログイン画面の「ゲストログイン」ボタンからアプリを体験してみてください。ゲストログインではアカウント情報の変更とアカウントの削除が無効になっております。
 
