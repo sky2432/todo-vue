@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/d1ed1ecb-77d5-40e4-8e71-ab401126a32d/deploy-status)](https://app.netlify.com/sites/my-simple-todolist/deploys)
+
 # TodoList
 Todoリストアプリケーションです。Todoの登録と完了ができます。グラフやカレンダーによる視覚的な表示からTodo管理の継続化を促します。
 
